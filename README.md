@@ -14,7 +14,7 @@ Then run the following command:
 docker-compose up --build
 ```
 
-Then open your browser and go to `http://localhost:3000`
+Then open your browser and go to `http://localhost/`
 
 ### From Replit
 Just go to [Replit Genworlds-Community Fork](https://replit.com/@yeagerai/genworlds-community) and click on RUN button.
