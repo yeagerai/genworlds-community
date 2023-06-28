@@ -1,0 +1,10 @@
+{
+  "name": "genworlds-community",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:yeagerai/genworlds-community.git",
+  "author": "jmlago <jm@yeager.ai>",
+  "license": "",
+  "private": true,
+  "workspaces": ["*"]
+}
