@@ -7,3 +7,28 @@ services:
       dockerfile: ./docker/nano-vue.Dockerfile
     ports:
       - "80:80"
+      - "8080:8080"
+
+  world-instance:
+    build:
+      context: .
+      dockerfile: ./docker/world-instance.Dockerfile
+    ports:
+      - "7457:7457"
+      - "5678:5678"
+
+  real-ws:
+    build:
+      context: .
+      dockerfile: ./docker/real-ws.Dockerfile
+    ports:
+      - "7456:7456"
+      - "5679:5679"
+
+  mocked-ws:
+    build:
+      context: .
+      dockerfile: ./docker/mocked-ws.Dockerfile
+    ports:
+      - "7455:7455"
+      - "5680:5680"

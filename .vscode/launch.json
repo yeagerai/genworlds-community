@@ -1,0 +1,69 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Attach to FastAPI: World Instance",
+        "type": "python",
+        "request": "attach",
+        "connect": {
+          "host": "localhost",
+          "port": 5678
+        },
+        "pathMappings": [
+          {
+            "localRoot": "${workspaceFolder}/path-to-your-world-instance-app",
+            "remoteRoot": "/app"
+          }
+        ]
+      },
+      {
+        "name": "Attach to FastAPI: Real WS",
+        "type": "python",
+        "request": "attach",
+        "connect": {
+          "host": "localhost",
+          "port": 5679
+        },
+        "pathMappings": [
+          {
+            "localRoot": "${workspaceFolder}/path-to-your-real-ws-app",
+            "remoteRoot": "/app"
+          }
+        ]
+      },
+      {
+        "name": "Attach to FastAPI: Mocked WS",
+        "type": "python",
+        "request": "attach",
+        "connect": {
+          "host": "localhost",
+          "port": 5680
+        },
+        "pathMappings": [
+          {
+            "localRoot": "${workspaceFolder}/path-to-your-mocked-ws-app",
+            "remoteRoot": "/app"
+          }
+        ]
+      },
+      {
+        "type": "chrome",
+        "request": "launch",
+        "name": "Launch Chrome against Vue",
+        "url": "http://localhost:80",
+        "webRoot": "${workspaceFolder}/path-to-your-vue-app"
+      }
+    ],
+    "compounds": [
+        {
+          "name": "Debug All",
+          "configurations": [
+            "Attach to FastAPI: World Instance",
+            "Attach to FastAPI: Real WS",
+            "Attach to FastAPI: Mocked WS",
+            "Launch Chrome against Vue"
+          ],
+          "preLaunchTask": "docker-compose up"
+        }
+      ]
+  }

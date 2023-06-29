@@ -1,3 +1,6 @@
+import debugpy
+debugpy.listen(("0.0.0.0", 5680))
+
 import json
 import asyncio
 from datetime import datetime
@@ -68,4 +71,6 @@ async def websocket_endpoint(websocket: WebSocket):
         await websocket_manager.disconnect(websocket)
 
 
-# uvicorn world_socket_server:app --host 0.0.0.0 --port 7456
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7455)

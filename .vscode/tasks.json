@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "docker-compose up",
+        "type": "shell",
+        "command": "docker-compose up --build",
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "isBackground": true,
+        "problemMatcher": {
+          "pattern": {
+            "regexp": "^[^\\s].*"
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": ".*Starting development server.*",
+            "endsPattern": ".*Server is listening.*"
+          }
+        }
+      }
+    ]
+  }  

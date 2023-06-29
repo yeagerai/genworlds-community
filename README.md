@@ -16,5 +16,11 @@ docker-compose up --build
 
 Then open your browser and go to `http://localhost/`
 
+### Services
+* Frontend interface (Vue): `http://localhost/` port `80`
+* World Instance (FastAPI REST): `http://localhost:7457/` port `7457`
+* Real web socket (FastAPI WS): `http://localhost:7456/` port `7456`
+* Mocked web socket (FastAPI WS): `http://localhost:7455/` port `7455`
+
 ### From Replit
 Just go to [Replit Genworlds-Community Fork](https://replit.com/@yeagerai/genworlds-community) and click on RUN button.
