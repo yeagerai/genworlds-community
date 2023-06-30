@@ -11,4 +11,4 @@ COPY packages/mocked-ws/app/ app/
 
 EXPOSE 7456
 
-CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5680", "--wait-for-client", "main.py"]
+CMD ["sh", "-c", "python -u -m debugpy --listen 0.0.0.0:5680 -m uvicorn --reload --host 0.0.0.0 --port 7455 main:app"]

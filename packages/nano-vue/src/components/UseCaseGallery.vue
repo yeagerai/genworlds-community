@@ -34,7 +34,7 @@ export default {
     },
   },
   mounted() {
-    fetch("http://localhost:7457/use-case-list")
+    fetch("http://127.0.0.1:7457/use-case-list")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

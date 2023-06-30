@@ -1,13 +1,17 @@
-import debugpy
-debugpy.listen(("0.0.0.0", 5678))
-
 import os
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from pydantic import BaseModel
 import threading
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Data(BaseModel):
     message: str
@@ -16,7 +20,6 @@ class Data(BaseModel):
 def get_use_case_list():
     def get_folder_names(path):
         return [name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))]
-    print("WTF")
     use_cases = get_folder_names("use_cases")
     return JSONResponse(content=use_cases)
 
@@ -57,4 +60,4 @@ async def trigger_world(data: Data):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=7457)
+    uvicorn.run(app, port=7457, log_level="info")

@@ -16,4 +16,4 @@ RUN pip install debugpy
 EXPOSE 7456
 
 # Run main.py when the container launches
-CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5679", "--wait-for-client", "main.py"]
+CMD ["sh", "-c", "python -u -m debugpy --listen 0.0.0.0:5679 -m main.py"]
