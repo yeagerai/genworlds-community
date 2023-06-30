@@ -16,7 +16,7 @@
           "background": {
             "activeOnStart": true,
             "beginsPattern": ".*Starting development server.*",
-            "endsPattern": ".*Server is listening.*"
+            "endsPattern": ".*Attaching to .*"
           }
         }
       }

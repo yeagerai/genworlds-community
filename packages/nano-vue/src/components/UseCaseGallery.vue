@@ -8,7 +8,7 @@
         class="p-4 text-center bg-white rounded-lg shadow-md cursor-pointer hover:bg-blue-50"
         @click="navigateToUseCase(useCase)"
       >
-        {{ useCase }}
+        {{ useCase.replace("-", / /g).replace("_", / /g) }}
       </li>
     </ul>
   </div>
@@ -25,10 +25,10 @@ export default {
   methods: {
     navigateToUseCase(useCase) {
       this.$router.push({
-        name: "UseCaseView",
+        name: "useCaseView",
         params: {
           useCaseTitle: useCase,
-          useCaseSlug: useCase.toLowerCase().replace(/ /g, "-"),
+          slug: useCase.toLowerCase().replace(/ /g, "-"),
         },
       });
     },

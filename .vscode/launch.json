@@ -11,7 +11,7 @@
         },
         "pathMappings": [
           {
-            "localRoot": "${workspaceFolder}/path-to-your-world-instance-app",
+            "localRoot": "${workspaceFolder}/packages/world-instance",
             "remoteRoot": "/app"
           }
         ]
@@ -26,7 +26,7 @@
         },
         "pathMappings": [
           {
-            "localRoot": "${workspaceFolder}/path-to-your-real-ws-app",
+            "localRoot": "${workspaceFolder}/packages/real-ws",
             "remoteRoot": "/app"
           }
         ]
@@ -41,7 +41,7 @@
         },
         "pathMappings": [
           {
-            "localRoot": "${workspaceFolder}/path-to-your-mocked-ws-app",
+            "localRoot": "${workspaceFolder}/packages/mocked-ws",
             "remoteRoot": "/app"
           }
         ]
@@ -51,7 +51,7 @@
         "request": "launch",
         "name": "Launch Chrome against Vue",
         "url": "http://localhost:80",
-        "webRoot": "${workspaceFolder}/path-to-your-vue-app"
+        "webRoot": "${workspaceFolder}/packages/nano-vue"
       }
     ],
     "compounds": [
