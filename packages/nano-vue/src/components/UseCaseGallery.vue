@@ -8,7 +8,7 @@
         class="p-4 text-center bg-white rounded-lg shadow-md cursor-pointer hover:bg-blue-50"
         @click="navigateToUseCase(useCase)"
       >
-        {{ useCase.replace("-", / /g).replace("_", / /g) }}
+        {{ useCase.replace("-"," ").replace("_", " ") }}
       </li>
     </ul>
   </div>

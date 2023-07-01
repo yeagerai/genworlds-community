@@ -1,6 +1,7 @@
 from importlib import import_module
 import os
 import threading
+import json
 
 from pydantic import BaseModel
 from fastapi import FastAPI
@@ -43,7 +44,7 @@ async def trigger_world(slug: str):
     :return: JSONResponse with status, port, and event stream configuration
     """
     with open(f"use_cases/{slug}/event_stream_config.json", "r") as f:
-        event_stream_config = f.read()
+        event_stream_config = json.loads(f.read())
 
     response = {
         "status": "The world is running in the background",

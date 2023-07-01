@@ -63,7 +63,7 @@
             "Attach to FastAPI: Mocked WS",
             "Launch Chrome against Vue"
           ],
-          "preLaunchTask": "docker-compose up"
+          "preLaunchTask": "start-docker-compose"
         }
       ]
   }

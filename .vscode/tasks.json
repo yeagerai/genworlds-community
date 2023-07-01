@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "label": "docker-compose up",
+        "label": "start-docker-compose",
         "type": "shell",
         "command": "docker-compose up --build",
         "options": {
@@ -15,8 +15,8 @@
           },
           "background": {
             "activeOnStart": true,
-            "beginsPattern": ".*Starting development server.*",
-            "endsPattern": ".*Attaching to .*"
+            "beginsPattern": ".*[+] Building.*",
+            "endsPattern": ".*genworlds-community-world-instance-1  \\| INFO:     Application startup complete\\..*"
           }
         }
       }

@@ -8,6 +8,10 @@ services:
     ports:
       - "80:80"
       - "8080:8080"
+    depends_on:
+      - world-instance
+      - real-ws
+      - mocked-ws
 
   world-instance:
     build:
@@ -16,7 +20,10 @@ services:
     ports:
       - "7457:7457"
       - "5678:5678"
-
+    depends_on:
+      - real-ws
+      - mocked-ws
+      
   real-ws:
     build:
       context: .
