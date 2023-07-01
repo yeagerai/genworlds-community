@@ -1,5 +1,9 @@
 <template>
   <div class="min-h-screen p-8 bg-gray-50" v-if="screens.length > 0">
+    <div v-if="websocketPort === 7455" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-8" role="alert">
+      <p class="font-bold">WARNING Mocked Data:</p>
+      <p>You are currently connected to a simulated socket, which means that the data you are seeing has been pre-recorded and is not live. To initiate a real-time simulation, please configure the environment variables as outlined in the .env.example file.</p>
+    </div>
     <h1 class="mb-6 text-4xl font-semibold text-blue-600">{{ useCaseName }}</h1>
     <div class="flex mb-4">
       <button
@@ -72,30 +76,34 @@ export default {
       return { screens: [], settings: {} };
     },
     connectToWebSocket() {
-  const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`);
+    const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`);
 
-  rws.addEventListener('message', (message) => {
-    const { event_type, description } = JSON.parse(message.data);
-    console.log('Received message:', event_type, description);
+    rws.addEventListener('message', (msg) => {
+        const { event_type, description, created_at, message } = JSON.parse(msg.data);
+        console.log('Received message:', event_type, description);
 
-    const newScreens = this.screens.map(screen => {
-      const trackedEvent = screen.tracked_events.find(e => e.event_type === event_type);
+        const newScreens = this.screens.map(screen => {
+            const trackedEvents = screen.tracked_events ? [...screen.tracked_events] : [];
 
-      if (trackedEvent) {
-        trackedEvent.fields_to_display = trackedEvent.fields_to_display.map(field => {
-          if (field.name === 'description') {
-            return { ...field, data: description };
-          } else if (field.name === 'event_type') {
-            return { ...field, data: event_type };
-          }
-          return field;
+            // Check if event with the same created_at already exists
+            const eventExists = trackedEvents.some(event => event.created_at === created_at);
+
+            if (!eventExists) {
+                const newFields = [
+                    { name: 'description', data: description},
+                    { name: 'event_type', data: event_type},
+                    { name: 'created_at', data: created_at},
+                    { name: 'message', data: message}
+                ];
+
+                trackedEvents.push({ event_type, fields_to_display: newFields, created_at });
+            }
+
+            return { ...screen, tracked_events: trackedEvents };
         });
-      }
-      return screen;
-    });
 
-    this.screens = newScreens;
-  });
+        this.screens = [...newScreens];
+    });
 }},
 };
 </script>
