@@ -15,14 +15,10 @@
     <div v-if="activeScreenObject" class="p-6 bg-white rounded-lg shadow-md">
       <h2 class="mb-4 text-2xl font-semibold text-gray-700">{{ activeScreenObject.name }}</h2>
       <ul class="space-y-4">
-        <li
-          v-for="event in activeScreenObject.trackedEvents"
-          :key="event.event_type"
-          class="p-4 rounded-md"
-        >
-          <div v-for="field in event.fields_to_display" :key="field.name" :class="field.format">
-            {{ event[field.name] }}
-          </div>
+        <li v-for="event in activeScreenObject.tracked_events" :key="event.event_type" class="p-4 rounded-md">
+            <div v-for="field in event.fields_to_display" :key="field.name" :class="field.format">
+                {{ field.data }}
+            </div>
         </li>
       </ul>
     </div>
@@ -76,22 +72,31 @@ export default {
       return { screens: [], settings: {} };
     },
     connectToWebSocket() {
-      const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`);
+  const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`);
 
-      rws.addEventListener('message', (message) => {
-        const { screenName, eventType, data } = JSON.parse(message.data);
-        const screen = this.screens.find((s) => s.name === screenName);
-        if (screen) {
-          const trackedEvent = screen.tracked_events.find(e => e.event_type === eventType);
-          if (trackedEvent) {
-            trackedEvent.fields_to_display.forEach(field => {
-              field.data = data[field.name];
-            });
+  rws.addEventListener('message', (message) => {
+    const { event_type, description } = JSON.parse(message.data);
+    console.log('Received message:', event_type, description);
+
+    const newScreens = this.screens.map(screen => {
+      const trackedEvent = screen.tracked_events.find(e => e.event_type === event_type);
+
+      if (trackedEvent) {
+        trackedEvent.fields_to_display = trackedEvent.fields_to_display.map(field => {
+          if (field.name === 'description') {
+            return { ...field, data: description };
+          } else if (field.name === 'event_type') {
+            return { ...field, data: event_type };
           }
-        }
-      });
-    },
-  },
+          return field;
+        });
+      }
+      return screen;
+    });
+
+    this.screens = newScreens;
+  });
+}},
 };
 </script>
 

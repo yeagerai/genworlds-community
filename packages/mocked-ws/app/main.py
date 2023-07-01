@@ -26,7 +26,7 @@ def send_events(events):
             name="mocked-ws-client",
             daemon=True,
         ).start()
-    time.sleep(0.1)
+    time.sleep(2)
     for e in events:
         e["created_at"] = datetime.fromisoformat(e["created_at"]).isoformat()
 
