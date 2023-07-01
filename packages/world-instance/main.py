@@ -2,6 +2,7 @@ from importlib import import_module
 import os
 import threading
 import json
+import requests
 
 from pydantic import BaseModel
 from fastapi import FastAPI
@@ -58,6 +59,10 @@ async def trigger_world(slug: str):
     function_name = "launch_use_case"
 
     if is_mocked:
+        try:
+            requests.get(f"http://mocked-ws:{port}/start-mocked-ws/{slug}")
+        except Exception as e:
+            print(f"An error occurred: {e}")
         return response
     else:
         try:

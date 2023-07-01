@@ -1,3 +1,1 @@
-fastapi
-uvicorn
-websockets
+genworlds==0.0.2

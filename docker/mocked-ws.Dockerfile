@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install debugpy
 
 COPY packages/mocked-ws/app/ app/
+COPY use_cases /app/use_cases
 
 EXPOSE 7455
 

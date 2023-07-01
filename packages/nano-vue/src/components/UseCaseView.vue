@@ -47,7 +47,7 @@ export default {
     // Fetch configuration from REST API
     const config = await this.fetchConfig();
     // Set the screens
-    this.screens = config.screens;
+    this.screens = config.event_stream_config.screens;
     if (this.screens.length > 0) {
       this.activeScreen = this.screens[0].name;
     }
@@ -56,7 +56,7 @@ export default {
     this.useCaseName = config.name;
 
     // Connect to WebSocket
-    this.websocketPort = config.settings.websocketPort || 7456;
+    this.websocketPort = config.port;
     this.connectToWebSocket();
   },
   computed: {
@@ -76,7 +76,7 @@ export default {
       return { screens: [], settings: {} };
     },
     connectToWebSocket() {
-      const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}`);
+      const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`);
 
       rws.addEventListener('message', (message) => {
         const { screenName, eventType, data } = JSON.parse(message.data);
