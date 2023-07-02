@@ -1,39 +1,40 @@
 <template>
-  <div class="min-h-screen p-8 bg-gray-50" v-if="screens.length > 0">
-    <div v-if="websocketPort === 7455" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-8" role="alert">
+  <div v-if="screens.length > 0">
+    <div v-if="websocketPort === 7455" class="alert altert-warning">
       <p class="font-bold">WARNING Mocked Data:</p>
       <p>You are currently connected to a simulated socket, which means that the data you are seeing has been pre-recorded and is not live. To initiate a real-time simulation, please configure the environment variables as outlined in the .env.example file.</p>
     </div>
-    <h1 class="mb-6 text-4xl font-semibold text-blue-600">{{ useCaseName }}</h1>
-    <div class="flex mb-4">
+    <h1 class="text-xl">{{ useCaseName }}</h1>
+    <div class="tabs tabs-boxed">
       <button
         v-for="screen in screens"
         :key="screen.name"
         @click="activeScreen = screen.name"
-        :class="{ 'border-b-4 border-blue-600': activeScreen === screen.name }"
-        class="px-4 py-2 mr-4 text-lg text-blue-500 hover:text-blue-700"
+        :class="{ 'tab-active': activeScreen === screen.name }"
+        class="tab"
       >
         {{ screen.name }}
       </button>
     </div>
-    <div v-if="activeScreenObject" class="p-6 bg-white rounded-lg shadow-md">
+    <div v-if="activeScreenObject" class="p-6 rounded-lg shadow-md">
         <ul class="space-y-4">
-            <li v-for="event in activeScreenObject.tracked_events" :key="event.event_type" class="mb-4">
+            <li v-for="event in activeScreenObject.tracked_events" :key="event.event_type" class="chat chat-start">
                 <div class="p-3 rounded-lg bg-blue-100 ml-10 mr-10">
                     <div v-for="field in event.fields_to_display" :key="field.name">
-                        <div v-if="field.name === 'sender_id'" class="font-bold text-xs text-gray-600">
-                            Sender: {{ field.data }}
+                        <div v-if="field.name === 'sender_id'" class="chat-header">
+                            {{ field.data }}
+                            <time class="text-xs opacity-50" v-if="field.name === 'created_at'">{{ field.data }}</time>
                         </div>
-                        <div v-if="field.name === 'message'" class="text-sm">
+                        <div v-if="field.name === 'message'" class="chat-bubble">
                             {{ field.data }}
                         </div>
-                        <div v-if="field.name === 'created_at'" class="text-xs text-gray-500 text-right">
+                        <!-- <div v-if="field.name === 'created_at'" class="chat-footer opacity-50">
+                            {{ field.data }}
+                        </div> -->
+                        <div v-if="field.name === 'description'" class="chat-bubble">
                             {{ field.data }}
                         </div>
-                        <div v-if="field.name === 'description'" class="text-xs text-gray-500">
-                            Description: {{ field.data }}
-                        </div>
-                        <div v-if="field.name === 'event_type'" class="text-xs text-gray-500">
+                        <div v-if="field.name === 'event_type'" class="chat-footer opacity-50">
                             Event Type: {{ field.data }}
                         </div>
                     </div>
@@ -42,6 +43,7 @@
         </ul>
     </div>
   </div>
+  <textarea class="textarea" placeholder="SendEvent" disabled></textarea>
 </template>
 
 

@@ -1,16 +1,24 @@
 <template>
-  <div class="p-8 bg-gray-50">
-    <h1 class="mb-6 text-4xl font-semibold text-blue-600">Use Case Gallery</h1>
-    <ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <li
-        v-for="useCase in useCases"
-        :key="useCase"
-        class="p-4 text-center bg-white rounded-lg shadow-md cursor-pointer hover:bg-blue-50"
-        @click="navigateToUseCase(useCase)"
-      >
-        {{ useCase.replace("-"," ").replace("_", " ") }}
-      </li>
-    </ul>
+  <div class="navbar">
+    <div class="navbar-start">
+      <ul class="menu menu-horizontal px-1">
+        <li tabindex="0">
+          <details>
+            <summary>Use Cases</summary>
+            <ul class="p-2">
+              <li
+                v-for="useCase in useCases"
+                :key="useCase"
+                @click="navigateToUseCase(useCase)"
+              ><a>{{ useCase }}</a></li>
+            </ul>
+          </details>
+        </li>
+      </ul>
+    </div>
+    <div class="navbar-center">
+      <a class="btn btn-ghost normal-case text-xl">🧬🌍 GenWorlds</a>
+    </div>
   </div>
 </template>
 

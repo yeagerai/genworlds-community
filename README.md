@@ -16,6 +16,13 @@ docker-compose up --build
 
 Then open your browser and go to `http://localhost/`
 
+If you want the app to directly launch a specific use-case, you can add the following variable to the `.env` file:
+```bash
+VUE_APP_USE_CASE_ACCESS_POINT=/use-case/roundtable
+```
+And you can replace `roundtable` by any folder name in the `use_cases/` folder.
+
+
 ### Services
 * Frontend interface (Vue): `http://localhost/` port `80`
 * World Instance (FastAPI REST): `http://localhost:7457/` port `7457`

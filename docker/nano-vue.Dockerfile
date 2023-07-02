@@ -5,6 +5,7 @@ FROM node:lts-alpine as build-stage
 WORKDIR /app
 
 # Copy package.json and yarn.lock
+COPY .env /app/.env
 COPY packages/nano-vue/package.json packages/nano-vue/yarn.lock ./
 
 # Install dependencies using yarn
