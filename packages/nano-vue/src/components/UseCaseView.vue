@@ -17,14 +17,29 @@
       </button>
     </div>
     <div v-if="activeScreenObject" class="p-6 bg-white rounded-lg shadow-md">
-      <h2 class="mb-4 text-2xl font-semibold text-gray-700">{{ activeScreenObject.name }}</h2>
-      <ul class="space-y-4">
-        <li v-for="event in activeScreenObject.tracked_events" :key="event.event_type" class="p-4 rounded-md">
-            <div v-for="field in event.fields_to_display" :key="field.name" :class="field.format">
-                {{ field.data }}
-            </div>
-        </li>
-      </ul>
+        <ul class="space-y-4">
+            <li v-for="event in activeScreenObject.tracked_events" :key="event.event_type" class="mb-4">
+                <div class="p-3 rounded-lg bg-blue-100 ml-10 mr-10">
+                    <div v-for="field in event.fields_to_display" :key="field.name">
+                        <div v-if="field.name === 'sender_id'" class="font-bold text-xs text-gray-600">
+                            Sender: {{ field.data }}
+                        </div>
+                        <div v-if="field.name === 'message'" class="text-sm">
+                            {{ field.data }}
+                        </div>
+                        <div v-if="field.name === 'created_at'" class="text-xs text-gray-500 text-right">
+                            {{ field.data }}
+                        </div>
+                        <div v-if="field.name === 'description'" class="text-xs text-gray-500">
+                            Description: {{ field.data }}
+                        </div>
+                        <div v-if="field.name === 'event_type'" class="text-xs text-gray-500">
+                            Event Type: {{ field.data }}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
     </div>
   </div>
 </template>
@@ -79,7 +94,7 @@ export default {
     const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`);
 
     rws.addEventListener('message', (msg) => {
-        const { event_type, description, created_at, message } = JSON.parse(msg.data);
+        const { event_type, description, created_at, message, sender_id } = JSON.parse(msg.data);
         console.log('Received message:', event_type, description);
 
         const newScreens = this.screens.map(screen => {
@@ -93,6 +108,7 @@ export default {
                     { name: 'description', data: description},
                     { name: 'event_type', data: event_type},
                     { name: 'created_at', data: created_at},
+                    { name: 'sender_id', data: sender_id},
                     { name: 'message', data: message}
                 ];
 
