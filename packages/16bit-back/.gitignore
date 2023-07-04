@@ -1,0 +1,35 @@
+# OS auto-generated files
+*.DS_Store
+
+# Vim
+*~
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# IDEs
+.idea
+
+# Node
+node_modules
+
+# dotenv
+/.env
+/*.env
+!/example.env
+
+# Testing
+coverage
+.coverage
+
+# Typescript
+dist
+target
+build
+*.tsbuildinfo
+
+# Other
+*.xml
+yarn.lock

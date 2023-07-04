@@ -1,0 +1,51 @@
+// https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
+// https://www.typescriptlang.org/tsconfig#files
+{
+  "compilerOptions": {
+    /* Basic Options */
+    "target": "ES2021",
+    "module": "commonjs",
+    "lib": ["ES2021"],
+    "removeComments": true,
+    "sourceMap": true,
+
+    /* Strict Type-Checking Options */
+    "alwaysStrict": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": true,
+
+    /* Module Resolution Options */
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "types": ["node", "jest"],
+    "baseUrl": "./",
+    "rootDir": "./",
+    "paths": {
+      "@app/*": ["src/*"],
+      "@shared/*": ["shared/*"],
+      "@test/*": ["test/*"]
+    },
+    "outDir": "./dist",
+
+    /* Advanced Options */
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "incremental": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "allowJs": false,
+
+    /* Other */
+    "downlevelIteration": true,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "useUnknownInCatchVariables": true,
+    "useDefineForClassFields": false
+  },
+  "include": ["./src/**/*.ts", "./shared/**/*.ts", "./test/**/*.ts"]
+}

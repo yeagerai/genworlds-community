@@ -1,0 +1,78 @@
+{
+  "root": true,
+  "extends": ["airbnb-base"],
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "env": {
+    "node": true
+  },
+  "rules": {},
+  "overrides": [
+    {
+      "files": ["**/*.ts", "**/*.tsx"],
+      "plugins": ["@typescript-eslint"],
+      "extends": ["airbnb-base", "plugin:@typescript-eslint/recommended"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": ["./tsconfig.json"]
+      },
+      "rules": {
+        "linebreak-style": ["error", "windows"],
+        "import/extensions": "off",
+        "import/no-extraneous-dependencies": [
+          "error",
+          {
+            "devDependencies": ["**/*.spec.ts", "**/test/**/*.ts"],
+            "packageDir": [] // use closest package.json
+          }
+        ],
+        "max-len": [
+          "error",
+          {
+            "code": 120,
+            "ignorePattern": "(^describe|^import\\s.+\\sfrom\\s.+;$)"
+          }
+        ],
+        "import/no-unresolved": "off",
+        "no-underscore-dangle": [
+          "error",
+          { "allow": ["_id"], "allowAfterThis": true }
+        ],
+        "object-curly-newline": [
+          "error",
+          {
+            "ObjectExpression": {
+              "minProperties": 0,
+              "multiline": true,
+              "consistent": true
+            },
+            "ObjectPattern": {
+              "minProperties": 4,
+              "multiline": true,
+              "consistent": true
+            },
+            "ImportDeclaration": {
+              "minProperties": 0,
+              "multiline": true,
+              "consistent": true
+            },
+            "ExportDeclaration": {
+              "minProperties": 4,
+              "multiline": true,
+              "consistent": true
+            }
+          }
+        ],
+        "import/prefer-default-export": "off",
+        "import/no-default-export": ["error"],
+        "no-shadow": "off",
+        "@typescript-eslint/no-shadow": ["error"],
+        "no-useless-constructor": "off",
+        "@typescript-eslint/no-useless-constructor": ["error"],
+        "@typescript-eslint/explicit-function-return-type": ["error"],
+        "@typescript-eslint/explicit-member-accessibility": ["error"]
+      }
+    }
+  ]
+}
