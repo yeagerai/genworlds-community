@@ -17,9 +17,8 @@ export class WsHandler {
   public constructor(roomState: TankRoomState) {
     this.roomState = roomState;
 
-    const { host, port } = config.yeager.world.websocket;
-    // const wsUrl = `${host}:${port}/ws`;
-    const wsUrl = `ws://mocked-ws:7455/ws`;
+    const { host, port, path } = config.yeager.world.websocket;
+    const wsUrl = `${host}:${port}/${path}`;
 
     this.wsClient = new WebSocket(wsUrl, {
       perMessageDeflate: false,

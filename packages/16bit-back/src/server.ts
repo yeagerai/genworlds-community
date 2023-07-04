@@ -13,6 +13,10 @@ import { config } from './config';
 import { logger } from './infra/logger';
 // import { getMongoDbURL } from './infra/mongodb';
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => { setTimeout(() => { resolve(); }, ms); });
+}
+
 async function main(): Promise<void> {
   const expressApp = createApp();
 
@@ -20,6 +24,8 @@ async function main(): Promise<void> {
 
   // Restrict the client-side from creating rooms
   matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
+
+  sleep(4000);
 
   const gameServer = new Server({
     greet: false,
