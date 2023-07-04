@@ -1,0 +1,15 @@
+{
+  "name": "@yeager/eslint-config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Yeager - ESLint Config",
+  "author": "Robert Tarré <rtarre@nakima.es>",
+  "license": "UNLICENSED",
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "^8.23.1"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.7"
+  }
+}

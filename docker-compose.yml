@@ -62,7 +62,6 @@ services:
 
   redisdb:
     image: redis:7-alpine
-    restart: "no"
     logging:
       driver: "json-file"
       options:
@@ -73,7 +72,6 @@ services:
     build:
       context: ./
       dockerfile: ./docker/16bit-back.Dockerfile
-    restart: "no"
     logging:
       driver: "json-file"
       options:
@@ -99,3 +97,19 @@ services:
       YEAGER_WORLD_WS_PATH: "ws"
     ports:
       - "5000:5000"
+
+  16bit-front:
+    build:
+      context: ./
+      dockerfile: ./docker/16bit-front.Dockerfile
+      args:
+        - node_environment=production
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      - 16bit-back
+    ports:
+      - "8081:80" 

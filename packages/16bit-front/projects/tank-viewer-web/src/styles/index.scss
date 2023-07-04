@@ -1,0 +1,38 @@
+@import '_reset';
+
+// html,
+// body {
+//   image-rendering: optimizeSpeed; /* Older versions of FF */
+//   image-rendering: -moz-crisp-edges; /* FF 6.0+ */
+//   image-rendering: -webkit-optimize-contrast; /* Webkit (non standard naming) */
+//   image-rendering: -o-crisp-edges; /* OS X & Windows Opera (12.02+) */
+//   image-rendering: crisp-edges; /* Possible future browsers. */
+//   -ms-interpolation-mode: nearest-neighbor; /* IE (non standard naming) */
+//   image-rendering: pixelated; /* Chrome 41 */
+// }
+
+@font-face {
+  font-family: 'PKMN RBYGSC';
+  src:
+    // url("fonts/Samplino.eot?") format("eot"),
+    // url("fonts/Samplino.woff2") format("woff2"),
+    // url("fonts/Samplino.woff") format("woff"),
+    url('/src/assets/fonts/PKMN RBYGSC.ttf') format('truetype');
+  //  url("fonts/Samplino.svg#Samplino") format("svg");
+}
+
+@font-face {
+  font-family: 'VCR_OSD_MONO';
+  src:
+    // url("fonts/Samplino.eot?") format("eot"),
+    // url("fonts/Samplino.woff2") format("woff2"),
+    // url("fonts/Samplino.woff") format("woff"),
+    url('/src/assets/fonts/VCR_OSD_MONO_1.001.ttf') format('truetype');
+  //  url("fonts/Samplino.svg#Samplino") format("svg");
+}
+
+#map-container {
+  width: 100%;
+  height: min(100vh, 1000px);
+  text-align: center;
+}

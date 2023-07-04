@@ -1,0 +1,50 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es6",
+    /* Modules */
+    "module": "CommonJS" /* Specify what module code is generated. */,
+    "moduleResolution": "node",
+    "resolveJsonModule": true /* Enable importing .json files. */,
+    "isolatedModules": true,
+    "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
+    "paths": {
+      /* Specify a set of entries that re-map imports to additional lookup locations. */
+      "@/*": ["./src/*"],
+      "@/assets": ["./src/assets/index"],
+      "@/assets/*": ["./src/assets/*"],
+      "@/modules": ["./src/modules/index"],
+      "@/modules/*": ["./src/modules/*"],
+      "@/styles": ["./src/styles/index"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/config": ["./src/config/index"]
+      // "@/classes": ["./src/classes/index"],
+      // "@/classes/*": ["./src/classes/*"],
+      // "@/types": ["./src/types/index"],
+      // "@/types/*": ["./src/types/*"]
+    },
+    /* Emit */
+    // "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
+    "sourceMap": true /* Create source map files for emitted JavaScript files. */,
+    "removeComments": true /* Disable emitting comments. */,
+    "outDir": "./dist" /* Specify an output folder for all emitted files. */,
+
+    /* Interop Constraints */
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Type Checking */
+    "strict": true /* Enable all strict type-checking options. */,
+    "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
+    "strictNullChecks": true /* When type checking, take into account 'null' and 'undefined'. */,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Completeness */
+    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true
+  },
+  "include": ["./src/**/*.ts", "declarations.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

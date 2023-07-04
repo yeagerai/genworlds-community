@@ -1,0 +1,70 @@
+{
+  "name": "@yeager/tank-viewer-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Robert Tarré <rtarre@nakima.es>",
+  "license": "UNLICENSED",
+  "workspaces": [
+    "packages/*",
+    "projects/*"
+  ],
+  "scripts": {
+    "prepare": "husky install",
+    "lerna": "lerna",
+    "bootstrap": "lerna bootstrap",
+    "graph": "nx graph",
+    "setup": "yarn install && yarn bootstrap",
+    "setup:ci": "CI=true yarn install --frozen-lockfile && yarn bootstrap --force-local",
+    "start": "yarn dev",
+    "dev": "lerna run dev --sort --stream --parallel",
+    "dev:web-only": "lerna exec --scope @yeager/tank-viewer-web -- yarn dev",
+    "build": "lerna run build --stream",
+    "test": "lerna run test --parallel --stream --no-sort",
+    "test:ci": "CI=true lerna run test:ci --parallel --stream --no-sort",
+    "type-check": "lerna run type-check --parallel --no-sort",
+    "type-check:ci": "CI=true lerna run type-check:ci --parallel --no-sort",
+    "lint": "lerna run lint --parallel --no-sort",
+    "lint:ci": "CI=true lerna run lint:ci --parallel --no-sort"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.3",
+    "@types/webfontloader": "^1.6.35",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "commitizen": "^4.3.0",
+    "css-loader": "^6.7.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.38.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-webpack-plugin": "^4.0.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.1",
+    "husky": "^8.0.3",
+    "lerna": "^6.6.1",
+    "mini-css-extract-plugin": "^2.7.5",
+    "nodemon": "^2.0.22",
+    "prettier": "^2.8.7",
+    "rimraf": "^5.0.0",
+    "sass": "^1.62.0",
+    "sass-loader": "^13.2.2",
+    "style-loader": "^3.3.2",
+    "symlink-resolver": "^0.2.1",
+    "ts-node": "^10.9.1",
+    "tsc-alias": "^1.8.5",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.0.4",
+    "webpack-dev-server": "^4.13.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {}
+}

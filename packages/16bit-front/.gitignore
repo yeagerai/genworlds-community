@@ -1,0 +1,58 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Dependency directories
+node_modules/
+jspm_packages/
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+**/build
+**/dist
+
+# misc
+.DS_Store
+*.pem
+out.txt
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+
+# dotenv environment variables file
+# .env
+# .env.test
+.env*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Docker
+/volumes
