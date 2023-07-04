@@ -1,11 +1,13 @@
 <template>
-  <div v-if="screens.length > 0">
-    <div v-if="websocketPort === 7455" class="alert altert-warning">
-      <p class="font-bold">WARNING Mocked Data:</p>
+  <div v-if="screens.length > 0" class="p-4 h-screen flex flex-col">
+    <div v-if="showAlert && websocketPort === 7455" class="alert alert-warning mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
       <p>You are currently connected to a simulated socket, which means that the data you are seeing has been pre-recorded and is not live. To initiate a real-time simulation, please configure the environment variables as outlined in the .env.example file.</p>
+
+      <button @click="showAlert = false" class="btn btn-sm">OK</button>
     </div>
-    <h1 class="text-xl">{{ useCaseName }}</h1>
-    <div class="tabs tabs-boxed">
+    <h1 class="text-xl mb-4">{{ useCaseName }}</h1>
+    <div class="tabs tabs-boxed mb-4">
       <button
         v-for="screen in screens"
         :key="screen.name"
@@ -16,34 +18,29 @@
         {{ screen.name }}
       </button>
     </div>
-    <div v-if="activeScreenObject" class="p-6 rounded-lg shadow-md">
-        <ul class="space-y-4">
-            <li v-for="event in activeScreenObject.tracked_events" :key="event.event_type" class="chat chat-start">
-                <div class="p-3 rounded-lg bg-blue-100 ml-10 mr-10">
-                    <div v-for="field in event.fields_to_display" :key="field.name">
-                        <div v-if="field.name === 'sender_id'" class="chat-header">
-                            {{ field.data }}
-                            <time class="text-xs opacity-50" v-if="field.name === 'created_at'">{{ field.data }}</time>
-                        </div>
-                        <div v-if="field.name === 'message'" class="chat-bubble">
-                            {{ field.data }}
-                        </div>
-                        <!-- <div v-if="field.name === 'created_at'" class="chat-footer opacity-50">
-                            {{ field.data }}
-                        </div> -->
-                        <div v-if="field.name === 'description'" class="chat-bubble">
-                            {{ field.data }}
-                        </div>
-                        <div v-if="field.name === 'event_type'" class="chat-footer opacity-50">
-                            Event Type: {{ field.data }}
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
+    <div v-if="activeScreenObject" ref="chatContainer" class="p-6 rounded-lg shadow-md overflow-y-auto flex-1 mb-4">
+      <ul class="space-y-4">
+        <li v-for="(event, index) in activeScreenObject.tracked_events" :key="index">
+          <div class="chat chat-start">
+            <div class="chat-header">
+              <p class="text-xs">{{ getFieldValue(event, 'sender_id') }}</p>
+              <time class="text-xs opacity-50">{{ getFieldValue(event, 'created_at') }}</time>
+            </div>
+            <div class="chat-bubble">
+              <p>
+                {{ getFieldValue(event, 'message') || getFieldValue(event, 'description') || 'No description was provided for this event 😢' }}
+              </p>
+            </div>
+            <div class="chat-footer">
+              <p class="text-xs opacity-50">Event Type: {{ getFieldValue(event, 'event_type') }}</p>
+            </div>
+          </div>
+        </li>
+      </ul>
   </div>
-  <textarea class="textarea" placeholder="SendEvent" disabled></textarea>
+    <textarea class="textarea w-full" placeholder="SendEvent" disabled></textarea>
+  </div>
+
 </template>
 
 
@@ -58,8 +55,30 @@ export default {
       screens: [],
       useCaseName: '',
       websocketPort: null,
+      showAlert: true,
     };
   },
+  watch: {
+      'activeScreenObject.tracked_events': {
+        handler() {
+          this.$nextTick(() => {
+            const container = this.$refs.chatContainer;
+            if (container) {
+              // Check if the user is near the bottom
+              const isNearBottom =
+                container.scrollHeight - container.scrollTop - container.clientHeight < 400;
+              console.log('is near bottom', isNearBottom);
+
+              // Only scroll to the bottom if the user is near the bottom
+              if (isNearBottom) {
+                container.scrollTo({top: container.scrollHeight, behavior: 'smooth'});
+              }
+            }
+          });
+        },
+        deep: true,
+      },
+    },
   async mounted() {
     // Fetch configuration from REST API
     const config = await this.fetchConfig();
@@ -70,7 +89,7 @@ export default {
     }
 
     // Set the use case name
-    this.useCaseName = config.name;
+    this.useCaseName = config.event_stream_config.name;
 
     // Connect to WebSocket
     this.websocketPort = config.port;
@@ -82,6 +101,21 @@ export default {
     }
   },
   methods: {
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const container = this.$refs.chatContainer;
+        if (container) {
+          const lastMessage = container.lastElementChild;
+          if (lastMessage) {
+            lastMessage.scrollIntoView(false);
+          }
+        }
+      });
+    },
+    getFieldValue(event, fieldName) {
+    const field = event.fields_to_display.find(f => f.name === fieldName);
+    return field ? field.data : null;
+  },
     async fetchConfig() {
       try {
         const slug = this.$route.params.slug;
@@ -96,31 +130,36 @@ export default {
     const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`);
 
     rws.addEventListener('message', (msg) => {
-        const { event_type, description, created_at, message, sender_id } = JSON.parse(msg.data);
-        console.log('Received message:', event_type, description);
+        const parsedData = JSON.parse(msg.data);
+        console.log('Received message:', parsedData)
+        console.log('Received message:', parsedData.event_type)
+        
+        // Check if the message contains all necessary data
+        if (!parsedData || parsedData.event_type === null || parsedData.event_type === undefined || parsedData.created_at === null || parsedData.created_at === undefined) {
+            console.warn('Invalid message received:', msg.data);
+            return; // Don't process this message
+        }else{
+          const { event_type, description, created_at, message, sender_id } = parsedData;
+          console.log('Received message:', event_type, description);
 
-        const newScreens = this.screens.map(screen => {
-            const trackedEvents = screen.tracked_events ? [...screen.tracked_events] : [];
+          const newScreens = this.screens.map(screen => {
+              let trackedEvents = screen.tracked_events ? [...screen.tracked_events] : [];
+              const newFields = [
+                  { name: 'description', data: description },
+                  { name: 'event_type', data: event_type },
+                  { name: 'created_at', data: created_at },
+                  { name: 'sender_id', data: sender_id },
+                  { name: 'message', data: message }
+              ];
 
-            // Check if event with the same created_at already exists
-            const eventExists = trackedEvents.some(event => event.created_at === created_at);
+              trackedEvents.push({ event_type, fields_to_display: newFields, created_at });
+              trackedEvents = trackedEvents.filter(event => event.event_type !== null && event.event_type !== undefined);
 
-            if (!eventExists) {
-                const newFields = [
-                    { name: 'description', data: description},
-                    { name: 'event_type', data: event_type},
-                    { name: 'created_at', data: created_at},
-                    { name: 'sender_id', data: sender_id},
-                    { name: 'message', data: message}
-                ];
+              return { ...screen, tracked_events: trackedEvents };
+          });
 
-                trackedEvents.push({ event_type, fields_to_display: newFields, created_at });
-            }
-
-            return { ...screen, tracked_events: trackedEvents };
-        });
-
-        this.screens = [...newScreens];
+          this.screens = [...newScreens];
+        }
     });
 }},
 };
