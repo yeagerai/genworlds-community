@@ -51,9 +51,20 @@ RUN find ./node_modules/@yeager -mindepth 2 -maxdepth 2 -type d -and -not -name 
 # ==== Step 2: deliver =========================================================
 # ==============================================================================
 
-FROM node:18-alpine
+FROM node:18-alpine as deliver
 
 WORKDIR /monorepo
 
 # Copy projects
 COPY --from=builder ./monorepo/projects ./projects
+
+#-------------------------------------------------------------------------------
+# STAGE 3: Setup server
+#-------------------------------------------------------------------------------
+
+FROM nginx:stable-alpine
+
+COPY --from=deliver /monorepo/projects/tank-viewer-web/nginx-config/nginx.conf /etc/nginx/nginx.conf
+COPY --from=deliver /monorepo/projects/tank-viewer-web/nginx-config/default.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=deliver /monorepo/projects/tank-viewer-web/dist /static_webpage
