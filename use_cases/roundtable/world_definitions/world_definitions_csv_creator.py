@@ -16,25 +16,30 @@ yaml.add_representer(str, str_presenter)
 def id_from_name(name):
     return re.sub(r'\W+', '_', name.lower())
 
+def split_and_filter_lines(string):
+    return [line.strip().lstrip("- ").lstrip("• ") for line in string.splitlines() if line.strip().lstrip("- ").lstrip("• ")]
+
 def main(input_file):
     with open(input_file, 'r') as csv_file:
         reader = csv.DictReader(csv_file)
-        roundtable = None
+        roundtable_name = None
         description = None
         world_data = None
 
         for row in reader:
             new_roundtable = False
-            if row['RoundTable']:
-                roundtable = row['RoundTable']
-                new_roundtable = True
-            if row['Description']:
-                description = row['Description']
-            if new_roundtable and roundtable and description:
-                if world_data:  # if this is not the first roundtable
-                    with open(f'{id_from_name(roundtable)}.yaml', 'w') as yaml_file:
+            if row['roundtable_name']:
+                if world_data:  # if this is not the first roundtable, save to file                    
+                    print(id_from_name(roundtable_name))
+                    with open(f'{id_from_name(roundtable_name)}.yaml', 'w') as yaml_file:
                         yaml.dump({"world_definition": world_data}, yaml_file, sort_keys=False)
 
+                roundtable_name = row['roundtable_name']
+                new_roundtable = True
+            if row['description']:
+                description = row['description']
+
+            if new_roundtable and roundtable_name:
                 world_data = {
                     "base_args": {
                         "websocket_url": "ws://real-ws:7456/ws",
@@ -42,7 +47,7 @@ def main(input_file):
                     "world": {
                         "id": "world",
                         "class": "genworlds.worlds.world_2d.world_2d.World2D",
-                        "name": roundtable,
+                        "name": roundtable_name,
                         "description": description,
                         "locations": ["roundtable"],
                         "objects": [
@@ -51,12 +56,14 @@ def main(input_file):
                                 "class": "use_cases.roundtable.objects.microphone.Microphone",
                                 "name": "Microphone",
                                 "description": """A podcast microphone that allows the holder of it to speak to the audience. The speaker can choose to make a statement, ask a question, respond to a question, or make a joke.""",
-                                "host": id_from_name(row["Agents"]),
-                                "world_properties": {"held_by": id_from_name(row["Agents"])},
+                                "host": id_from_name(row["agent_name"]),
+                                "world_properties": {"held_by": id_from_name(row["agent_name"])},
                             }
                         ],
                         "agents": [],
                         "base_agent": {
+                            "topic_of_conversation": row["topic_of_conversation"],
+                            "goals": split_and_filter_lines(row["world_goals"]),
                             "evaluation_principles": [
                                 "Be engaging, clear and didactical",
                             ],
@@ -72,22 +79,32 @@ def main(input_file):
                     }
                 }
 
+                if row['path_to_external_memory']:
+                    world_data["world"]["path_to_external_memory"] = row['path_to_external_memory']
+
             agent = {
-                "id": id_from_name(row["Agents"]),
+                "id": id_from_name(row["agent_name"]),
                 "class": "use_cases.roundtable.agents.roundtable_agent.RoundtableAgent",
-                "name": row["Agents"],
+                "name": row["agent_name"],
                 "role": row["role"],
                 "background": row["background"],
-                "goals": [row["goals"]],
+                "personality": row["personality"],
+                "communication_style": row["communication_style"],
+                "agent_goals": split_and_filter_lines(row["agent_goals"]),
                 "constraints": [],
                 "evaluation_principles": [],
                 "world_properties": {"location": "roundtable"},
             }
+
+            if row["personality_db_collection_name"]:
+                agent["personality_db_collection_name"] = row["personality_db_collection_name"]
+
             world_data["world"]["agents"].append(agent)
+            print(f'Added agent {agent["id"]} to roundtable {roundtable_name}')
 
         # Save the last roundtable
         if world_data:
-            with open(f'{id_from_name(roundtable)}.yaml', 'w') as yaml_file:
+            with open(f'{id_from_name(roundtable_name)}.yaml', 'w') as yaml_file:
                 yaml.dump({"world_definition": world_data}, yaml_file, sort_keys=False)
 
 if __name__ == "__main__":

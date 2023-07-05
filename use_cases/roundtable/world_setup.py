@@ -24,9 +24,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 
 ABS_PATH = os.path.dirname(os.path.abspath(__file__))
 
-personality_db_qdrant_client = QdrantClient(path=os.path.join(ABS_PATH, "databases/all_in_summaries_qdrant"))
-
-
+personality_db_qdrant_client = None
 
 
 def load_yaml(yaml_path):
@@ -114,6 +112,9 @@ def construct_world(data):
 
     # Get the base agent data
     base_agent_data = world_def.get('base_agent', {})
+    if 'path_to_external_memory' in world_def:
+        personality_db_qdrant_client = QdrantClient(path=os.path.join(ABS_PATH, world_def['path_to_external_memory']))
+        base_agent_data['personality_db_qdrant_client'] = personality_db_qdrant_client
 
     # Construct all agents
     agents = [construct_agent(agent, base_agent_data, base_kwargs) for agent in world_def.get('agents', [])]  # Assuming you have a construct_agent function
@@ -136,6 +137,7 @@ def construct_world(data):
 
     return world, objects, agents, locations
 
+
 def launch_use_case(world_definition="default_world_definition.yaml"):
     yaml_data = load_yaml(os.path.join(ABS_PATH, "world_definitions", world_definition))
 
@@ -148,7 +150,6 @@ def launch_use_case(world_definition="default_world_definition.yaml"):
         objects=objects,
         agents=agents,
     )
-
 
     # this attaches to the websocket all the objects and agents in the world
     simulation.launch()

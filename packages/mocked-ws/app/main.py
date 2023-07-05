@@ -19,6 +19,8 @@ app.add_middleware(
 
 websocket_manager = WebSocketManager()
 
+SPEEDUP_RATIO = 10
+
 def send_events(events):
     ws_client = WorldSocketClient(process_event=lambda x: x, url="ws://127.0.0.1:7455/ws")
     threading.Thread(
@@ -36,7 +38,7 @@ def send_events(events):
         current_time = datetime.fromisoformat(events[0]["created_at"])
         for event in events[1:]:
             next_time = datetime.fromisoformat(event["created_at"])
-            waiting_time = (next_time - current_time).total_seconds()
+            waiting_time = (next_time - current_time).total_seconds() / SPEEDUP_RATIO
             print(f"waiting for {current_time} {next_time} {waiting_time}")
             time.sleep(abs(waiting_time))
             ws_client.send_message(json.dumps(event))
