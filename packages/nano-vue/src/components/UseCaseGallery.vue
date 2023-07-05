@@ -1,23 +1,37 @@
 <template>
-  <div class="navbar">
-    <div class="navbar-start">
-      <ul class="menu menu-horizontal px-1">
-        <li tabindex="0">
-          <details>
-            <summary>Use Cases</summary>
-            <ul class="p-2">
-              <li
-                v-for="useCase in useCases"
-                :key="useCase"
-                @click="navigateToUseCase(useCase)"
-              ><a>{{ useCase }}</a></li>
-            </ul>
-          </details>
-        </li>
-      </ul>
+  <div class="h-screen flex flex-col">
+    <div class="navbar">
+      <div class="navbar-start">
+        <ul class="menu menu-horizontal px-1">
+          <li tabindex="0">
+            <!-- <details>
+              <summary>Use Cases</summary>
+              <ul class="p-2">
+                <li
+                  v-for="useCase in useCases"
+                  :key="useCase.use_case + useCase.world_definition"
+                  @click="navigateToUseCase(useCase)"
+                ><a>{{ useCase.use_case + "/" + useCase.world_definition }}</a></li>
+              </ul>
+            </details> -->
+
+            <div class="inline-block relative w-128">
+              <label for="use-case-select" class="block text-sm font-medium mb-2 dark:text-white">Current Use Case:</label>
+              <select id="use-case-select" class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                v-model="currentUseCase" @change="navigateToCurentUseCase">
+                <option :value="null" disabled selected>Select a use case</option>
+                <option v-for="useCase in useCases" :key="useCase.use_case + useCase.world_definition" :value="useCase">{{ useCase.use_case + "/" + useCase.world_definition }}</option>
+              </select>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="navbar-center">
+        <a class="btn btn-ghost normal-case text-xl">🧬🌍 GenWorlds</a>
+      </div>
     </div>
-    <div class="navbar-center">
-      <a class="btn btn-ghost normal-case text-xl">🧬🌍 GenWorlds</a>
+    <div class="flex-grow">
+      <router-view />
     </div>
   </div>
 </template>
@@ -28,18 +42,27 @@ export default {
   data() {
     return {
       useCases: [],
+      currentUseCase: this.$route.params.use_case ? {use_case: this.$route.params.use_case, world_definition: this.$route.params.world_definition} : null,
     };
   },
   methods: {
-    navigateToUseCase(useCase) {
+    navigateToCurentUseCase() {
       this.$router.push({
         name: "useCaseView",
         params: {
-          useCaseTitle: useCase,
-          slug: useCase.toLowerCase().replace(/ /g, "-"),
+          use_case: this.currentUseCase.use_case,
+          world_definition: this.currentUseCase.world_definition,
         },
       });
     },
+  },
+  watch: {
+    $route(to, ) {
+      this.currentUseCase = {
+        use_case: to.params.use_case,
+        world_definition: to.params.world_definition,
+      };
+    }
   },
   mounted() {
     fetch("http://127.0.0.1:7457/use-case-list")

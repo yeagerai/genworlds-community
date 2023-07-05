@@ -1,0 +1,81 @@
+world_definition:
+  base_args:
+    websocket_url: ws://127.0.0.1:7456/ws
+  world:
+    id: world
+    class: genworlds.worlds.world_2d.world_2d.World2D
+    name: Shark Tank
+    description: Pitch your startup idea to the sharks.  We apologize in advance...
+    locations:
+    - roundtable
+    objects:
+    - id: mic1
+      class: use_cases.roundtable.objects.microphone.Microphone
+      name: Microphone
+      description: A podcast microphone that allows the holder of it to speak to the
+        audience. The speaker can choose to make a statement, ask a question, respond
+        to a question, or make a joke.
+      host: marc_cuban
+      world_properties:
+        held_by: marc_cuban
+    agents:
+    - id: marc_cuban
+      class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
+      name: Marc Cuban
+      role: ''
+      background: ''
+      goals:
+      - ''
+      constraints: []
+      evaluation_principles: []
+      world_properties:
+        location: roundtable
+    - id: kevin_o_leary
+      class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
+      name: Kevin O'Leary
+      role: ''
+      background: ''
+      goals:
+      - ''
+      constraints: []
+      evaluation_principles: []
+      world_properties:
+        location: roundtable
+    - id: barbra_corcoran
+      class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
+      name: Barbra Corcoran
+      role: ''
+      background: ''
+      goals:
+      - ''
+      constraints: []
+      evaluation_principles: []
+      world_properties:
+        location: roundtable
+    - id: daymond_john
+      class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
+      name: Daymond John
+      role: ''
+      background: ''
+      goals:
+      - ''
+      constraints: []
+      evaluation_principles: []
+      world_properties:
+        location: roundtable
+    base_agent:
+      evaluation_principles:
+      - Be engaging, clear and didactical
+      constraints:
+      - Only the holder of the microphone can speak to the audience, if you don't
+        have the microphone in your inventory, wait to receive it from the previous
+        speaker
+      - Don't repeat yourself, ask insightful questions to the guests of the podcast
+        to advance the conversation
+      - Don't hog the microphone for a long time, make sure to give it to other participants
+      - If you have asked a question, make sure to give the microphone to the guest
+        so they can answer
+      - If you have completed your statement, make sure to give the microphone to
+        the next speaker
+      - Do not wait if you still have the microphone, speak or pass the microphone
+        to the next speaker

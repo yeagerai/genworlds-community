@@ -136,8 +136,8 @@ def construct_world(data):
 
     return world, objects, agents, locations
 
-def launch_use_case():
-    yaml_data = load_yaml(os.path.join(ABS_PATH, "world_definition.yaml"))
+def launch_use_case(world_definition="default_world_definition.yaml"):
+    yaml_data = load_yaml(os.path.join(ABS_PATH, "world_definitions", world_definition))
 
     world, objects, agents, locations = construct_world(yaml_data['world_definition'])
 

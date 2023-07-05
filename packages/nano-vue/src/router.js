@@ -14,12 +14,16 @@ const routes = [
       path: '/home',
       name: 'useCaseGallery',
       component: UseCaseGallery,
+      children: [
+        {
+          path: '/use-case/:use_case/:world_definition',
+          name: 'useCaseView',
+          component: UseCaseView,
+          props: true,
+        },
+      ]
     },
-    {
-      path: '/use-case/:slug',
-      name: 'useCaseView',
-      component: UseCaseView,
-    },
+    
 ];
 
 const router = createRouter({
