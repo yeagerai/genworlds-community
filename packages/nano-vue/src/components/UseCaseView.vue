@@ -11,32 +11,54 @@
       <button
         v-for="screen in screens"
         :key="screen.name"
-        @click="activeScreen = screen.name"
+        @click="handleTabClick(screen.name)"
         :class="{ 'tab-active': activeScreen === screen.name }"
         class="tab"
       >
         {{ screen.name }}
       </button>
+      <button
+        :key="'16bit'"
+        @click="handleTabClick('16bit')"
+        :class="{ 'tab-active': activeScreen === '16bit' }"
+        class="tab"
+      >
+        16bit
+      </button>
     </div>
-    <div v-if="activeScreenObject" ref="chatContainer" class="p-6 rounded-lg shadow-md overflow-y-auto flex-1 mb-4">
-      <ul class="space-y-4">
-        <li v-for="(event, index) in activeScreenObject.tracked_events" :key="index">
-          <div class="chat chat-start">
-            <div class="chat-header">
-              <p class="text-xs">{{ getFieldValue(event, 'sender_id') }}</p>
-              <time class="text-xs opacity-50">{{ getFieldValue(event, 'created_at') }}</time>
-            </div>
-            <div class="chat-bubble">
-              <p>
-                {{ getFieldValue(event, 'message') || getFieldValue(event, 'description') || 'No description was provided for this event 😢' }}
-              </p>
-            </div>
-            <div class="chat-footer">
-              <p class="text-xs opacity-50">Event Type: {{ getFieldValue(event, 'event_type') }}</p>
-            </div>
-          </div>
-        </li>
-      </ul>
+    <div class="overflow-y-auto flex-1 mb-4">
+    <div v-if="shouldRenderIframe" class="w-full h-full">
+        <iframe 
+           src="http://localhost:8081/?tankId=1" 
+           class="w-full h-full"
+           frameborder="0"
+           allow="autoplay; encrypted-media" 
+           allowfullscreen
+           >
+        </iframe>
+    </div>
+    <div v-else>
+      <div v-if="activeScreenObject" ref="chatContainer" class="p-6 rounded-lg shadow-md">
+          <ul class="space-y-4">
+            <li v-for="(event, index) in activeScreenObject.tracked_events" :key="index">
+              <div class="chat chat-start">
+                <div class="chat-header">
+                  <p class="text-xs">{{ getFieldValue(event, 'sender_id') }}</p>
+                  <time class="text-xs opacity-50">{{ getFieldValue(event, 'created_at') }}</time>
+                </div>
+                <div class="chat-bubble">
+                  <p>
+                    {{ getFieldValue(event, 'message') || getFieldValue(event, 'description') || 'No description was provided for this event 😢' }}
+                  </p>
+                </div>
+                <div class="chat-footer">
+                  <p class="text-xs opacity-50">Event Type: {{ getFieldValue(event, 'event_type') }}</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+      </div>
+  </div>
   </div>
     <textarea class="textarea w-full" placeholder="SendEvent" disabled></textarea>
   </div>
@@ -98,9 +120,16 @@ export default {
   computed: {
     activeScreenObject() {
         return this.screens.find(screen => screen.name === this.activeScreen);
-    }
+    },
+    shouldRenderIframe() {
+    return this.activeScreen === '16bit';
+  }
   },
   methods: {
+    handleTabClick(screenName) {
+        console.log('Tab clicked:', screenName);
+        this.activeScreen = screenName;
+    },
     scrollToBottom() {
       this.$nextTick(() => {
         const container = this.$refs.chatContainer;
