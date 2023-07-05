@@ -1,12 +1,12 @@
 <template>
-  <div v-if="screens.length > 0" class="p-4 h-screen flex flex-col">
+  <div v-if="screens.length > 0" class="p-4 flex flex-col h-full">
     <div v-if="showAlert && websocketPort === 7455" class="alert alert-warning mb-4">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
       <p>You are currently connected to a simulated socket, which means that the data you are seeing has been pre-recorded and is not live. To initiate a real-time simulation, please configure the environment variables as outlined in the .env.example file.</p>
 
       <button @click="showAlert = false" class="btn btn-sm">OK</button>
     </div>
-    <h1 class="text-xl mb-4">{{ useCaseName }}</h1>
+    <!-- <h1 class="text-xl mb-4">{{ useCaseName }}</h1> -->
     <div class="tabs tabs-boxed mb-4">
       <button
         v-for="screen in screens"
@@ -27,40 +27,40 @@
       </button>
     </div>
     <div class="overflow-y-auto flex-1 mb-4">
-    <div v-if="shouldRenderIframe" class="w-full h-full">
-        <iframe 
-           src="http://localhost:8081/?tankId=1" 
-           class="w-full h-full"
-           frameborder="0"
-           allow="autoplay; encrypted-media" 
-           allowfullscreen
-           >
-        </iframe>
-    </div>
-    <div v-else>
-      <div v-if="activeScreenObject" ref="chatContainer" class="p-6 rounded-lg shadow-md">
-          <ul class="space-y-4">
-            <li v-for="(event, index) in activeScreenObject.tracked_events" :key="index">
-              <div class="chat chat-start">
-                <div class="chat-header">
-                  <p class="text-xs">{{ getFieldValue(event, 'sender_id') }}</p>
-                  <time class="text-xs opacity-50">{{ getFieldValue(event, 'created_at') }}</time>
-                </div>
-                <div class="chat-bubble">
-                  <p>
-                    {{ getFieldValue(event, 'message') || getFieldValue(event, 'description') || 'No description was provided for this event 😢' }}
-                  </p>
-                </div>
-                <div class="chat-footer">
-                  <p class="text-xs opacity-50">Event Type: {{ getFieldValue(event, 'event_type') }}</p>
-                </div>
-              </div>
-            </li>
-          </ul>
+      <div v-if="shouldRenderIframe" class="w-full h-full">
+          <iframe 
+            src="http://localhost:8081/?tankId=1" 
+            class="w-full h-full"
+            frameborder="0"
+            allow="autoplay; encrypted-media" 
+            allowfullscreen
+            >
+          </iframe>
       </div>
-  </div>
-  </div>
-    <textarea class="textarea w-full" placeholder="SendEvent" disabled></textarea>
+      <div v-else>
+        <div v-if="activeScreenObject" ref="chatContainer" class="p-6 rounded-lg shadow-md">
+            <ul class="space-y-4">
+              <li v-for="(event, index) in activeScreenObject.tracked_events" :key="index">
+                <div class="chat chat-start">
+                  <div class="chat-header">
+                    <p class="text-xs">{{ getFieldValue(event, 'sender_id') }}</p>
+                    <time class="text-xs opacity-50">{{ getFieldValue(event, 'created_at') }}</time>
+                  </div>
+                  <div class="chat-bubble">
+                    <p>
+                      {{ getFieldValue(event, 'message') || getFieldValue(event, 'description') || 'No description was provided for this event 😢' }}
+                    </p>
+                  </div>
+                  <div class="chat-footer">
+                    <p class="text-xs opacity-50">Event Type: {{ getFieldValue(event, 'event_type') }}</p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+        </div>
+      </div>
+    </div>
+    <!-- <textarea class="textarea w-full" placeholder="SendEvent" disabled></textarea> -->
   </div>
 
 </template>
@@ -80,42 +80,33 @@ export default {
       showAlert: true,
     };
   },
+  props: ['use_case', 'world_definition'],
   watch: {
-      'activeScreenObject.tracked_events': {
-        handler() {
-          this.$nextTick(() => {
-            const container = this.$refs.chatContainer;
-            if (container) {
-              // Check if the user is near the bottom
-              const isNearBottom =
-                container.scrollHeight - container.scrollTop - container.clientHeight < 400;
-              console.log('is near bottom', isNearBottom);
+    'activeScreenObject.tracked_events': {
+      handler() {
+        this.$nextTick(() => {
+          const container = this.$refs.chatContainer;
+          if (container) {
+            // Check if the user is near the bottom
+            const isNearBottom =
+              container.scrollHeight - container.scrollTop - container.clientHeight < 400;
+            console.log('is near bottom', isNearBottom);
 
-              // Only scroll to the bottom if the user is near the bottom
-              if (isNearBottom) {
-                container.scrollTo({top: container.scrollHeight, behavior: 'smooth'});
-              }
+            // Only scroll to the bottom if the user is near the bottom
+            if (isNearBottom) {
+              container.scrollTo({top: container.scrollHeight, behavior: 'smooth'});
             }
-          });
-        },
-        deep: true,
+          }
+        });
       },
+      deep: true,
     },
+    $route() {
+      this.loadUseCase();
+    },
+  },
   async mounted() {
-    // Fetch configuration from REST API
-    const config = await this.fetchConfig();
-    // Set the screens
-    this.screens = config.event_stream_config.screens;
-    if (this.screens.length > 0) {
-      this.activeScreen = this.screens[0].name;
-    }
-
-    // Set the use case name
-    this.useCaseName = config.event_stream_config.name;
-
-    // Connect to WebSocket
-    this.websocketPort = config.port;
-    this.connectToWebSocket();
+    this.loadUseCase();
   },
   computed: {
     activeScreenObject() {
@@ -130,6 +121,22 @@ export default {
         console.log('Tab clicked:', screenName);
         this.activeScreen = screenName;
     },
+    async loadUseCase() {      
+      // Fetch configuration from REST API
+      const config = await this.fetchConfig();
+      // Set the screens
+      this.screens = config.event_stream_config.screens;
+      if (this.screens.length > 0) {
+        this.activeScreen = this.screens[0].name;
+      }
+
+      // Set the use case name
+      this.useCaseName = config.event_stream_config.name;
+
+      // Connect to WebSocket
+      this.websocketPort = config.port;
+      this.connectToWebSocket();
+    },
     scrollToBottom() {
       this.$nextTick(() => {
         const container = this.$refs.chatContainer;
@@ -142,13 +149,12 @@ export default {
       });
     },
     getFieldValue(event, fieldName) {
-    const field = event.fields_to_display.find(f => f.name === fieldName);
-    return field ? field.data : null;
-  },
+      const field = event.fields_to_display.find(f => f.name === fieldName);
+      return field ? field.data : null;
+    },
     async fetchConfig() {
       try {
-        const slug = this.$route.params.slug;
-        const response = await axios.get(`http://localhost:7457/trigger-use-case/${slug}`);
+        const response = await axios.get(`http://localhost:7457/trigger-use-case/${this.use_case}/${this.world_definition}`);
         return response.data;
       } catch (error) {
         console.error('Error fetching config:', error);

@@ -20,6 +20,10 @@ RUN yarn build
 # Production stage
 FROM nginx:stable-alpine as production-stage
 
+# Copy Nginx configuration file
+COPY packages/nano-vue/default.conf /etc/nginx/conf.d/default.conf
+
+# Copy the built app to our server
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Expose port 80
