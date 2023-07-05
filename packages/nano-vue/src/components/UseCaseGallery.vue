@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen flex flex-col">
-    <div class="navbar h-24">
+    <div class="navbar h-32">
       <div class="navbar-start">
         <ul class="menu menu-horizontal px-1">
           <li tabindex="0">
@@ -62,7 +62,7 @@ export default {
         return response.json();
       })
       .then((data) => {
-        this.useCases = data;
+        this.useCases = data.toSorted((a, b) => (a.use_case+a.world_definition).localeCompare(b.use_case+b.world_definition));
       })
       .catch((error) => console.error("There was a problem with the fetch operation:", error));
   },

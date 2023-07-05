@@ -1,8 +1,11 @@
+from collections import deque
 import fnmatch
 from importlib import import_module
+from multiprocessing import Process
 import os
 import threading
 import json
+import time
 import requests
 
 from pydantic import BaseModel
@@ -19,6 +22,8 @@ load_dotenv()
 openai_api_key = os.environ.get('OPENAI_API_KEY')
 port = 7456 if openai_api_key else 7455
 is_mocked = not openai_api_key
+
+running_processes = deque[Process]()
 
 app.add_middleware(
     CORSMiddleware,
@@ -60,6 +65,13 @@ async def trigger_world(use_case: str, world_definition: str):
     :param slug: Use case identifier (string)
     :return: JSONResponse with status, port, and event stream configuration
     """
+
+    # kill any running threads
+    print(f"stopping {len(running_processes)} processes: {running_processes}")
+    while running_processes:
+        running_processes.popleft().kill()
+        time.sleep(1)
+
     with open(f"use_cases/{use_case}/event_stream_config.json", "r") as f:
         event_stream_config = json.loads(f.read())
 
@@ -85,7 +97,10 @@ async def trigger_world(use_case: str, world_definition: str):
             module = import_module(module_name)
             launch_use_case = getattr(module, function_name)
             
-            threading.Thread(target=launch_use_case, kwargs={"world_definition": world_definition}).start()
+            p = Process(target=launch_use_case, kwargs={"world_definition": world_definition})
+            running_processes.append(p)
+            p.start()
+
             return response
         except Exception as e:
             return {"status": f"Failed to launch use case. Error: {str(e)}", "port": None, "is_mocked": None}

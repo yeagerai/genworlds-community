@@ -2,7 +2,7 @@
   <div v-if="screens.length > 0" class="p-4 flex flex-col h-full">
     <div v-if="showAlert && websocketPort === 7455" class="alert alert-warning mb-4">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-      <p>You are currently connected to a simulated socket, which means that the data you are seeing has been pre-recorded and is not live. To initiate a real-time simulation, please configure the environment variables as outlined in the .env.example file.</p>
+      <p>You are currently connected to a simulated websocket server, which means that the data you are seeing has been pre-recorded and is not live. To initiate a real-time simulation, please configure the environment variables as outlined in the .env.example file.</p>
 
       <button @click="showAlert = false" class="btn btn-sm">OK</button>
     </div>
@@ -26,7 +26,7 @@
         16bit
       </button>
     </div>
-    <div class="overflow-y-auto flex-1 mb-4">
+    <div class="overflow-y-auto flex-1 mb-4" ref="chatContainer">
       <div v-if="shouldRenderIframe" class="w-full h-full">
           <iframe 
             src="http://localhost:8081/?tankId=1" 
@@ -38,7 +38,7 @@
           </iframe>
       </div>
       <div v-else>
-        <div v-if="activeScreenObject" ref="chatContainer" class="p-6 rounded-lg shadow-md">
+        <div v-if="activeScreenObject" class="p-6 rounded-lg shadow-md">
             <ul class="space-y-4">
               <li v-for="(event, index) in activeScreenObject.tracked_events" :key="index">
                 <div class="chat chat-start">
@@ -78,6 +78,7 @@ export default {
       useCaseName: '',
       websocketPort: null,
       showAlert: true,
+      webSocket: null,
     };
   },
   props: ['use_case', 'world_definition'],
@@ -90,23 +91,22 @@ export default {
             // Check if the user is near the bottom
             const isNearBottom =
               container.scrollHeight - container.scrollTop - container.clientHeight < 400;
-            console.log('is near bottom', isNearBottom);
 
             // Only scroll to the bottom if the user is near the bottom
             if (isNearBottom) {
-              container.scrollTo({top: container.scrollHeight, behavior: 'smooth'});
+              container.scrollTo({top: container.scrollHeight, behavior: 'instant'});
             }
           }
         });
       },
       deep: true,
     },
-    $route() {
-      this.loadUseCase();
+    $route(to,) {
+      this.loadUseCase(to.params.use_case, to.params.world_definition);
     },
   },
   async mounted() {
-    this.loadUseCase();
+    this.loadUseCase(this.use_case, this.world_definition);
   },
   computed: {
     activeScreenObject() {
@@ -121,9 +121,11 @@ export default {
         console.log('Tab clicked:', screenName);
         this.activeScreen = screenName;
     },
-    async loadUseCase() {      
+    async loadUseCase(use_case, world_definition) {     
+      console.log('Loading use case:', use_case, world_definition)
+      
       // Fetch configuration from REST API
-      const config = await this.fetchConfig();
+      const config = await this.fetchConfig(use_case, world_definition);
       // Set the screens
       this.screens = config.event_stream_config.screens;
       if (this.screens.length > 0) {
@@ -152,9 +154,9 @@ export default {
       const field = event.fields_to_display.find(f => f.name === fieldName);
       return field ? field.data : null;
     },
-    async fetchConfig() {
+    async fetchConfig(use_case, world_definition) {
       try {
-        const response = await axios.get(`http://localhost:7457/trigger-use-case/${this.use_case}/${this.world_definition}`);
+        const response = await axios.get(`http://localhost:7457/trigger-use-case/${use_case}/${world_definition}`);
         return response.data;
       } catch (error) {
         console.error('Error fetching config:', error);
@@ -162,20 +164,22 @@ export default {
       return { screens: [], settings: {} };
     },
     connectToWebSocket() {
-    const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`);
+      if (this.webSocket) {
+        this.webSocket.close();
+      }
 
-    rws.addEventListener('message', (msg) => {
+      this.webSocket = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`, [], {maxRetries: 0});
+
+      this.webSocket.addEventListener('message', (msg) => {
         const parsedData = JSON.parse(msg.data);
         console.log('Received message:', parsedData)
-        console.log('Received message:', parsedData.event_type)
         
         // Check if the message contains all necessary data
         if (!parsedData || parsedData.event_type === null || parsedData.event_type === undefined || parsedData.created_at === null || parsedData.created_at === undefined) {
             console.warn('Invalid message received:', msg.data);
             return; // Don't process this message
-        }else{
+        } else {
           const { event_type, description, created_at, message, sender_id } = parsedData;
-          console.log('Received message:', event_type, description);
 
           const newScreens = this.screens.map(screen => {
               let trackedEvents = screen.tracked_events ? [...screen.tracked_events] : [];

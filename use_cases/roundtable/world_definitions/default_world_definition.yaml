@@ -1,6 +1,6 @@
 world_definition:
   base_args:
-    websocket_url: ws://127.0.0.1:7456/ws
+    websocket_url: ws://real-ws:7456/ws
 
   world:
     id: world

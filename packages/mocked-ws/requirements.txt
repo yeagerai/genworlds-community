@@ -1,1 +1,1 @@
-genworlds==0.0.5
+genworlds==0.0.8

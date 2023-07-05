@@ -1,3 +1,4 @@
+from collections import deque
 import json
 import time
 import threading
@@ -20,8 +21,9 @@ app.add_middleware(
 websocket_manager = WebSocketManager()
 
 SPEEDUP_RATIO = 10
+stop_events = deque()
 
-def send_events(events):
+def send_events(events, stop_event: threading.Event):
     ws_client = WorldSocketClient(process_event=lambda x: x, url="ws://127.0.0.1:7455/ws")
     threading.Thread(
             target=ws_client.websocket.run_forever,
@@ -33,24 +35,39 @@ def send_events(events):
         e["created_at"] = datetime.fromisoformat(e["created_at"]).isoformat()
 
     while True:
-        ws_client.send_message(json.dumps(events[0]))
-        print(f"message sent created at: {events[0]['created_at']}")
-        current_time = datetime.fromisoformat(events[0]["created_at"])
-        for event in events[1:]:
-            next_time = datetime.fromisoformat(event["created_at"])
+        for (current_event, next_event) in zip(events, events[1:] + [None]):
+            print(stop_event.is_set())
+            if stop_event.is_set():
+                print("stopping")
+                return
+            
+            ws_client.send_message(json.dumps(current_event))
+
+            if not next_event:
+                return
+            
+            current_time = datetime.fromisoformat(current_event["created_at"])
+            next_time = datetime.fromisoformat(next_event["created_at"])
             waiting_time = (next_time - current_time).total_seconds() / SPEEDUP_RATIO
             print(f"waiting for {current_time} {next_time} {waiting_time}")
             time.sleep(abs(waiting_time))
-            ws_client.send_message(json.dumps(event))
-            current_time = datetime.fromisoformat(event["created_at"])
 
 @app.get("/start-mocked-ws/{slug}")
 async def send_mocked_world_event_stream(slug: str, background_tasks: BackgroundTasks):
+    # kill any running threads
+    while stop_events:
+        print(f"stopping {len(stop_events)} threads: {stop_events}")
+        stop_event = stop_events.popleft()
+        stop_event.set()
+        time.sleep(0.1)
+
     with open(f"use_cases/{slug}/mocked_record.json", "r") as f:
         mocked_event_stream = json.loads(f.read())
 
     events = mocked_event_stream["events"]
-    background_tasks.add_task(send_events, events)
+    stop_event = threading.Event()
+    stop_events.append(stop_event)
+    background_tasks.add_task(send_events, events, stop_event)
     return {"status": "The mocked world is running in the background"}
 
 @app.websocket("/ws")
