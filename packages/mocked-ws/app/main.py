@@ -1,5 +1,6 @@
 from collections import deque
 import json
+import os
 import time
 import threading
 from datetime import datetime
@@ -20,7 +21,7 @@ app.add_middleware(
 
 websocket_manager = WebSocketManager()
 
-SPEEDUP_RATIO = 10
+SPEEDUP_RATIO = 25
 stop_events = deque()
 
 def send_events(events, stop_event: threading.Event):
@@ -36,9 +37,8 @@ def send_events(events, stop_event: threading.Event):
 
     while True:
         for (current_event, next_event) in zip(events, events[1:] + [None]):
-            print(stop_event.is_set())
             if stop_event.is_set():
-                print("stopping")
+                print("Stopping")
                 return
             
             ws_client.send_message(json.dumps(current_event))
@@ -52,8 +52,8 @@ def send_events(events, stop_event: threading.Event):
             print(f"waiting for {current_time} {next_time} {waiting_time}")
             time.sleep(abs(waiting_time))
 
-@app.get("/start-mocked-ws/{slug}")
-async def send_mocked_world_event_stream(slug: str, background_tasks: BackgroundTasks):
+@app.get("/start-mocked-ws/{use_case}/{world_definition}")
+async def send_mocked_world_event_stream(use_case: str, world_definition: str, background_tasks: BackgroundTasks):
     # kill any running threads
     while stop_events:
         print(f"stopping {len(stop_events)} threads: {stop_events}")
@@ -61,8 +61,14 @@ async def send_mocked_world_event_stream(slug: str, background_tasks: Background
         stop_event.set()
         time.sleep(0.1)
 
-    with open(f"use_cases/{slug}/mocked_record.json", "r") as f:
-        mocked_event_stream = json.loads(f.read())
+    file_path = os.path.join("use_cases", use_case, "world_definitions", world_definition+".mocked_record.json")
+    try:
+        with open(file_path, "r") as f:
+            mocked_event_stream = json.loads(f.read())
+    except FileNotFoundError:
+        file_path = os.path.join("use_cases", use_case, "mocked_record.json")
+        with open(file_path, "r") as f:
+            mocked_event_stream = json.loads(f.read())
 
     events = mocked_event_stream["events"]
     stop_event = threading.Event()

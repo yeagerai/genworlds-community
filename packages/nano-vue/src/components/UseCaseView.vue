@@ -40,16 +40,22 @@
       <div v-else>
         <div v-if="activeScreenObject" class="p-6 rounded-lg shadow-md">
             <ul class="space-y-4">
-              <li v-for="(event, index) in activeScreenObject.tracked_events" :key="index">
+              <li v-for="(event, index) in activeScreenObject.event_history" :key="index">
                 <div class="chat chat-start">
                   <div class="chat-header">
-                    <p class="text-xs">{{ getFieldValue(event, 'sender_id') }}</p>
+                    From: {{ getFieldValue(event, 'sender_id') }}                    
                     <time class="text-xs opacity-50">{{ getFieldValue(event, 'created_at') }}</time>
                   </div>
-                  <div class="chat-bubble">
-                    <p>
-                      {{ getFieldValue(event, 'message') || getFieldValue(event, 'description') || 'No description was provided for this event 😢' }}
-                    </p>
+                  <div class="chat-bubble" :class="getEventCssClasses(event)">
+                    <template v-if="getFieldValue(event, 'message')">
+                      {{ getFieldValue(event, 'message') }}
+                    </template>
+                    <template v-else-if="getFieldValue(event, 'summary')">
+                      {{ getFieldValue(event, 'summary') }}
+                    </template>
+                    <template v-else>
+                      <pre class="overflow-x-auto"><code>{{ JSON.stringify(event, null, 2) }}</code></pre>
+                    </template>
                   </div>
                   <div class="chat-footer">
                     <p class="text-xs opacity-50">Event Type: {{ getFieldValue(event, 'event_type') }}</p>
@@ -128,6 +134,9 @@ export default {
       const config = await this.fetchConfig(use_case, world_definition);
       // Set the screens
       this.screens = config.event_stream_config.screens;
+      for (const screen of this.screens) {
+        screen.event_history = [];
+      }
       if (this.screens.length > 0) {
         this.activeScreen = this.screens[0].name;
       }
@@ -151,8 +160,11 @@ export default {
       });
     },
     getFieldValue(event, fieldName) {
-      const field = event.fields_to_display.find(f => f.name === fieldName);
-      return field ? field.data : null;
+      return fieldName in event ? event[fieldName] : '';
+    },
+    getEventCssClasses(event) {
+      const eventInfo = this.activeScreenObject.tracked_events.find((trackedEvent) => trackedEvent.event_type === event.event_type);
+      return 'css_classes' in eventInfo ? eventInfo.css_classes : '';
     },
     async fetchConfig(use_case, world_definition) {
       try {
@@ -171,33 +183,33 @@ export default {
       this.webSocket = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`, [], {maxRetries: 0});
 
       this.webSocket.addEventListener('message', (msg) => {
-        const parsedData = JSON.parse(msg.data);
-        console.log('Received message:', parsedData)
+        const socketEvent = JSON.parse(msg.data);
+        console.log('Received message:', socketEvent)
         
         // Check if the message contains all necessary data
-        if (!parsedData || parsedData.event_type === null || parsedData.event_type === undefined || parsedData.created_at === null || parsedData.created_at === undefined) {
+        if (!socketEvent || socketEvent.event_type === null || socketEvent.event_type === undefined || socketEvent.created_at === null || socketEvent.created_at === undefined) {
             console.warn('Invalid message received:', msg.data);
             return; // Don't process this message
-        } else {
-          const { event_type, description, created_at, message, sender_id } = parsedData;
+        } 
 
-          const newScreens = this.screens.map(screen => {
-              let trackedEvents = screen.tracked_events ? [...screen.tracked_events] : [];
-              const newFields = [
-                  { name: 'description', data: description },
-                  { name: 'event_type', data: event_type },
-                  { name: 'created_at', data: created_at },
-                  { name: 'sender_id', data: sender_id },
-                  { name: 'message', data: message }
-              ];
+        for (const screen of this.screens) {
+            for (const trackedEvent of screen.tracked_events) {
+                if (trackedEvent.event_type === socketEvent.event_type) {
+                    const filteredEvent = {
+                        event_type: socketEvent.event_type,
+                        created_at: socketEvent.created_at,
+                        sender_id: socketEvent.sender_id,
+                    }
 
-              trackedEvents.push({ event_type, fields_to_display: newFields, created_at });
-              trackedEvents = trackedEvents.filter(event => event.event_type !== null && event.event_type !== undefined);
+                    for (const field of trackedEvent.fields_to_display) {
+                        filteredEvent[field.name] = socketEvent[field.name];
+                    }
 
-              return { ...screen, tracked_events: trackedEvents };
-          });
+                    screen.event_history.push(filteredEvent);
 
-          this.screens = [...newScreens];
+                    break;
+                }
+            }
         }
     });
 }},
