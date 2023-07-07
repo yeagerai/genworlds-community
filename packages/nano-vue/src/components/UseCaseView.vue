@@ -29,7 +29,7 @@
     <div class="overflow-y-auto flex-1 mb-4">
       <div v-if="shouldRenderIframe" class="w-full h-full">
           <iframe 
-            src="http://localhost:8081/?tankId=1" 
+            :src="iframeSrc" 
             class="w-full h-full"
             frameborder="0"
             allow="autoplay; encrypted-media" 
@@ -114,7 +114,11 @@ export default {
     },
     shouldRenderIframe() {
     return this.activeScreen === '16bit';
-  }
+  },
+  iframeSrc() {
+      const currentUrl = window.location.origin;
+      return `${currentUrl}:9000/16bit-front/?tankId=1`;
+    }
   },
   methods: {
     handleTabClick(screenName) {
@@ -153,8 +157,10 @@ export default {
       return field ? field.data : null;
     },
     async fetchConfig() {
+      const currentUrl = window.location.origin;
+      const apiUrl = `${currentUrl}:9000/world-instance/trigger-use-case/${this.use_case}/${this.world_definition}`;
       try {
-        const response = await axios.get(`http://localhost:7457/trigger-use-case/${this.use_case}/${this.world_definition}`);
+        const response = await axios.get(apiUrl);
         return response.data;
       } catch (error) {
         console.error('Error fetching config:', error);
@@ -162,7 +168,16 @@ export default {
       return { screens: [], settings: {} };
     },
     connectToWebSocket() {
-    const rws = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`);
+    let wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const currentHost = window.location.host;
+    let wsUrl;
+    
+    if (this.websocketPort === '7456') {
+        wsUrl = `${wsProtocol}://${currentHost}:9000/real-ws/ws`;
+    } else {
+        wsUrl = `${wsProtocol}://${currentHost}:9000/mocked-ws/ws`;
+    }
+    const rws = new ReconnectingWebSocket(wsUrl);
 
     rws.addEventListener('message', (msg) => {
         const parsedData = JSON.parse(msg.data);
