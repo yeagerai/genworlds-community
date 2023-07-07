@@ -5,14 +5,11 @@
         <!-- <div class="inline-block relative w-128">Current Use Case:</div> -->
         <ul class="menu menu-horizontal px-1">
           <li tabindex="0">
-            <div class="inline-block relative w-128">
-              <!-- <label for="use-case-select" class="block text-sm font-medium mb-2 dark:text-white">Current Use Case:</label> -->
-              <select id="use-case-select" class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                v-model="currentUseCase" @change="navigateToCurentUseCase">
-                <option :value="null" disabled selected>Select a use case</option>
-                <option v-for="useCase in useCases" :key="useCase.use_case + useCase.world_definition" :value="useCase">{{ useCase.use_case + "/" + useCase.world_definition }}</option>
-              </select>
-            </div>
+           <select id="use-case-select" class="select select-bordered select-primary w-full max-w-xs"
+              v-model="currentUseCase" @change="navigateToCurentUseCase">
+              <option :value="null" disabled selected>Select a use case</option>
+              <option v-for="useCase in useCases" :key="useCase.use_case + useCase.world_definition" :value="useCase">{{ useCase.use_case + "/" + useCase.world_definition }}</option>
+            </select>
           </li>
         </ul>
       </div>

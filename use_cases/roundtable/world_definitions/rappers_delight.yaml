@@ -261,6 +261,7 @@ world_definition:
       - Participate in a freestyle battle
       - Speak in rhyme
       - Make jokes about the other participants of the freestyle battle
+      - After you do a verse, pass on the micraphone to someone else
       evaluation_principles:
       - Be engaging, clear and didactical
       constraints:

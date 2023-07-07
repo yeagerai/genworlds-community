@@ -227,34 +227,34 @@ world_definition:
       world_properties:
         location: roundtable
     base_agent:
-      topic_of_conversation: "Today you will analyze and grill the yeager team on\
-        \ GenWorlds, an innovative AI platform developed by Yeager.ai. The conversation\
-        \ will delve into how GenWorlds allows users to create highly customized,\
-        \ interactive environments populated by AI agents, each with unique personalities,\
-        \ goals, and memories. You will explore the adaptability and scalability of\
-        \ GenWorlds and how it enables users to tailor every detail of their world\
-        \ to their needs. The podcast will also cover the platform's extensive collection\
-        \ of plug-n-play tools ready for immediate deployment, which speeds up application\
-        \ development. The conversation will touch on how users can choose the cognitive\
-        \ processes for each agent, aligning the AI\u2019s thinking process with their\
-        \ specific goals. The discussion will not leave out the range of coordination\
-        \ protocols provided by GenWorlds, which ensures efficient task execution\
-        \ and organization. You will address the seamless integration of GenWorlds\
-        \ with existing AI agents and worlds, enhancing their capabilities and expanding\
-        \ their effectiveness. The ultimate goal of the podcast will be to analyze\
-        \ how GenWorlds can be used to harness the power of AI to tackle complex problems\
-        \ and boost productivity and see if it has a good business model."
+      topic_of_conversation: "You have just seen a pitch for GenWorlds:\n\n\"GenWorlds\
+        \ is an innovative AI platform developed by Yeager.ai that enables users to\
+        \ construct highly customized, interactive environments, or \"GenWorlds.\"\
+        \ Each GenWorld is populated by AI agents, each designed with unique personalities,\
+        \ goals, and memories, which work in unison towards defined long-term objectives,\
+        \ resulting in precise problem-solving capabilities. GenWorlds stands out\
+        \ due to its high level of adaptability and scalability, enabling users to\
+        \ tailor every detail of their world to their needs and ensuring optimal performance\
+        \ regardless of the task at hand. It also boasts an extensive collection of\
+        \ plug-n-play tools ready for immediate deployment within any GenWorld, speeding\
+        \ up application development. Moreover, users can choose the cognitive processes\
+        \ for each agent, tailoring the AI\u2019s thinking process to align with their\
+        \ specific goals. GenWorlds also provides a variety of coordination protocols,\
+        \ ensuring efficient task execution and organization tailored to users' needs.\
+        \ Notably, GenWorlds allows for seamless integration with existing AI agents\
+        \ and worlds, enhancing the capabilities of each GenWorld and expanding their\
+        \ effectiveness and reach. Overall, GenWorlds provides a sophisticated, interactive,\
+        \ and highly customizable platform for harnessing the power of AI to tackle\
+        \ complex problems and boost productivity.\"\n\nYou're discussing whether\
+        \ to invest in the company."
       goals:
-      - Participate in a discussion on the topic for a podcast
-      - Communicate your ideas in a way that's easy for the audience to understand,
-        avoiding jargon whenever possible.
-      - Actively listen, as this is crucial to respond thoughtfully to others' ideas
-        and create a richer discussion.
-      - Maintain a positive and engaging energy throughout the podcast to make the
-        discussion more enjoyable for listeners.
-      - Don't be afraid to engage in some good-natured ribbing when appropriate
-      - Finally, wrap up with key takeaways to provide listeners with clear insights
-        to reflect on after the podcast ends.
+      - You need to make an investment decision
+      - Think like a venture capitalist
+      - Try to find holes in the pitch
+      - Highlight any potential issues with the pitch and the business plan of the
+        company
+      - Be ruthless, the founders value your feedback
+      - Relate lessons from your own vast business experience
       evaluation_principles:
       - Be engaging, clear and didactical
       constraints:

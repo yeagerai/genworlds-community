@@ -248,30 +248,32 @@ world_definition:
         location: roundtable
       personality_db_collection_name: chamath-summaries
     base_agent:
-      topic_of_conversation: "Jason has just read and shared with everyone a press\
-        \ release about GenWorlds:\n\nGenWorlds is a powerful open-source framework\
-        \ that helps you create dynamic, interactive environments populated with AI-driven\
-        \ agents. \nImagine it as a toolset for creating your own virtual world where\
-        \ each character, known as an agent, is controlled by artificial intelligence.\
-        \ \nUnlike conventional AI agents, these are specialized, meaning they can\
-        \ be designed for specific tasks or roles within the environment you create.\
-        \ \nFor instance, in a virtual city, you could create AI taxi drivers who\
-        \ know the city layout, AI policemen who maintain order, or AI chefs who create\
-        \ food. \nEach character is equipped with its own personality, memories, and\
-        \ goals, and all of them can interact and work together to run the city, just\
-        \ like characters in a real city. \nFurthermore, GenWorlds can facilitate\
-        \ complex conversations, such as an AI version of a roundtable discussion\
-        \ where each participant is an AI agent with its own unique memory and personality,\
-        \ evolving the conversation over time and striving towards a conclusion. \n\
-        Built on top of LangChain, GenWorlds is designed to be flexible and easy to\
-        \ use, allowing you to either create your own virtual world from scratch or\
-        \ adapt and expand upon the tools and protocols provided by the GenWorlds\
-        \ framework. \nThough it may sound complex, particularly if you're not familiar\
-        \ with AI and programming, it's truly an exciting concept: creating intelligent,\
-        \ interactive, and dynamic virtual environments where AI agents interact and\
-        \ coordinate much like humans would in real life.\n\nDiscuss the product,\
-        \ the company, the business case and relate it to your own investment theses\
-        \ and the broader generative AI ecosystem."
+      topic_of_conversation: "Jason has just read and shared with everyone the following\
+        \ press release about GenWorlds:\n\n\"GenWorlds is a powerful open-source\
+        \ framework that helps you create dynamic, interactive environments populated\
+        \ with AI-driven agents. \nImagine it as a toolset for creating your own virtual\
+        \ world where each character, known as an agent, is controlled by artificial\
+        \ intelligence. \nUnlike conventional AI agents, these are specialized, meaning\
+        \ they can be designed for specific tasks or roles within the environment\
+        \ you create. \nFor instance, in a virtual city, you could create AI taxi\
+        \ drivers who know the city layout, AI policemen who maintain order, or AI\
+        \ chefs who create food. \nEach character is equipped with its own personality,\
+        \ memories, and goals, and all of them can interact and work together to run\
+        \ the city, just like characters in a real city. \nFurthermore, GenWorlds\
+        \ can facilitate complex conversations, such as an AI version of a roundtable\
+        \ discussion where each participant is an AI agent with its own unique memory\
+        \ and personality, evolving the conversation over time and striving towards\
+        \ a conclusion. \nBuilt on top of LangChain, GenWorlds is designed to be flexible\
+        \ and easy to use, allowing you to either create your own virtual world from\
+        \ scratch or adapt and expand upon the tools and protocols provided by the\
+        \ GenWorlds framework. \nThough it may sound complex, particularly if you're\
+        \ not familiar with AI and programming, it's truly an exciting concept: creating\
+        \ intelligent, interactive, and dynamic virtual environments where AI agents\
+        \ interact and coordinate much like humans would in real life.\"\n\nYour goal\
+        \ is to discuss this new startup - the product, the business case, the marketing.\
+        \ Discuss whether you would invest and what you would do differently.\nDon't\
+        \ take the press release at face value, apply your normal skepticism that\
+        \ you would apply to any new product you see."
       goals:
       - Participate in a discussion on the topic for a podcast
       - Communicate your ideas in a way that's easy for the audience to understand,

@@ -88,6 +88,7 @@ export default {
       websocketPort: null,
       showAlert: true,
       webSocket: null,
+      fullEventHistory: [],
     };
   },
   props: ['use_case', 'world_definition'],
@@ -116,6 +117,20 @@ export default {
   },
   async mounted() {
     this.loadUseCase(this.use_case, this.world_definition);
+
+    this._keyListener = function(e) {
+        if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault(); // present "Save Page" from getting triggered.
+
+            this.downloadEventHistory();
+        }
+    };
+
+    document.addEventListener('keydown', this._keyListener.bind(this));  
+
+  },
+  beforeUnmount() {
+      document.removeEventListener('keydown', this._keyListener);
   },
   computed: {
     activeScreenObject() {
@@ -188,6 +203,8 @@ export default {
       this.webSocket.addEventListener('message', (msg) => {
         const socketEvent = JSON.parse(msg.data);
         console.log('Received message:', socketEvent)
+
+        this.fullEventHistory.push(socketEvent);
         
         // Check if the message contains all necessary data
         if (!socketEvent || socketEvent.event_type === null || socketEvent.event_type === undefined || socketEvent.created_at === null || socketEvent.created_at === undefined) {
@@ -211,11 +228,43 @@ export default {
                     screen.event_history.push(filteredEvent);
 
                     break;
+                    }
                 }
             }
-        }
-    });
-}},
+        });
+    },
+    downloadEventHistory() {
+      // Suppose this is your JSON object
+      const data = {
+        events: this.fullEventHistory,
+      }
+
+      // Convert it to JSON string
+      const jsonStr = JSON.stringify(data, null, 2);
+
+      // Create a Blob from the JSON string
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+
+      // Create an object URL from the Blob
+      const url = URL.createObjectURL(blob);
+
+      // Create a link element
+      const link = document.createElement('a');
+
+      // Set the href and download attributes of the link
+      link.href = url;
+      link.download = 'websocket_event_history.json';
+
+      // Append the link to the body
+      document.body.appendChild(link);
+
+      // Click the link to start the download
+      link.click();
+
+      // Remove the link after the download starts
+      document.body.removeChild(link);
+    },
+  },
 };
 </script>
 

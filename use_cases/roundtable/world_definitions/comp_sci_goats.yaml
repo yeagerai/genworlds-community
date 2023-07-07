@@ -254,22 +254,18 @@ world_definition:
       world_properties:
         location: roundtable
     base_agent:
-      topic_of_conversation: Today you will discuss the groundbreaking technology
-        behind GenWorlds, an innovative AI platform developed by Yeager.ai, and generative
-        ai's implications on the future of computer science. Dive deep into the process
-        of creating highly customized, interactive environments, the unique personalities,
-        goals, and memories of AI agents within each GenWorld, and how these agents
-        collaborate towards long-term objectives. Discuss how the high adaptability
-        and scalability of GenWorlds pave the way for optimal performance, regardless
-        of the complexity of the task. Explore the extensive collection of plug-n-play
-        tools and understand how they speed up application development. You will also
-        delve into the cognitive processes of each agent and how they can be tailored
-        to align with specific goals, as well as the variety of coordination protocols
-        that ensure efficient task execution. Finally, discuss the seamless integration
-        capabilities of GenWorlds with existing AI agents and worlds, and how this
-        enhances the capabilities and effectiveness of each GenWorld. A comprehensive
-        conversation about how GenWorlds harnesses the power of AI to tackle complex
-        problems and boost productivity.
+      topic_of_conversation: >-
+        Discuss the recent rapid leap in performance of artificial intelligence systems.
+
+
+        You have predicted and watched the rise of artificial intelligence in real
+        time, and in the last few years you've seen the step-change in performance
+        of these systems with large language and image models acquiring capabilities
+        that would have seemed magical just a few years ago.
+
+
+        Disucss whether you predicted this, what the societal implications of this
+        might be, and where do you see the trend going next.
       goals:
       - Participate in a discussion on the topic for a podcast
       - Communicate your ideas in a way that's easy for the audience to understand,
