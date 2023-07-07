@@ -20,7 +20,7 @@ def split_and_filter_lines(string):
     return [line.strip().lstrip("- ").lstrip("• ") for line in string.splitlines() if line.strip().lstrip("- ").lstrip("• ")]
 
 def main(input_file):
-    with open(input_file, 'r') as csv_file:
+    with open(input_file, 'r', encoding='utf-8') as csv_file:
         reader = csv.DictReader(csv_file)
         roundtable_name = None
         description = None

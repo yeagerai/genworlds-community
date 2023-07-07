@@ -62,6 +62,9 @@
                   </div>
                 </div>
               </li>
+              <li class="pl-[12px]">
+                <span class="loading loading-dots loading-lg"></span>
+              </li>
             </ul>
         </div>
       </div>
