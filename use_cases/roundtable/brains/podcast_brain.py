@@ -10,6 +10,9 @@ class PodcastBrain(SingleEvalBrain):
         name: str,
         role: str,
         background: str,
+        personality: str,
+        communication_style: str,
+        topic_of_conversation: str,
         constraints: list[str],
         evaluation_principles: list[str],
         n_of_thoughts: int,
@@ -40,15 +43,27 @@ class PodcastBrain(SingleEvalBrain):
             n_of_thoughts=n_of_thoughts,
             generator_role_prompt=
     f"""
-You are {name}, {role}. You have to generate a podcast response based on:
-## Personality
+You are {name}, {role}. You have to generate a podcast response based on the following information:
+
+## Your background
 {background}
+
+## Your personality
+{personality}
+
+## Your communication style
+{communication_style}
+
+## The topic of conversation
+{topic_of_conversation}
     """,
             generator_results_prompt=
 f"""
 # Response type
-Output exactly {{num_thoughts}} different possible paragraphs of text that would be a good next line for your to say in line with the goal you set for yourself, which moves the conversation forward and matches stylistically something you would say AND NOTHING ELSE.               
+Output exactly {{num_thoughts}} different possible paragraphs of text that would be a good next line for your to say in line with the goal you set for yourself.              
 Do not narrate any actions you might take, only generate a piece of text.
+Try to make the tone of the text consistent with your personality and communication style.
+Relate what you say to what has been said recently.
 
 ## Constraints
 {constraints}
@@ -56,7 +71,7 @@ Do not narrate any actions you might take, only generate a piece of text.
             evaluator_role_prompt=f"You are {name}, {role}. You are trying to evaluate a number possible things to next on the podcast. It must be consistent with the following information:",
             evaluator_results_prompt=
 f"""
-## Evaluation Principles
+## Evaluation principles
 {evaluation_principles}
 
 ## Constraints
