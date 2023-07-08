@@ -2,56 +2,6 @@
   "name": "Roundtable Example",
   "screens": [
     {
-      "name": "All events",
-      "has_input": false,
-      "screen_type": "event_history",
-      "tracked_events": [
-        {
-          "event_type": "world_sends_schemas_event",
-          "fields_to_display": [
-        {"name":"created_at", "format":"fg:#ff00ff bold"},
-        {"name":"event_type", "format":"fg:#ffffff"},
-        {"name":"summary","format":"fg:#ffffff"}
-      ],
-      "filters":[]
-        },
-        {
-          "event_type": "agent_speaks_into_microphone",
-          "fields_to_display": [
-        {"name":"created_at", "format":"fg:#ffffff"},
-        {"name":"event_type", "format":"fg:#ffffff"},       
-        {"name":"sender_id", "format":"fg:#ffffff"},
-        {"name":"message", "format":"fg:#ffffff"},
-        {"name":"summary","format":"fg:#ffffff"}
-      ],
-      "filters":[]
-        },
-        {
-          "event_type": "agent_gives_object_to_agent_event",
-          "fields_to_display": [
-        {"name":"created_at", "format":"fg:#ffffff"},
-        {"name":"event_type", "format":"fg:#ffffff"},          
-        {"name":"sender_id", "format":"fg:#ffffff"},
-        {"name":"recipient_agent_id", "format":"fg:#ffffff"},
-        {"name":"object_id", "format":"fg:#ffffff"},
-        {"name":"summary","format":"fg:#ffffff"}
-      ],
-      "filters":[]
-        },
-        {
-          "event_type": "agent_moves_to_new_location",
-          "fields_to_display": [
-        {"name":"created_at", "format":"fg:#ffffff"},
-        {"name":"event_type", "format":"fg:#ffffff"},      
-        {"name":"sender_id", "format":"fg:#ffffff"},
-        {"name":"destination_location", "format":"fg:#ffffff"},
-        {"name":"summary","format":"fg:#ffffff"}
-      ],
-      "filters":[]
-        }
-      ]
-    },
-    {
       "name": "Chat Room",
       "has_input": false,
       "screen_type": "event_history",
@@ -59,27 +9,102 @@
         {
           "event_type": "agent_speaks_into_microphone",
           "fields_to_display": [
-        {"name":"created_at", "format":"fg:#ff0000 bold"},
-        {"name":"event_type", "format":"fg:#ff0000"}, 
-        {"name":"sender_id", "format":"fg:#ff0000"},
-        {"name":"message", "format":"fg:#ff0000"},
-        {"name":"summary","format":"fg:#ff0000"}
-      ],
-      "filters":[{"field": "sender_id", "value": "jimmy"}]
+            {"name":"created_at"},
+            {"name":"event_type"}, 
+            {"name":"sender_id"},
+            {"name":"message"},
+            {"name":"summary"}
+          ],
+          "filters":[]
+        },
+        {
+          "event_type": "agent_gives_object_to_agent_event",
+          "css_classes": ["italic", "font-light"],
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"},          
+            {"name":"sender_id"},
+            {"name":"recipient_agent_id"},
+            {"name":"object_id"},
+            {"name":"summary"}
+          ],
+          "filters":[]
+        }
+      ]
+    },
+
+    {
+      "name": "All events",
+      "has_input": false,
+      "screen_type": "event_history",
+      "tracked_events": [
+        {
+          "event_type": "world_sends_schemas_event",
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"},
+            {"name":"world_name"},
+            {"name":"world_description"},
+            {"name":"schemas"}
+          ],
+          "filters":[]
+        },
+        {
+          "event_type": "entity_world_state_update_event",
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"},
+            {"name":"target_id"},
+            {"name":"entity_world_state"}
+          ],
+          "filters":[]
+        },
+        {
+          "event_type": "world_sends_nearby_entities_event",
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"},
+            {"name":"target_id"},
+            {"name":"nearby_entities"}
+          ],
+          "filters":[]
         },
         {
           "event_type": "agent_speaks_into_microphone",
           "fields_to_display": [
-        {"name":"created_at", "format":"fg:#00ff00 bold"},
-        {"name":"event_type", "format":"fg:#00ff00"},
-        {"name":"sender_id", "format":"fg:#00ff00"},
-        {"name":"message", "format":"fg:#00ff00"},
-        {"name":"summary","format":"fg:#00ff00"}
-      ],
-      "filters":[{"field": "sender_id", "value": "maria"}]
+            {"name":"created_at"},
+            {"name":"event_type"},       
+            {"name":"sender_id"},
+            {"name":"message"},
+            {"name":"summary"}
+          ],
+          "filters":[]
+        },
+        {
+          "event_type": "agent_gives_object_to_agent_event",
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"},          
+            {"name":"sender_id"},
+            {"name":"recipient_agent_id"},
+            {"name":"object_id"},
+            {"name":"summary"}
+          ],
+          "filters":[]
+        },
+        {
+          "event_type": "agent_moves_to_new_location",
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"},      
+            {"name":"sender_id"},
+            {"name":"destination_location"},
+            {"name":"summary"}
+        ],
+          "filters":[]
         }
       ]
-    }
+    }    
   ],
   "settings": {}
 }
