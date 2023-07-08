@@ -1,26 +1,65 @@
-# first is to build all artifcats using node
-# second is to copy all artifacts to the final python image
-# third is to copy all python scripts and pip install all dependencies
-# fourth is to execute the runner
-# ---- Stage 1: Build all artifacts using Node ----
-FROM node:18-alpine AS node-builder
+# ---- Stage 1: Build 16bit-back using Node ----
+# FROM node:18-alpine AS node-builder-16bit-back
+# WORKDIR /app
+# COPY packages/16bit-back/package*.json ./
+# RUN npm install
+# COPY packages/16bit-back/ ./
+# RUN npm run build
+
+# ---- Stage 2: Build 16bit-front using Node ----
+FROM node:18-alpine AS node-builder-16bit-front
 WORKDIR /app
-COPY package*.json ./
+COPY packages/16bit-front/ ./
+RUN npm install yarn
+RUN yarn install
+RUN yarn build
+
+# ---- Stage 3: Build nano-vue using Node ----
+FROM node:18-alpine AS node-builder-nano-vue
+WORKDIR /app
+COPY packages/nano-vue/package*.json ./
 RUN npm install
-COPY . .
-RUN npm run build  # or whatever build command your app requires
+COPY packages/nano-vue/ ./
+RUN npm run build
 
-# ---- Stage 2: Copy artifacts to the final Python image ----
-FROM python:3.9 AS python-stage
+# ---- Stage 4: Copy artifacts to the final Python image ----
+FROM python:3.10.8 AS python-stage
 WORKDIR /app
 
-# Copy build artifacts from node-stage
-COPY --from=node-builder /app/build ./build
+# Install Redis
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y redis-server nodejs
 
-# ---- Stage 3: Copy all Python scripts and pip install all dependencies ----
-COPY requirements.txt ./
+RUN npm install express http-proxy
+# Copy build artifacts from each stage
+# COPY --from=node-builder-16bit-back /app/dist ./16bit-back
+
+COPY --from=node-builder-16bit-front /app/projects/tank-viewer-web/dist ./16bit-front
+COPY packages/16bit-front/server.js ./16bit-front/server.js
+
+COPY --from=node-builder-nano-vue /app/dist ./nano-vue
+COPY packages/nano-vue/server.js ./nano-vue/server.js
+
+COPY packages/gateway/server.js ./gateway/server.js
+
+# ---- Stage 5: Copy all Python scripts and pip install all dependencies ----
+COPY packages/world-instance/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY ./path_to_your_python_scripts/ ./path_in_container/
 
-# ---- Stage 4: Execute the runner ----
-CMD ["python", "your-runner-script.py"]
+COPY packages/world-instance ./world-instance
+COPY packages/real-ws ./real-ws
+COPY packages/mocked-ws ./mocked-ws
+
+COPY use_cases ./use_cases
+
+COPY .env ./.env
+
+COPY deployments/shared-scripts/runner.py ./runner.py
+
+EXPOSE 80
+EXPOSE 9000
+
+# ---- Stage 6: Execute the runner ----
+CMD ["python", "runner.py"]

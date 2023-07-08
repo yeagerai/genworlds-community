@@ -190,7 +190,9 @@ export default {
     },
     async fetchConfig(use_case, world_definition) {
       try {
-        const response = await axios.get(`http://localhost:7457/trigger-use-case/${use_case}/${world_definition}`);
+        const currentUrl = window.location.host;
+        let protocol = window.location.protocol === 'https:' ? 'https' : 'http';
+        const response = await axios.get(`${protocol}://${currentUrl}:9000/world-instance/trigger-use-case/${use_case}/${world_definition}`);
         return response.data;
       } catch (error) {
         console.error('Error fetching config:', error);
@@ -201,8 +203,16 @@ export default {
       if (this.webSocket) {
         this.webSocket.close();
       }
-
-      this.webSocket = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`, [], {maxRetries: 0});
+      let wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const currentHost = window.location.host;
+      let wsUrl;
+      
+      if (this.websocketPort === '7456') {
+          wsUrl = `${wsProtocol}://${currentHost}:9000/real-ws/ws`;
+      } else {
+          wsUrl = `${wsProtocol}://${currentHost}:9000/mocked-ws/ws`;
+      }
+      this.webSocket = new ReconnectingWebSocket(wsUrl, [], {maxRetries: 0});
 
       this.webSocket.addEventListener('message', (msg) => {
         const socketEvent = JSON.parse(msg.data);

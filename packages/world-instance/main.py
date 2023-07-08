@@ -88,7 +88,7 @@ async def trigger_world(use_case: str, world_definition: str):
 
     if is_mocked:
         try:
-            requests.get(f"http://mocked-ws:{port}/start-mocked-ws/{use_case}/{world_definition}")
+            requests.get(f"http://localhost:{port}/start-mocked-ws/{use_case}/{world_definition}")
         except Exception as e:
             print(f"An error occurred: {e}")
         return response

@@ -33,19 +33,19 @@ services = [
     },
     {
         'name': '16bit-back',
-        'command': 'node ./src/server.js',
+        'command': 'node ./16bit-back/src/server.js',
     },
     {
         'name': '16-bit-front',
-        'command': 'node ./16bit-front.js',
+        'command': 'node ./16bit-front/server.js',
     },
     {
         'name': 'vue-frontend',
-        'command': 'node ./nano-vue.js',
+        'command': 'node ./nano-vue/server.js',
     },
     {
-        'name': 'reverse-proxy',
-        'command': 'node proxy.js',
+        'name': 'gateway',
+        'command': 'node ./gateway/server.js',
     },
 ]
 
