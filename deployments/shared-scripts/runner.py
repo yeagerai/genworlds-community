@@ -33,7 +33,7 @@ services = [
     },
     {
         'name': '16bit-back',
-        'command': 'node ./16bit-back/src/server.js',
+        'command': 'node ./src/server.js',
     },
     {
         'name': '16-bit-front',
