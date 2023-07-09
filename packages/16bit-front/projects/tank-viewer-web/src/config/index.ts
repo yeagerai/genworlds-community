@@ -32,9 +32,12 @@ function getEnvironment(): Environment {
 }
 
 const getWsUrl = (): string => {
-  const wsProtocol: string = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const wsProtocol: string = window.location.protocol === 'https:' ? 'https' : 'http';
   const currentHost: string = window.location.host;
-  return `${wsProtocol}://${currentHost}:9000/16bit-back/`;
+  const url: string = `${wsProtocol}://${currentHost}/16bit-back`;
+  /* eslint-disable no-console */
+  console.log('url', url);
+  return url;
 };
 
 const WEBSOCKETS: { [key in Environment]: string } = {
