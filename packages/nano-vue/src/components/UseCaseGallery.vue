@@ -7,8 +7,12 @@
           v-model="currentUseCase" @change="navigateToCurentUseCase">
           <option :value="null" disabled selected>Select a use case</option>
           <option v-for="useCase in useCases" :key="useCase.use_case + useCase.world_definition" :value="useCase">{{ useCase.use_case + "/" + useCase.world_definition }}</option>
-        </select>
+        </select>       
 
+      </div>
+      
+
+      <div class="navbar-center space-x-4">
         <div class="join">
           <div class="tooltip tooltip-bottom" data-tip="Stop the current use case">
             <button class="btn btn-sm join-item btn-outline btn-error" @click="stopUseCase" :disabled="!currentUseCase">
@@ -34,9 +38,9 @@
             </button>
           </div>
         </div>  
-
       </div>
-      <div class="navbar-center">
+
+      <div class="navbar-end">
         <a class="btn btn-ghost normal-case text-xl">🧬🌍 GenWorlds</a>
       </div>
     </div>
