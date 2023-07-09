@@ -11,6 +11,12 @@ const routes = [
       redirect: defaultRedirectPath,
     },
     {
+      path: '/use-case/:use_case/:world_definition',
+      name: 'useCaseView',
+      component: UseCaseView,
+      props: true,
+    },
+    {
       path: '/home',
       name: 'useCaseGallery',
       component: UseCaseGallery,
