@@ -52,9 +52,10 @@ RUN yarn build
 FROM node:18-alpine AS node-builder-nano-vue
 WORKDIR /app
 COPY packages/nano-vue/package*.json ./
-RUN npm install
+RUN npm install yarn
+RUN yarn install
 COPY packages/nano-vue/ ./
-RUN npm run build
+RUN yarn build
 
 # ---- Stage 4: Copy artifacts to the final Python image ----
 FROM python:3.10.8 AS python-stage

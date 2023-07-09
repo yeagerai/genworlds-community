@@ -104,7 +104,27 @@ async def trigger_world(use_case: str, world_definition: str):
             return response
         except Exception as e:
             return {"status": f"Failed to launch use case. Error: {str(e)}", "port": None, "is_mocked": None}
+        
+@app.get("/kill-all-use-cases")
+async def trigger_world():
+    """
+    Kill all running use cases
+    
+    """
 
+    if is_mocked:
+        try:
+            requests.get(f"http://localhost:{port}/kill-mocked-ws")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+    else:
+        # kill any running threads
+        print(f"stopping {len(running_processes)} processes: {running_processes}")
+        while running_processes:
+            running_processes.popleft().kill()
+            time.sleep(1)
+
+    return {"status": "All use cases killed"}
 
 if __name__ == "__main__":
     import uvicorn
