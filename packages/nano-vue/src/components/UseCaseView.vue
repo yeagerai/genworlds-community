@@ -207,7 +207,7 @@ export default {
       const currentHost = window.location.host;
       let wsUrl;
       
-      if (this.websocketPort === '7456') {
+      if (this.websocketPort === 7456) {
           wsUrl = `${wsProtocol}://${currentHost}:9000/real-ws/ws`;
       } else {
           wsUrl = `${wsProtocol}://${currentHost}:9000/mocked-ws/ws`;
