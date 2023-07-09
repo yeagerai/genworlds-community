@@ -34,6 +34,10 @@ server.on('upgrade', (req, socket, head) => {
         // Remove /real-ws from the path
         req.url = url.replace('/real-ws', '');
         proxy.ws(req, socket, head, { target: 'ws://localhost:7456' });
+    } else if (url.startsWith('/16bit-back/')) {
+    // Remove /real-ws from the path
+    req.url = url.replace('/16bit-back', '');
+    proxy.ws(req, socket, head, { target: 'ws://localhost:5000' });
     }
 });
 
