@@ -23,7 +23,7 @@ Then run the following commands:
 First to build the docker image
 
 ```bash
-docker build -t genworlds-world-app -f ./deployments/single-container/Dockerfile .
+docker build -t genworlds-world-app -f ./deployments/docker/Dockerfile .
 ```
 
 And then to run it:

@@ -40,6 +40,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint", "npm:7.32.0"],\
             ["eslint-plugin-vue", "virtual:122c93d5376caec0b359abe71c636a95c12fb9199945e34a364afb99378171b97962d796941cf3317dda573e8f91c20d977d4f00a39e8a5ccc023044c027671c#npm:8.7.1"],\
             ["pinia", "virtual:122c93d5376caec0b359abe71c636a95c12fb9199945e34a364afb99378171b97962d796941cf3317dda573e8f91c20d977d4f00a39e8a5ccc023044c027671c#npm:2.1.4"],\
+            ["pinia-plugin-persistedstate", "virtual:122c93d5376caec0b359abe71c636a95c12fb9199945e34a364afb99378171b97962d796941cf3317dda573e8f91c20d977d4f00a39e8a5ccc023044c027671c#npm:3.1.0"],\
             ["reconnecting-websocket", "npm:4.4.0"],\
             ["tailwindcss", "npm:3.3.2"],\
             ["vue", "npm:3.3.4"],\
@@ -8953,6 +8954,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint", "npm:7.32.0"],\
             ["eslint-plugin-vue", "virtual:122c93d5376caec0b359abe71c636a95c12fb9199945e34a364afb99378171b97962d796941cf3317dda573e8f91c20d977d4f00a39e8a5ccc023044c027671c#npm:8.7.1"],\
             ["pinia", "virtual:122c93d5376caec0b359abe71c636a95c12fb9199945e34a364afb99378171b97962d796941cf3317dda573e8f91c20d977d4f00a39e8a5ccc023044c027671c#npm:2.1.4"],\
+            ["pinia-plugin-persistedstate", "virtual:122c93d5376caec0b359abe71c636a95c12fb9199945e34a364afb99378171b97962d796941cf3317dda573e8f91c20d977d4f00a39e8a5ccc023044c027671c#npm:3.1.0"],\
             ["reconnecting-websocket", "npm:4.4.0"],\
             ["tailwindcss", "npm:3.3.2"],\
             ["vue", "npm:3.3.4"],\
@@ -9608,6 +9610,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@vue/composition-api",\
             "typescript",\
             "vue"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["pinia-plugin-persistedstate", [\
+        ["npm:3.1.0", {\
+          "packageLocation": "./.yarn/cache/pinia-plugin-persistedstate-npm-3.1.0-3b28565b9e-00f5c3b580.zip/node_modules/pinia-plugin-persistedstate/",\
+          "packageDependencies": [\
+            ["pinia-plugin-persistedstate", "npm:3.1.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:122c93d5376caec0b359abe71c636a95c12fb9199945e34a364afb99378171b97962d796941cf3317dda573e8f91c20d977d4f00a39e8a5ccc023044c027671c#npm:3.1.0", {\
+          "packageLocation": "./.yarn/__virtual__/pinia-plugin-persistedstate-virtual-7848ebb0f5/0/cache/pinia-plugin-persistedstate-npm-3.1.0-3b28565b9e-00f5c3b580.zip/node_modules/pinia-plugin-persistedstate/",\
+          "packageDependencies": [\
+            ["pinia-plugin-persistedstate", "virtual:122c93d5376caec0b359abe71c636a95c12fb9199945e34a364afb99378171b97962d796941cf3317dda573e8f91c20d977d4f00a39e8a5ccc023044c027671c#npm:3.1.0"],\
+            ["@types/pinia", null],\
+            ["pinia", "virtual:122c93d5376caec0b359abe71c636a95c12fb9199945e34a364afb99378171b97962d796941cf3317dda573e8f91c20d977d4f00a39e8a5ccc023044c027671c#npm:2.1.4"]\
+          ],\
+          "packagePeers": [\
+            "@types/pinia",\
+            "pinia"\
           ],\
           "linkType": "HARD"\
         }]\

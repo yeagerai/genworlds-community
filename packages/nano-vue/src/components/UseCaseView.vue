@@ -1,9 +1,254 @@
+<script setup>
+import ReconnectingWebSocket from 'reconnecting-websocket';
+import { ref, watch, onMounted, onBeforeUnmount, computed, nextTick, defineProps } from 'vue';
+import { useUseCaseActionStore } from '@/stores/useCaseActionStore';
+import { useSettingsStore } from '@/stores/settingsStore';
+import { useRoute } from 'vue-router';
+import WorldInstance from '@/api/resources/WorldInstance';
+
+const props = defineProps({
+  use_case: {
+    type: String,
+    required: true,
+  },
+  world_definition: {
+    type: String,
+    required: true,
+  },
+})
+
+const activeScreen = ref('');
+const screens = ref([]);
+const useCaseName = ref('');
+const websocketPort = ref(null);
+const showAlert = ref(true);
+const webSocket = ref(null);
+const fullEventHistory = ref([]);
+const activeScreenObject = computed(() => screens.value.find(screen => screen.name === activeScreen.value));
+const shouldRenderIframe = computed(() => activeScreen.value === '16bit');
+const iframeSrc = computed(() => `${window.location.origin}:9000/16bit-front/?tankId=1`);
+
+const loadUseCase = async (use_case, world_definition) => {
+  console.log('Loading use case:', use_case, world_definition)
+  
+  // Fetch configuration from REST API
+  const config = await fetchConfig(use_case, world_definition);
+  // Set the screens
+  screens.value = config.event_stream_config.screens;
+  for (const screen of screens.value) {
+    screen.event_history = [];
+  }
+  if (screens.value.length > 0) {
+    activeScreen.value = screens.value[0].name;
+  }
+
+  // Set the use case name
+  useCaseName.value = config.event_stream_config.name;
+
+  // Connect to WebSocket
+  websocketPort.value = config.port;
+  connectToWebSocket();
+};
+
+const connectToWebSocket = () => {
+  if (webSocket.value) {
+    webSocket.value.close();
+  }
+  let wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const currentHost = window.location.host;
+  let wsUrl;
+  
+  if (websocketPort.value == 7456) {
+      wsUrl = `${wsProtocol}://${currentHost}:9000/real-ws/ws`;
+  } else {
+      wsUrl = `${wsProtocol}://${currentHost}:9000/mocked-ws/ws`;
+  }
+  webSocket.value = new ReconnectingWebSocket(wsUrl, [], {maxRetries: 0});
+
+  webSocket.value.addEventListener('message', (msg) => {
+    const socketEvent = JSON.parse(msg.data);
+    console.log('Received message:', socketEvent)
+
+    fullEventHistory.value.push(socketEvent);
+    
+    // Check if the message contains all necessary data
+    if (!socketEvent || socketEvent.event_type === null || socketEvent.event_type === undefined || socketEvent.created_at === null || socketEvent.created_at === undefined) {
+        console.warn('Invalid message received:', msg.data);
+        return; // Don't process this message
+    } 
+
+    for (const screen of screens.value) {
+        for (const trackedEvent of screen.tracked_events) {
+            if (trackedEvent.event_type === socketEvent.event_type) {
+                const filteredEvent = {
+                    event_type: socketEvent.event_type,
+                    created_at: socketEvent.created_at,
+                    sender_id: socketEvent.sender_id,
+                }
+
+                for (const field of trackedEvent.fields_to_display) {
+                    filteredEvent[field.name] = socketEvent[field.name];
+                }
+
+                screen.event_history.push(filteredEvent);
+
+                break;
+              }
+            }
+        }
+    });
+};
+
+// Auto scroll chat to bottom
+const chatContainer = ref(null);
+watch(() => activeScreenObject, async () => {
+  await nextTick();
+
+  if (chatContainer.value) {
+    // Check if the user is near the bottom
+    const isNearBottom =
+      chatContainer.value.scrollHeight - chatContainer.value.scrollTop - chatContainer.value.clientHeight < 400;
+
+    // Only scroll to the bottom if the user is near the bottom
+    if (isNearBottom) {
+      chatContainer.value.scrollTo({top: chatContainer.value.scrollHeight, behavior: 'instant'});
+    }
+  }      
+}, { deep: true });
+
+// Handle route changes
+const route = useRoute();
+watch(route, to => {
+  loadUseCase(to.params.use_case, to.params.world_definition);
+});
+
+
+// Handle API key changes
+const settingsStore = useSettingsStore();
+watch(() => settingsStore.settings.openaiApiKey, () => {
+  loadUseCase(props.use_case, props.world_definition);
+}, { deep: true });
+
+onMounted(async () => {
+  await loadUseCase(props.use_case, props.world_definition);
+
+  const _keyListener = function(e) {
+      if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+
+          downloadEventHistory();
+      }
+  };
+
+  document.addEventListener('keydown', _keyListener);  
+
+  onBeforeUnmount(() => {
+    document.removeEventListener('keydown', _keyListener);
+  });
+});
+
+const handleTabClick = (screenName) => {
+  console.log('Tab clicked:', screenName);
+  activeScreen.value = screenName;
+};
+
+const fetchConfig = async (use_case, world_definition) => {
+  try {
+    return WorldInstance.triggerUseCase(use_case, world_definition);
+  } catch (error) {
+    console.error('Error fetching config:', error);
+  }
+  return { screens: [], settings: {} };
+};
+
+const downloadEventHistory = () => {
+  // Suppose this is your JSON object
+  const data = {
+    events: fullEventHistory.value,
+  }
+
+  // Convert it to JSON string
+  const jsonStr = JSON.stringify(data, null, 2);
+
+  // Create a Blob from the JSON string
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+
+  // Create an object URL from the Blob
+  const url = URL.createObjectURL(blob);
+
+  // Create a link element
+  const link = document.createElement('a');
+
+  // Set the href and download attributes of the link
+  link.href = url;
+  link.download = 'websocket_event_history.json';
+
+  // Append the link to the body
+  document.body.appendChild(link);
+
+  // Click the link to start the download
+  link.click();
+
+  // Remove the link after the download starts
+  document.body.removeChild(link);
+};
+
+const getFieldValue = (event, fieldName) => {
+  return fieldName in event ? event[fieldName] : '';
+};
+
+const getEventCssClasses = (event) => {
+  const eventInfo = activeScreenObject.value.tracked_events.find((trackedEvent) => trackedEvent.event_type === event.event_type);
+  return 'css_classes' in eventInfo ? eventInfo.css_classes : '';
+};
+
+
+
+const useCaseActionsStore = useUseCaseActionStore();
+const stopUseCase = async () => {
+  console.log('Stopping use case');
+
+  try {
+    await WorldInstance.stopAllUseCases();
+  } catch (error) {
+    console.error('Error stopping use case:', error);
+  }
+
+  webSocket.value.close();
+  webSocket.value = null;
+};
+
+
+watch(() => useCaseActionsStore.performStopUseCaseAction, (newVal) => {
+  if (newVal) {
+    stopUseCase();
+    useCaseActionsStore.setPerformStopUseCaseAction(false);
+  }
+});
+watch(() => useCaseActionsStore.performRestartUseCaseAction, (newVal) => {
+  if (newVal) {
+    loadUseCase(props.use_case, props.world_definition);
+    useCaseActionsStore.setPerformRestartUseCaseAction(false);
+  }
+});
+watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVal) => {
+  if (newVal) {
+    downloadEventHistory();
+    useCaseActionsStore.setPerformDownloadUseCaseEventHistoryAction(false);
+  }
+});
+</script>
+
 <template>
   <div v-if="screens.length > 0" class="p-4 flex flex-col h-full">
-    <div v-if="showAlert && websocketPort === 7455" class="alert alert-warning mb-4">
+    <div v-if="showAlert && websocketPort == 7455" class="alert alert-warning mb-4">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-      <p>You are currently connected to a simulated websocket server, which means that the data you are seeing has been pre-recorded and is not live. To initiate a real-time simulation, please configure the environment variables as outlined in the .env.example file.</p>
-
+      <p>
+        You are currently connected to a simulated websocket server, 
+        which means that the data you are seeing has been pre-recorded and is not live. 
+        To initiate a real-time simulation, 
+        please configure the <a class="link" onclick="settings_modal.showModal()">OpenAI API Key in the settings</a>
+      </p>
       <button @click="showAlert = false" class="btn btn-sm">OK</button>
     </div>
     <!-- <h1 class="text-xl mb-4">{{ useCaseName }}</h1> -->
@@ -73,278 +318,6 @@
   </div>
 
 </template>
-
-<script>
-import axios from 'axios';
-import ReconnectingWebSocket from 'reconnecting-websocket';
-import { ref, watch, onMounted, onBeforeUnmount, computed, toRefs, nextTick } from 'vue';
-import { useUseCaseActionStore } from '@/stores/useCaseActionStore';
-import { useRoute } from 'vue-router';
-
-export default {
-  props: ['use_case', 'world_definition'],
-  setup(props) {
-
-    const activeScreen = ref('');
-    const screens = ref([]);
-    const useCaseName = ref('');
-    const websocketPort = ref(null);
-    const showAlert = ref(true);
-    const webSocket = ref(null);
-    const fullEventHistory = ref([]);
-    const activeScreenObject = computed(() => screens.value.find(screen => screen.name === activeScreen.value));
-    const shouldRenderIframe = computed(() => activeScreen.value === '16bit');
-    const iframeSrc = computed(() => `${window.location.origin}:9000/16bit-front/?tankId=1`);
-
-    const loadUseCase = async (use_case, world_definition) => {
-      console.log('Loading use case:', use_case, world_definition)
-      
-      // Fetch configuration from REST API
-      const config = await fetchConfig(use_case, world_definition);
-      // Set the screens
-      screens.value = config.event_stream_config.screens;
-      for (const screen of screens.value) {
-        screen.event_history = [];
-      }
-      if (screens.value.length > 0) {
-        activeScreen.value = screens.value[0].name;
-      }
-
-      // Set the use case name
-      useCaseName.value = config.event_stream_config.name;
-
-      // Connect to WebSocket
-      websocketPort.value = config.port;
-      connectToWebSocket();
-    };
-
-    const connectToWebSocket = () => {
-      if (webSocket.value) {
-        webSocket.value.close();
-      }
-      let wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-      const currentHost = window.location.host;
-      let wsUrl;
-      
-      if (websocketPort.value == 7456) {
-          wsUrl = `${wsProtocol}://${currentHost}:9000/real-ws/ws`;
-      } else {
-          wsUrl = `${wsProtocol}://${currentHost}:9000/mocked-ws/ws`;
-      }
-      webSocket.value = new ReconnectingWebSocket(wsUrl, [], {maxRetries: 0});
-
-      webSocket.value.addEventListener('message', (msg) => {
-        const socketEvent = JSON.parse(msg.data);
-        console.log('Received message:', socketEvent)
-
-        fullEventHistory.value.push(socketEvent);
-        
-        // Check if the message contains all necessary data
-        if (!socketEvent || socketEvent.event_type === null || socketEvent.event_type === undefined || socketEvent.created_at === null || socketEvent.created_at === undefined) {
-            console.warn('Invalid message received:', msg.data);
-            return; // Don't process this message
-        } 
-
-        for (const screen of screens.value) {
-            for (const trackedEvent of screen.tracked_events) {
-                if (trackedEvent.event_type === socketEvent.event_type) {
-                    const filteredEvent = {
-                        event_type: socketEvent.event_type,
-                        created_at: socketEvent.created_at,
-                        sender_id: socketEvent.sender_id,
-                    }
-
-                    for (const field of trackedEvent.fields_to_display) {
-                        filteredEvent[field.name] = socketEvent[field.name];
-                    }
-
-                    screen.event_history.push(filteredEvent);
-
-                    break;
-                  }
-                }
-            }
-        });
-    };
-
-    // Auto scroll chat to bottom
-    const chatContainer = ref(null);
-    watch(() => activeScreenObject, async () => {
-      await nextTick();
-
-      if (chatContainer.value) {
-        // Check if the user is near the bottom
-        const isNearBottom =
-          chatContainer.value.scrollHeight - chatContainer.value.scrollTop - chatContainer.value.clientHeight < 400;
-
-        // Only scroll to the bottom if the user is near the bottom
-        if (isNearBottom) {
-          chatContainer.value.scrollTo({top: chatContainer.value.scrollHeight, behavior: 'instant'});
-        }
-      }      
-    }, { deep: true });
-
-    const scrollToBottom = async () => {
-      await nextTick();
-    
-      if (chatContainer.value) {
-        const lastMessage = chatContainer.value.lastElementChild;
-        if (lastMessage) {
-          lastMessage.scrollIntoView(false);
-        }
-      }      
-    };
-
-
-    // Handle route changes
-    const route = useRoute();
-    watch(route, to => {
-      loadUseCase(to.params.use_case, to.params.world_definition);
-    });
-
-    onMounted(async () => {
-      await loadUseCase(props.use_case, props.world_definition);
-
-      const _keyListener = function(e) {
-          if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
-              e.preventDefault();
-
-              downloadEventHistory();
-          }
-      };
-
-      document.addEventListener('keydown', _keyListener);  
-
-      onBeforeUnmount(() => {
-        document.removeEventListener('keydown', _keyListener);
-      });
-    });
-
-    const handleTabClick = (screenName) => {
-      console.log('Tab clicked:', screenName);
-      activeScreen.value = screenName;
-    };
-
-    const fetchConfig = async (use_case, world_definition) => {
-      try {
-        const currentUrl = window.location.host;
-        let protocol = window.location.protocol === 'https:' ? 'https' : 'http';
-        const response = await axios.get(`${protocol}://${currentUrl}:9000/world-instance/trigger-use-case/${use_case}/${world_definition}`);
-        return response.data;
-      } catch (error) {
-        console.error('Error fetching config:', error);
-      }
-      return { screens: [], settings: {} };
-    };
-
-    const downloadEventHistory = () => {
-      // Suppose this is your JSON object
-      const data = {
-        events: fullEventHistory.value,
-      }
-
-      // Convert it to JSON string
-      const jsonStr = JSON.stringify(data, null, 2);
-
-      // Create a Blob from the JSON string
-      const blob = new Blob([jsonStr], { type: 'application/json' });
-
-      // Create an object URL from the Blob
-      const url = URL.createObjectURL(blob);
-
-      // Create a link element
-      const link = document.createElement('a');
-
-      // Set the href and download attributes of the link
-      link.href = url;
-      link.download = 'websocket_event_history.json';
-
-      // Append the link to the body
-      document.body.appendChild(link);
-
-      // Click the link to start the download
-      link.click();
-
-      // Remove the link after the download starts
-      document.body.removeChild(link);
-    };
-
-    const getFieldValue = (event, fieldName) => {
-      return fieldName in event ? event[fieldName] : '';
-    };
-
-    const getEventCssClasses = (event) => {
-      const eventInfo = activeScreenObject.value.tracked_events.find((trackedEvent) => trackedEvent.event_type === event.event_type);
-      return 'css_classes' in eventInfo ? eventInfo.css_classes : '';
-    };
-
-    
-
-    const useCaseActionsStore = useUseCaseActionStore();
-    const stopUseCase = async () => {
-      console.log('Stopping use case');
-
-      try {
-        const currentUrl = window.location.host;
-        let protocol = window.location.protocol === 'https:' ? 'https' : 'http';
-        const response = await axios.get(`${protocol}://${currentUrl}:9000/world-instance/kill-all-use-cases`);
-        console.log('Response:', response.data);
-      } catch (error) {
-        console.error('Error killing use case:', error);
-      }
-
-      webSocket.value.close();
-      webSocket.value = null;
-    };
-
-
-    watch(() => useCaseActionsStore.performStopUseCaseAction, (newVal) => {
-      if (newVal) {
-        stopUseCase();
-        useCaseActionsStore.setPerformStopUseCaseAction(false);
-      }
-    });
-    watch(() => useCaseActionsStore.performRestartUseCaseAction, (newVal) => {
-      if (newVal) {
-        loadUseCase(props.use_case, props.world_definition);
-        useCaseActionsStore.setPerformRestartUseCaseAction(false);
-      }
-    });
-    watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVal) => {
-      if (newVal) {
-        downloadEventHistory();
-        useCaseActionsStore.setPerformDownloadUseCaseEventHistoryAction(false);
-      }
-    });
-
-
-    return {
-      ...toRefs(props),
-      activeScreen,
-      screens,
-      useCaseName,
-      websocketPort,
-      showAlert,
-      webSocket,
-      fullEventHistory,
-      activeScreenObject,
-      shouldRenderIframe,
-      iframeSrc,
-      chatContainer,
-      handleTabClick,
-      loadUseCase,
-      connectToWebSocket,
-      fetchConfig,
-      downloadEventHistory,
-      getFieldValue,
-      getEventCssClasses,
-      scrollToBottom,
-    };
-  },
-};
-
-</script>
-
 
 <style scoped>
 [format*="bold"] {

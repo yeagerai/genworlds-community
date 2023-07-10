@@ -3,13 +3,12 @@ import fnmatch
 from importlib import import_module
 from multiprocessing import Process
 import os
-import threading
 import json
 import time
 import requests
 
 from pydantic import BaseModel
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -19,9 +18,12 @@ app = FastAPI()
 
 load_dotenv()
 
-openai_api_key = os.environ.get('OPENAI_API_KEY')
-port = 7456 if openai_api_key else 7455
-is_mocked = not openai_api_key
+PORT_REAL_WS = 7456
+PORT_MOCKED_WS = 7455
+
+# openai_api_key = os.environ.get('OPENAI_API_KEY')
+# port = 7456 if openai_api_key else 7455
+# is_mocked = not openai_api_key
 
 running_processes = deque[Process]()
 
@@ -59,7 +61,7 @@ def get_use_case_list():
     return JSONResponse(content=world_definitions)
 
 @app.get("/trigger-use-case/{use_case}/{world_definition}")
-async def trigger_world(use_case: str, world_definition: str):
+async def trigger_world(request: Request, use_case: str, world_definition: str):
     """
     Trigger a specific use case.
     :param slug: Use case identifier (string)
@@ -74,6 +76,16 @@ async def trigger_world(use_case: str, world_definition: str):
 
     with open(f"use_cases/{use_case}/event_stream_config.json", "r") as f:
         event_stream_config = json.loads(f.read())
+
+    # Get openai_api_key from request header
+    openai_api_key = request.headers.get('Openai-Api-Key')
+
+    # Load openai_api_key from .env file if not provided
+    if not openai_api_key:
+        openai_api_key = os.environ.get('OPENAI_API_KEY')
+
+    port = PORT_REAL_WS if openai_api_key else PORT_MOCKED_WS
+    is_mocked = not openai_api_key
 
     response = {
         "status": "The world is running in the background",
@@ -96,33 +108,42 @@ async def trigger_world(use_case: str, world_definition: str):
         try:
             module = import_module(module_name)
             launch_use_case = getattr(module, function_name)
+
+            # Set openai API key in environment variable, for the process
+            opneai_api_key_env = os.environ.get('OPENAI_API_KEY')
+            os.environ['OPENAI_API_KEY'] = openai_api_key
             
             p = Process(target=launch_use_case, kwargs={"world_definition": world_definition})
             running_processes.append(p)
             p.start()
+
+            # restore OPENAI_API_KEY
+            if opneai_api_key_env:
+                os.environ['OPENAI_API_KEY'] = opneai_api_key_env
+            else:
+                del os.environ['OPENAI_API_KEY']
 
             return response
         except Exception as e:
             return {"status": f"Failed to launch use case. Error: {str(e)}", "port": None, "is_mocked": None}
         
 @app.get("/kill-all-use-cases")
-async def trigger_world():
+async def kill_all_use_cases():
     """
     Kill all running use cases
     
     """
+    # kill any running threads
+    print(f"stopping {len(running_processes)} processes: {running_processes}")
+    while running_processes:
+        running_processes.popleft().kill()
+        time.sleep(1)
 
-    if is_mocked:
-        try:
-            requests.get(f"http://localhost:{port}/kill-mocked-ws")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-    else:
-        # kill any running threads
-        print(f"stopping {len(running_processes)} processes: {running_processes}")
-        while running_processes:
-            running_processes.popleft().kill()
-            time.sleep(1)
+    # Kill mocked socket
+    try:
+        requests.get(f"http://localhost:{port}/kill-mocked-ws")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
     return {"status": "All use cases killed"}
 
