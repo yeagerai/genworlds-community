@@ -6507,6 +6507,7 @@ __metadata:
     eslint: ^7.32.0
     eslint-plugin-vue: ^8.0.3
     pinia: ^2.1.4
+    pinia-plugin-persistedstate: ^3.1.0
     reconnecting-websocket: ^4.4.0
     tailwindcss: ^3.3.2
     vue: ^3.2.13
@@ -7047,6 +7048,15 @@ __metadata:
   version: 2.3.0
   resolution: "pify@npm:2.3.0"
   checksum: 9503aaeaf4577acc58642ad1d25c45c6d90288596238fb68f82811c08104c800e5a7870398e9f015d82b44ecbcbef3dc3d4251a1cbb582f6e5959fe09884b2ba
+  languageName: node
+  linkType: hard
+
+"pinia-plugin-persistedstate@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "pinia-plugin-persistedstate@npm:3.1.0"
+  peerDependencies:
+    pinia: ^2.0.0
+  checksum: 00f5c3b580ec4fffcd0f9cb8dab2cb0dedf9a119034e5385df4c06682e78933cfd85203b602632e0c696dd95ccace5bee21381695319bbd4f6b70ce7115f5140
   languageName: node
   linkType: hard
 
