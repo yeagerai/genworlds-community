@@ -13,8 +13,8 @@ Yeager - monorepo using `"lerna": "^6.6.1"`
 - Install dependencies:
 
   ```bash
-  $ nvm use
-  $ yarn setup
+  nvm use
+  yarn setup
   ```
 
 ### Start development
@@ -22,14 +22,15 @@ Yeager - monorepo using `"lerna": "^6.6.1"`
 - To begin working on the project
 
   ```bash
-  $ yarn start
+  yarn start
   ```
+  
   Then open [http://localhost:9000/?tankId=1](http://localhost:9000/?tankId=1) to view it in the browser. To switch map, just change the `tankId` query param.
 
 - To raise a local environment to work with other services (i.ex.: frontend apps)
 
   ```bash
-  $ yarn [start:dev | start:prod]
+  yarn [start:dev | start:prod]
   ```
 
 ### Best practices
