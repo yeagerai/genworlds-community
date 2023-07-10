@@ -42,7 +42,7 @@ def main(input_file):
             if new_roundtable and roundtable_name:
                 world_data = {
                     "base_args": {
-                        "websocket_url": "ws://real-ws:7456/ws",
+                        "websocket_url": "ws://localhost:7456/ws",
                     },
                     "world": {
                         "id": "world",

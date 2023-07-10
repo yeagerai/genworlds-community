@@ -31,11 +31,20 @@ function getEnvironment(): Environment {
   return environment;
 }
 
+const getWsUrl = (): string => {
+  const wsProtocol: string = window.location.protocol === 'https:' ? 'https' : 'http';
+  const currentHost: string = window.location.host;
+  const url: string = `${wsProtocol}://${currentHost}/16bit-back`;
+  /* eslint-disable no-console */
+  console.log('url', url);
+  return url;
+};
+
 const WEBSOCKETS: { [key in Environment]: string } = {
   // [Environment.DEVELOPMENT]: 'ws://localhost:3000',
-  [Environment.DEVELOPMENT]: 'ws://localhost:5000',
-  [Environment.STAGING]: 'ws://localhost:5000',
-  [Environment.PRODUCTION]: 'ws://localhost:5000',
+  [Environment.DEVELOPMENT]: getWsUrl(),
+  [Environment.STAGING]: getWsUrl(),
+  [Environment.PRODUCTION]: getWsUrl(),
   // [Environment.PRODUCTION]: 'wss://changeme',
 };
 

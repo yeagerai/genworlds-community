@@ -29,7 +29,7 @@
     <div class="overflow-y-auto flex-1 mb-4" ref="chatContainer">
       <div v-if="shouldRenderIframe" class="w-full h-full">
           <iframe 
-            src="http://localhost:8081/?tankId=1" 
+            :src="iframeSrc" 
             class="w-full h-full"
             frameborder="0"
             allow="autoplay; encrypted-media" 
@@ -62,7 +62,7 @@
                   </div>
                 </div>
               </li>
-              <li class="pl-[12px]">
+              <li class="pl-[12px]" v-if="webSocket">
                 <span class="loading loading-dots loading-lg"></span>
               </li>
             </ul>
@@ -74,137 +74,70 @@
 
 </template>
 
-
 <script>
 import axios from 'axios';
 import ReconnectingWebSocket from 'reconnecting-websocket';
+import { ref, watch, onMounted, onBeforeUnmount, computed, toRefs, nextTick } from 'vue';
+import { useUseCaseActionStore } from '@/stores/useCaseActionStore';
+import { useRoute } from 'vue-router';
 
 export default {
-  data() {
-    return {
-      activeScreen: '',
-      screens: [],
-      useCaseName: '',
-      websocketPort: null,
-      showAlert: true,
-      webSocket: null,
-      fullEventHistory: [],
-    };
-  },
   props: ['use_case', 'world_definition'],
-  watch: {
-    'activeScreenObject.tracked_events': {
-      handler() {
-        this.$nextTick(() => {
-          const container = this.$refs.chatContainer;
-          if (container) {
-            // Check if the user is near the bottom
-            const isNearBottom =
-              container.scrollHeight - container.scrollTop - container.clientHeight < 400;
+  setup(props) {
 
-            // Only scroll to the bottom if the user is near the bottom
-            if (isNearBottom) {
-              container.scrollTo({top: container.scrollHeight, behavior: 'instant'});
-            }
-          }
-        });
-      },
-      deep: true,
-    },
-    $route(to,) {
-      this.loadUseCase(to.params.use_case, to.params.world_definition);
-    },
-  },
-  async mounted() {
-    this.loadUseCase(this.use_case, this.world_definition);
+    const activeScreen = ref('');
+    const screens = ref([]);
+    const useCaseName = ref('');
+    const websocketPort = ref(null);
+    const showAlert = ref(true);
+    const webSocket = ref(null);
+    const fullEventHistory = ref([]);
+    const activeScreenObject = computed(() => screens.value.find(screen => screen.name === activeScreen.value));
+    const shouldRenderIframe = computed(() => activeScreen.value === '16bit');
+    const iframeSrc = computed(() => `${window.location.origin}:9000/16bit-front/?tankId=1`);
 
-    this._keyListener = function(e) {
-        if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
-            e.preventDefault(); // present "Save Page" from getting triggered.
-
-            this.downloadEventHistory();
-        }
-    };
-
-    document.addEventListener('keydown', this._keyListener.bind(this));  
-
-  },
-  beforeUnmount() {
-      document.removeEventListener('keydown', this._keyListener);
-  },
-  computed: {
-    activeScreenObject() {
-        return this.screens.find(screen => screen.name === this.activeScreen);
-    },
-    shouldRenderIframe() {
-    return this.activeScreen === '16bit';
-  }
-  },
-  methods: {
-    handleTabClick(screenName) {
-        console.log('Tab clicked:', screenName);
-        this.activeScreen = screenName;
-    },
-    async loadUseCase(use_case, world_definition) {     
+    const loadUseCase = async (use_case, world_definition) => {
       console.log('Loading use case:', use_case, world_definition)
       
       // Fetch configuration from REST API
-      const config = await this.fetchConfig(use_case, world_definition);
+      const config = await fetchConfig(use_case, world_definition);
       // Set the screens
-      this.screens = config.event_stream_config.screens;
-      for (const screen of this.screens) {
+      screens.value = config.event_stream_config.screens;
+      for (const screen of screens.value) {
         screen.event_history = [];
       }
-      if (this.screens.length > 0) {
-        this.activeScreen = this.screens[0].name;
+      if (screens.value.length > 0) {
+        activeScreen.value = screens.value[0].name;
       }
 
       // Set the use case name
-      this.useCaseName = config.event_stream_config.name;
+      useCaseName.value = config.event_stream_config.name;
 
       // Connect to WebSocket
-      this.websocketPort = config.port;
-      this.connectToWebSocket();
-    },
-    scrollToBottom() {
-      this.$nextTick(() => {
-        const container = this.$refs.chatContainer;
-        if (container) {
-          const lastMessage = container.lastElementChild;
-          if (lastMessage) {
-            lastMessage.scrollIntoView(false);
-          }
-        }
-      });
-    },
-    getFieldValue(event, fieldName) {
-      return fieldName in event ? event[fieldName] : '';
-    },
-    getEventCssClasses(event) {
-      const eventInfo = this.activeScreenObject.tracked_events.find((trackedEvent) => trackedEvent.event_type === event.event_type);
-      return 'css_classes' in eventInfo ? eventInfo.css_classes : '';
-    },
-    async fetchConfig(use_case, world_definition) {
-      try {
-        const response = await axios.get(`http://localhost:7457/trigger-use-case/${use_case}/${world_definition}`);
-        return response.data;
-      } catch (error) {
-        console.error('Error fetching config:', error);
-      }
-      return { screens: [], settings: {} };
-    },
-    connectToWebSocket() {
-      if (this.webSocket) {
-        this.webSocket.close();
-      }
+      websocketPort.value = config.port;
+      connectToWebSocket();
+    };
 
-      this.webSocket = new ReconnectingWebSocket(`ws://localhost:${this.websocketPort}/ws`, [], {maxRetries: 0});
+    const connectToWebSocket = () => {
+      if (webSocket.value) {
+        webSocket.value.close();
+      }
+      let wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const currentHost = window.location.host;
+      let wsUrl;
+      
+      if (websocketPort.value == 7456) {
+          wsUrl = `${wsProtocol}://${currentHost}:9000/real-ws/ws`;
+      } else {
+          wsUrl = `${wsProtocol}://${currentHost}:9000/mocked-ws/ws`;
+      }
+      webSocket.value = new ReconnectingWebSocket(wsUrl, [], {maxRetries: 0});
 
-      this.webSocket.addEventListener('message', (msg) => {
+      webSocket.value.addEventListener('message', (msg) => {
         const socketEvent = JSON.parse(msg.data);
         console.log('Received message:', socketEvent)
 
-        this.fullEventHistory.push(socketEvent);
+        fullEventHistory.value.push(socketEvent);
         
         // Check if the message contains all necessary data
         if (!socketEvent || socketEvent.event_type === null || socketEvent.event_type === undefined || socketEvent.created_at === null || socketEvent.created_at === undefined) {
@@ -212,7 +145,7 @@ export default {
             return; // Don't process this message
         } 
 
-        for (const screen of this.screens) {
+        for (const screen of screens.value) {
             for (const trackedEvent of screen.tracked_events) {
                 if (trackedEvent.event_type === socketEvent.event_type) {
                     const filteredEvent = {
@@ -228,15 +161,86 @@ export default {
                     screen.event_history.push(filteredEvent);
 
                     break;
-                    }
+                  }
                 }
             }
         });
-    },
-    downloadEventHistory() {
+    };
+
+    // Auto scroll chat to bottom
+    const chatContainer = ref(null);
+    watch(() => activeScreenObject, async () => {
+      await nextTick();
+
+      if (chatContainer.value) {
+        // Check if the user is near the bottom
+        const isNearBottom =
+          chatContainer.value.scrollHeight - chatContainer.value.scrollTop - chatContainer.value.clientHeight < 400;
+
+        // Only scroll to the bottom if the user is near the bottom
+        if (isNearBottom) {
+          chatContainer.value.scrollTo({top: chatContainer.value.scrollHeight, behavior: 'instant'});
+        }
+      }      
+    }, { deep: true });
+
+    const scrollToBottom = async () => {
+      await nextTick();
+    
+      if (chatContainer.value) {
+        const lastMessage = chatContainer.value.lastElementChild;
+        if (lastMessage) {
+          lastMessage.scrollIntoView(false);
+        }
+      }      
+    };
+
+
+    // Handle route changes
+    const route = useRoute();
+    watch(route, to => {
+      loadUseCase(to.params.use_case, to.params.world_definition);
+    });
+
+    onMounted(async () => {
+      await loadUseCase(props.use_case, props.world_definition);
+
+      const _keyListener = function(e) {
+          if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+              e.preventDefault();
+
+              downloadEventHistory();
+          }
+      };
+
+      document.addEventListener('keydown', _keyListener);  
+
+      onBeforeUnmount(() => {
+        document.removeEventListener('keydown', _keyListener);
+      });
+    });
+
+    const handleTabClick = (screenName) => {
+      console.log('Tab clicked:', screenName);
+      activeScreen.value = screenName;
+    };
+
+    const fetchConfig = async (use_case, world_definition) => {
+      try {
+        const currentUrl = window.location.host;
+        let protocol = window.location.protocol === 'https:' ? 'https' : 'http';
+        const response = await axios.get(`${protocol}://${currentUrl}:9000/world-instance/trigger-use-case/${use_case}/${world_definition}`);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching config:', error);
+      }
+      return { screens: [], settings: {} };
+    };
+
+    const downloadEventHistory = () => {
       // Suppose this is your JSON object
       const data = {
-        events: this.fullEventHistory,
+        events: fullEventHistory.value,
       }
 
       // Convert it to JSON string
@@ -263,10 +267,84 @@ export default {
 
       // Remove the link after the download starts
       document.body.removeChild(link);
-    },
+    };
+
+    const getFieldValue = (event, fieldName) => {
+      return fieldName in event ? event[fieldName] : '';
+    };
+
+    const getEventCssClasses = (event) => {
+      const eventInfo = activeScreenObject.value.tracked_events.find((trackedEvent) => trackedEvent.event_type === event.event_type);
+      return 'css_classes' in eventInfo ? eventInfo.css_classes : '';
+    };
+
+    
+
+    const useCaseActionsStore = useUseCaseActionStore();
+    const stopUseCase = async () => {
+      console.log('Stopping use case');
+
+      try {
+        const currentUrl = window.location.host;
+        let protocol = window.location.protocol === 'https:' ? 'https' : 'http';
+        const response = await axios.get(`${protocol}://${currentUrl}:9000/world-instance/kill-all-use-cases`);
+        console.log('Response:', response.data);
+      } catch (error) {
+        console.error('Error killing use case:', error);
+      }
+
+      webSocket.value.close();
+      webSocket.value = null;
+    };
+
+
+    watch(() => useCaseActionsStore.performStopUseCaseAction, (newVal) => {
+      if (newVal) {
+        stopUseCase();
+        useCaseActionsStore.setPerformStopUseCaseAction(false);
+      }
+    });
+    watch(() => useCaseActionsStore.performRestartUseCaseAction, (newVal) => {
+      if (newVal) {
+        loadUseCase(props.use_case, props.world_definition);
+        useCaseActionsStore.setPerformRestartUseCaseAction(false);
+      }
+    });
+    watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVal) => {
+      if (newVal) {
+        downloadEventHistory();
+        useCaseActionsStore.setPerformDownloadUseCaseEventHistoryAction(false);
+      }
+    });
+
+
+    return {
+      ...toRefs(props),
+      activeScreen,
+      screens,
+      useCaseName,
+      websocketPort,
+      showAlert,
+      webSocket,
+      fullEventHistory,
+      activeScreenObject,
+      shouldRenderIframe,
+      iframeSrc,
+      chatContainer,
+      handleTabClick,
+      loadUseCase,
+      connectToWebSocket,
+      fetchConfig,
+      downloadEventHistory,
+      getFieldValue,
+      getEventCssClasses,
+      scrollToBottom,
+    };
   },
 };
+
 </script>
+
 
 <style scoped>
 [format*="bold"] {

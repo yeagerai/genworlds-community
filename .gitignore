@@ -1,8 +1,12 @@
 __pycache__/
 .DS_Store
 node_modules
-/dist
+**/build
+**/dist
 
+# replit files
+**/replit-build
+replit-build.zip
 
 # local env files
 .env

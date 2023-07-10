@@ -13,8 +13,8 @@
     "start:prod": "webpack serve --open --mode=production",
     "prebuild": "yarn lint && yarn type-check",
     "build": "webpack --mode=production",
-    "lint": "eslint ./src --max-warnings 10 --ext .ts,.tsx",
-    "lint:ci": "CI=true eslint ./src --max-warnings 10 --ext .ts,.tsx",
+    "lint": "eslint ./src --max-warnings 10 --ext .ts,.tsx --fix",
+    "lint:ci": "CI=true eslint ./src --max-warnings 10 --ext .ts,.tsx --fix",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit",
     "type-check:ci": "CI=true tsc --project tsconfig.json --pretty --noEmit"
   },
