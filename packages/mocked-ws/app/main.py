@@ -76,6 +76,17 @@ async def send_mocked_world_event_stream(use_case: str, world_definition: str, b
     background_tasks.add_task(send_events, events, stop_event)
     return {"status": "The mocked world is running in the background"}
 
+@app.get("/kill-mocked-ws")
+async def send_mocked_world_event_stream():
+    # kill any running threads
+    while stop_events:
+        print(f"stopping {len(stop_events)} threads: {stop_events}")
+        stop_event = stop_events.popleft()
+        stop_event.set()
+        time.sleep(0.1)
+        
+    return {"status": "Stopped all mocked worlds"}
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket_manager.connect(websocket)
