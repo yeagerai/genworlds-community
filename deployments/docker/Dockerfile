@@ -93,7 +93,7 @@ COPY use_cases ./use_cases
 
 COPY .env ./.env
 
-COPY deployments/shared-scripts/runner.py ./runner.py
+COPY deployments/docker/runner.py ./runner.py
 
 EXPOSE 80
 EXPOSE 9000

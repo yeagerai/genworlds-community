@@ -4,6 +4,9 @@ node_modules
 **/build
 **/dist
 
+# replit files
+**/replit-build
+replit-build.zip
 
 # local env files
 .env

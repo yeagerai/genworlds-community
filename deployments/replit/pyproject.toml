@@ -6,7 +6,7 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.10.0,<3.11"
-genworlds = "0.0.9"
+genworlds = "0.0.10"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"
