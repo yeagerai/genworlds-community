@@ -22,8 +22,8 @@ world_definition:
     agents:
     - id: tony_soprano
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
-      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       name: Tony Soprano
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Host of the Podcast
       background: Tony Soprano is a fictional character, the protagonist in the HBO
         series "The Sopranos." Created by David Chase, Tony, portrayed by James Gandolfini,
@@ -81,8 +81,8 @@ world_definition:
         location: roundtable
     - id: al_capone
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
-      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       name: Al Capone
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Co-host of the podcast
       background: Al Capone, born in 1899 in Brooklyn, New York, was a notorious gangster
         and businessman during the Prohibition era. He left school at 14 and joined
@@ -135,8 +135,8 @@ world_definition:
         location: roundtable
     - id: pablo_escobar
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
-      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       name: Pablo Escobar
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: "Pablo Escobar, born in 1949 in Colombia, is infamous as the leader\
         \ of the Medell\xEDn Cartel, which controlled over 80% of the cocaine shipped\
@@ -193,8 +193,8 @@ world_definition:
         location: roundtable
     - id: el_chapo
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
-      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       name: El Chapo
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: "Joaqu\xEDn \"El Chapo\" Guzm\xE1n, born in Mexico to a poor farming\
         \ family, rose to lead the Sinaloa Cartel, one of the world's most powerful\

@@ -23,6 +23,7 @@ world_definition:
     - id: stephen_hawking_
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: 'Stephen Hawking '
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Host of the Podcast
       background: Stephen Hawking was a renowned British theoretical physicist and
         cosmologist. Born in 1942, he studied at Oxford and Cambridge, later holding
@@ -83,6 +84,7 @@ world_definition:
     - id: sam_altman
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Sam Altman
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: Sam Altman is an American entrepreneur and investor best known as
         the former president of Y Combinator and co-founder of OpenAI. Born in 1985,
@@ -140,6 +142,7 @@ world_definition:
     - id: eliezer_yudkowsky
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Eliezer Yudkowsky
+      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       role: Co-host of the podcast
       background: 'Eliezer Yudkowsky is an American AI researcher and writer known
         for his work in decision theory and AI safety. He co-founded the Machine Intelligence
@@ -198,6 +201,7 @@ world_definition:
     - id: bill_gates
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Bill Gates
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Co-host of the podcast
       background: Bill Gates, born in 1955, is an American business magnate, software
         developer, and philanthropist. He co-founded Microsoft Corporation in 1975
@@ -278,9 +282,9 @@ world_definition:
         avoiding jargon whenever possible.
       - Actively listen, as this is crucial to respond thoughtfully to others' ideas
         and create a richer discussion.
-      - Maintain a positive and engaging energy throughout the podcast to make the
-        discussion more enjoyable for listeners.
-      - Don't be afraid to engage in some good-natured ribbing when appropriate
+      - Maintain a nerdy and pretentious engaging energy throughout the podcast to
+        make the discussion more enjoyable for listeners.
+      - Argue your points when you disagree with other agents
       - Finally, wrap up with key takeaways to provide listeners with clear insights
         to reflect on after the podcast ends.
       evaluation_principles:

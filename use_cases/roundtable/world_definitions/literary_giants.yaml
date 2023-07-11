@@ -22,6 +22,7 @@ world_definition:
     - id: shakespeare
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Shakespeare
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Host of the Podcast
       background: William Shakespeare, born in 1564 in Stratford-upon-Avon, England,
         is widely regarded as the greatest writer in the English language. Despite
@@ -76,6 +77,7 @@ world_definition:
     - id: jane_austin
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Jane Austin
+      eleven_labs_voice_id: AZnzlk1XvdvUeBnXmlld
       role: Co-host of the podcast
       background: Jane Austen, a renowned British author, was born in 1775 in Hampshire,
         England. She was educated at home by her father and through extensive reading.
@@ -131,6 +133,7 @@ world_definition:
     - id: charles_dickens
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Charles Dickens
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Co-host of the podcast
       background: Charles Dickens, born in 1812 in Portsmouth, England, is celebrated
         as a literary genius. He spent his early years in London and Kent, locations
@@ -189,6 +192,7 @@ world_definition:
     - id: mark_twain
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Mark Twain
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: Mark Twain, born Samuel Clemens (1835-1910), was an American writer,
         humorist, and lecturer. Raised in Hannibal, Missouri, his work was influenced
@@ -245,24 +249,18 @@ world_definition:
       world_properties:
         location: roundtable
     base_agent:
-      topic_of_conversation: Today, you will discuss the profound impact of storytelling
-        on the human condition. Delve into how narratives shape our perceptions, actions,
-        and societal norms, tracing this influence from ancient oral traditions to
-        modern digital narratives. Explore the psychological mechanisms that make
-        stories so captivating, how they aid in conveying complex emotions, teach
-        moral values, and foster empathy. Lastly, share your unique insights on how
-        your own works have sought to illuminate aspects of the human condition through
-        your stories, and the role storytelling plays in defining and perpetuating
-        our collective humanity.
+      topic_of_conversation: write a character arc for the protaganist in a new novel.
+        Collaborate to make the character compelling and unique. Write a setting and
+        overall theme for the novel. Finish with the character's tragic death.
       goals:
-      - Participate in a discussion on the topic for a podcast
+      - write a compelling chracter arc for the protaganist of a new novel
       - Communicate your ideas in a way that's easy for the audience to understand,
         avoiding jargon whenever possible.
       - Actively listen, as this is crucial to respond thoughtfully to others' ideas
         and create a richer discussion.
-      - Maintain a positive and engaging energy throughout the podcast to make the
-        discussion more enjoyable for listeners.
-      - Don't be afraid to engage in some good-natured ribbing when appropriate
+      - Maintain a creative, thought proviing, and exploratory energy throughout the
+        podcast to make the discussion more enjoyable for listeners.
+      - Argue for your input into the character
       - Finally, wrap up with key takeaways to provide listeners with clear insights
         to reflect on after the podcast ends.
       evaluation_principles:

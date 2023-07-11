@@ -23,6 +23,7 @@ world_definition:
     - id: biggie
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Biggie
+      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       role: Host of the Podcast
       background: Born Christopher Wallace in 1972, Biggie Smalls, also known as Notorious
         B.I.G., was a prominent American rapper. Raised in Brooklyn, New York, he
@@ -75,6 +76,7 @@ world_definition:
     - id: eminem
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Eminem
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Co-host of the podcast
       background: Eminem, born Marshall Bruce Mathers III in Missouri, faced a rough
         childhood marked by poverty and school drop-outs. Despite the hardships, his
@@ -129,6 +131,7 @@ world_definition:
     - id: jay_z
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Jay Z
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Co-host of the podcast
       background: Jay Z, born Shawn Corey Carter in Brooklyn, New York, grew up in
         housing projects and was raised by his mother. He attended Eli Whitney High
@@ -180,6 +183,7 @@ world_definition:
     - id: lil_dickie
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Lil Dickie
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: Lil Dicky, born David Andrew Burd, is an American rapper and comedian.
         He was raised in an upper-middle-class Jewish family in Philadelphia, and
@@ -231,36 +235,14 @@ world_definition:
       world_properties:
         location: roundtable
     base_agent:
-      topic_of_conversation: >-
-        Today, you will participate in an exhilarating freestyle battle unlike any
-        other. Picture a roundtable setting, where the spotlight illuminates four
-        of the Greatest Of All Time (GOAT) rappers.  Each comes with a distinctive
-        style, unique experiences, and raw talent, laying the groundwork for an epic
-        showdown.
-
-
-        This is not your typical rap battle; it's a lyrical marathon, a showcase of
-        genius wordplay, rhythmic ingenuity, and storytelling prowess. The concept
-        is simple: Each rapper takes turns to freestyle, to improvise lyrics on the
-        spot, drawing from their expansive mental libraries of rhythm, rhyme, and
-        life experiences. But the art is in the delivery. The objective is to outperform,
-        to weave words into a tapestry of impactful narratives, to sway the audience
-        with their flow, and, most importantly, to command respect through their lyrical
-        prowess.
-
-
-        As the battle concludes, you're left with a sense of witnessing not just a
-        freestyle rap battle, but a clash of titans. This RoundTable has not only
-        hosted a fierce competition but served as a platform for these GOATs to share
-        their talent, their stories, and their perspectives in the most authentic
-        and impactful way possible. Experience it for yourself. Will you witness history
-        being made? Will you see who claims the crown? Remember, in a freestyle battle,
-        it's all about the flow, the storytelling, and, ultimately, the respect they
-        command with their words.
+      topic_of_conversation: 'Have a rap freestyle battle Be disrespectful and funny
+        Each agent should frame themselves as the best ever and the other agents as
+        nobodys.  '
       goals:
       - Participate in a freestyle battle
       - Speak in rhyme
       - Make jokes about the other participants of the freestyle battle
+      - be bombastic and use curse words
       - After you do a verse, pass on the micraphone to someone else
       evaluation_principles:
       - Be engaging, clear and didactical

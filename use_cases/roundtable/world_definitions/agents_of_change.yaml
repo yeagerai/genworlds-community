@@ -22,6 +22,7 @@ world_definition:
     - id: mahatma_gandhi
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Mahatma Gandhi
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Host of the Podcast
       background: Born in Porbandar, India in 1869, Mahatma Gandhi studied law in
         London before initiating civil rights movements in South Africa. Returning
@@ -79,6 +80,7 @@ world_definition:
     - id: nelson_mandela
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Nelson Mandela
+      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       role: Co-host of the podcast
       background: Nelson Mandela, born in 1918 in Mvezo, South Africa, studied law
         at Fort Hare University. He was a prominent anti-apartheid activist and co-founded
@@ -137,6 +139,7 @@ world_definition:
     - id: martin_luther_king_jr
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Martin Luther King Jr
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Co-host of the podcast
       background: Martin Luther King Jr, a pivotal figure in the American Civil Rights
         Movement, was born in 1929 in Atlanta, Georgia. He graduated from Morehouse
@@ -198,6 +201,7 @@ world_definition:
     - id: susan_b_anthony
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Susan B. Anthony
+      eleven_labs_voice_id: AZnzlk1XvdvUeBnXmlld
       role: Co-host of the podcast
       background: Susan B. Anthony, born in 1820 in Massachusetts, was a leading American
         women's rights activist. After teaching for 15 years, she became active in

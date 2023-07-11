@@ -23,6 +23,7 @@ world_definition:
     - id: michael_jordan
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Michael Jordan
+      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       role: Host of the Podcast
       background: Michael Jordan, born in 1963 in Brooklyn, New York, is a globally
         renowned former professional basketball player. He attended the University
@@ -78,6 +79,7 @@ world_definition:
     - id: babe_ruth
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Babe Ruth
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Co-host of the podcast
       background: Babe Ruth, born George Herman Ruth Jr. in 1898, was an American
         professional baseball player. Raised in Baltimore, he was sent to St. Mary's
@@ -136,6 +138,7 @@ world_definition:
     - id: pele
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Pele
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Co-host of the podcast
       background: Born Edson Arantes do Nascimento in 1940, Pele grew up in poverty
         in Bauru, Brazil. Despite financial constraints, he honed his soccer skills
@@ -191,6 +194,7 @@ world_definition:
     - id: tom_brady
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Tom Brady
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: Tom Brady, born in 1977, grew up in California and attended the
         University of Michigan, where he excelled in football. Drafted by the New
