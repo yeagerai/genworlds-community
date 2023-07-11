@@ -86,6 +86,7 @@ def main(input_file):
                 "id": id_from_name(row["agent_name"]),
                 "class": "use_cases.roundtable.agents.roundtable_agent.RoundtableAgent",
                 "name": row["agent_name"],
+                "eleven_labs_voice_id": row["eleven_labs_voice_id"],
                 "role": row["role"],
                 "background": row["background"],
                 "personality": row["personality"],

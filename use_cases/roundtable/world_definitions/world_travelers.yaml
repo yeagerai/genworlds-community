@@ -22,6 +22,7 @@ world_definition:
     - id: anthony_bourdain
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Anthony Bourdain
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Host of the Podcast
       background: 'Anthony Bourdain was an American celebrity chef, author, and TV
         personality. Born in 1956, he studied at the Culinary Institute of America
@@ -78,6 +79,7 @@ world_definition:
     - id: mark_wiens
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Mark Wiens
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: Mark Wiens is a renowned food travel blogger. Born in Arizona, USA,
         and educated in France and Africa, he developed a passion for exploring diverse
@@ -132,6 +134,7 @@ world_definition:
     - id: eva_zu_beck
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Eva Zu Beck
+      eleven_labs_voice_id: MF3mGyEYCl7XYWbV9V6O
       role: Co-host of the podcast
       background: Eva Zu Beck is a renowned Polish travel vlogger and content creator.
         She attended the University of Oxford, studying English Literature and Language.
@@ -188,6 +191,7 @@ world_definition:
     - id: sam_chui
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Sam Chui
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: Sam Chui is a renowned aviation blogger and photographer. Born in
         Beijing, he migrated to Hong Kong at an early age. Chui developed a passion

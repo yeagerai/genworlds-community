@@ -22,6 +22,7 @@ world_definition:
     - id: captain_kirk
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Captain Kirk
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Host of the Podcast
       background: Captain Kirk, full name James Tiberius Kirk, is a fictional character
         in the Star Trek franchise, originally played by William Shatner. Born in
@@ -83,6 +84,7 @@ world_definition:
     - id: neil_degrasse_tyson
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Neil DeGrasse Tyson
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Co-host of the podcast
       background: 'Neil DeGrasse Tyson is an American astrophysicist, author, and
         science communicator. Born and raised in New York City, Tyson discovered his
@@ -141,6 +143,7 @@ world_definition:
     - id: bob_lazar
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Bob Lazar
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: Bob Lazar is an American conspiracy theorist and claimed former
         Area 51 engineer. He was born in 1959 in Coral Gables, Florida. He attended
@@ -197,6 +200,7 @@ world_definition:
     - id: christopher_mellon
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Christopher Mellon
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: Christopher Mellon is a former US Deputy Assistant Secretary of
         Defense for Intelligence, having served in both the Clinton and George W.

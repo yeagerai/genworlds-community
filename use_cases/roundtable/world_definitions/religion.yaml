@@ -22,6 +22,7 @@ world_definition:
     - id: jesus_christ
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Jesus Christ
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Host of the Podcast
       background: Jesus Christ, believed to be the Son of God by Christians, was born
         in Bethlehem around 4 BC. Little is known about his early life, but at around
@@ -85,6 +86,7 @@ world_definition:
     - id: moses
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Moses
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: Moses, a major figure in the Abrahamic religions, was born in Egypt
         during a time when Hebrews were enslaved. According to biblical accounts,
@@ -137,6 +139,7 @@ world_definition:
     - id: buddha
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Buddha
+      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       role: Co-host of the podcast
       background: Born as Siddhartha Gautama in 5th century BC in Lumbini, Nepal,
         Buddha was a prince who renounced his worldly life in search of spiritual
@@ -193,6 +196,7 @@ world_definition:
     - id: muhammad
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Muhammad
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Co-host of the podcast
       background: Assuming you're referring to Muhammad of Islam, he was born in Mecca,
         Saudi Arabia, around 570 AD. Orphaned at an early age, he grew up under his

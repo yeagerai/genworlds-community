@@ -4,7 +4,7 @@ world_definition:
   world:
     id: world
     class: genworlds.worlds.world_2d.world_2d.World2D
-    name: Non-Fiction Villians
+    name: History's Villians
     description: A group discussion with the some of the worst tyrants in history.
     locations:
     - roundtable
@@ -22,6 +22,7 @@ world_definition:
     - id: adolph_hitler
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Adolph Hitler
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Host of the Podcast
       background: Adolf Hitler, born in Austria in 1889, was a failed artist before
         becoming a radical nationalist post-WWI. As a leader of the National Socialist
@@ -79,6 +80,7 @@ world_definition:
     - id: kim_jong_un
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Kim Jong Un
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Co-host of the podcast
       background: Kim Jong Un, born likely in 1984, is the Supreme Leader of North
         Korea, succeeding his father Kim Jong Il in 2011. Educated in Switzerland,
@@ -137,6 +139,7 @@ world_definition:
     - id: atila_the_hun
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Atila the Hun
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: Attila the Hun was the ruler of the Huns from 434 to 453 AD. Known
         for his ferocity and military prowess, he expanded the Hunnic Empire to its
@@ -187,6 +190,7 @@ world_definition:
     - id: joseph_stalin
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Joseph Stalin
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: Born in 1878 in Georgia, Stalin was educated at Tiflis Theological
         Seminary. He became involved in revolutionary politics and joined the Bolsheviks.

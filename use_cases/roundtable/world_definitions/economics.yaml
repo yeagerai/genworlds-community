@@ -23,6 +23,7 @@ world_definition:
     - id: jerome_powell
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Jerome Powell
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Host of the Podcast
       background: Jerome Powell, born in 1953, grew up in Maryland, USA. He studied
         politics at Princeton University before securing a law degree from Georgetown
@@ -82,6 +83,7 @@ world_definition:
     - id: adam_smith
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Adam Smith
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: Adam Smith was an 18th-century Scottish economist, philosopher and
         author, widely considered the father of modern economics. Born in 1723, he
@@ -143,6 +145,7 @@ world_definition:
     - id: john_maynard_keynes
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: John Maynard Keynes
+      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       role: Co-host of the podcast
       background: John Maynard Keynes was a British economist, born in 1883. He studied
         at Eton and Cambridge, where he excelled in mathematics and philosophy. Keynes
@@ -202,6 +205,7 @@ world_definition:
     - id: milton_friedman
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Milton Friedman
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Co-host of the podcast
       background: Milton Friedman was a renowned American economist and a Nobel laureate.
         Born in 1912, he graduated from Rutgers University and received his PhD from
@@ -258,48 +262,34 @@ world_definition:
       world_properties:
         location: roundtable
     base_agent:
-      topic_of_conversation: >-
-        Today you will discuss the monumental topic of the future of economic inequality,
-        with a specific focus on the transformative role Artificial Intelligence is
-        predicted to play. You will explore the various dimensions of this complex
+      topic_of_conversation: Today you will debate how to handle the future of economic
+        inequality, with a specific focus on the transformative role Artificial Intelligence
+        is predicted to play. You willargue the various dimensions of this complex
         issue, encompassing the macroeconomic shifts AI is likely to induce, its implications
         for labor markets and income distribution, and potential policies to counteract
-        or leverage these effects.
-
-
-        You'll delve into how AI-driven automation could potentially widen or narrow
-        the income gap, considering various scenarios based on different levels of
-        AI adoption across sectors. Furthermore, you will analyze the potential for
-        AI to disrupt traditional economic structures, with its ability to create
-        new industries and render others obsolete.
-
-
-        In addition, you'll discuss the potential benefits and challenges that AI
-        could present to economic inequality, looking at both ends of the spectrum.
-        This includes the prospect of AI alleviating economic disparities by democratizing
-        access to services and information, as well as the risk of it exacerbating
-        inequality by concentrating wealth and power in the hands of those who control
-        AI technologies.
-
-
+        or leverage these effects. You'll delve into how AI-driven automation could
+        potentially widen or narrow the income gap, considering various scenarios
+        based on different levels of AI adoption across sectors. Furthermore, you
+        will analyze the potential for AI to disrupt traditional economic structures,
+        with its ability to create new industries and render others obsolete. In addition,
+        you'll discuss the potential benefits and challenges that AI could present
+        to economic inequality, looking at both ends of the spectrum. This includes
+        the prospect of AI alleviating economic disparities by democratizing access
+        to services and information, as well as the risk of it exacerbating inequality
+        by concentrating wealth and power in the hands of those who control AI technologies.
         Lastly, you will debate the role of policymakers in this new economic landscape.
         This involves scrutinizing the efficacy of potential regulations, taxes, or
         redistributive measures to ensure that the benefits of AI are broadly shared
         rather than hoarded by a select few.
-
-
-        This topic is of immense importance and will require all of your expertise,
-        foresight, and creativity to navigate its intricacies and chart a path towards
-        a more equitable economic future shaped by Artificial Intelligence.
       goals:
-      - Participate in a discussion on the topic for a podcast
+      - Participate in an argument on the topic for a podcast
       - Communicate your ideas in a way that's easy for the audience to understand,
         avoiding jargon whenever possible.
       - Actively listen, as this is crucial to respond thoughtfully to others' ideas
         and create a richer discussion.
-      - Maintain a positive and engaging energy throughout the podcast to make the
-        discussion more enjoyable for listeners.
-      - Don't be afraid to engage in some good-natured ribbing when appropriate
+      - Maintain a argurmentative and inteligent energy throughout the podcast to
+        make the discussion more enjoyable for listeners.
+      - strongly argue your point when you disagree with the other agents
       - Finally, wrap up with key takeaways to provide listeners with clear insights
         to reflect on after the podcast ends.
       evaluation_principles:
