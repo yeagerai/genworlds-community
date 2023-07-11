@@ -21,7 +21,7 @@ app.add_middleware(
 
 websocket_manager = WebSocketManager()
 
-SPEEDUP_RATIO = 25
+SPEEDUP_RATIO = 15
 stop_events = deque()
 
 def send_events(events, stop_event: threading.Event):
@@ -84,7 +84,7 @@ async def send_mocked_world_event_stream():
         stop_event = stop_events.popleft()
         stop_event.set()
         time.sleep(0.1)
-        
+
     return {"status": "Stopped all mocked worlds"}
 
 @app.websocket("/ws")

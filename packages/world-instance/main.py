@@ -6,6 +6,7 @@ import os
 import json
 import time
 import requests
+import yaml
 
 from pydantic import BaseModel
 from fastapi import FastAPI, Request
@@ -87,11 +88,17 @@ async def trigger_world(request: Request, use_case: str, world_definition: str):
     port = PORT_REAL_WS if openai_api_key else PORT_MOCKED_WS
     is_mocked = not openai_api_key
 
+    # YAML world configuration file
+    yaml_path = f"use_cases/{use_case}/world_definitions/{world_definition}"
+    with open(yaml_path, 'r', encoding='utf-8') as stream:
+        yaml_data = yaml.safe_load(stream)
+
     response = {
         "status": "The world is running in the background",
         "port": port,
         "is_mocked": not openai_api_key,
-        "event_stream_config": event_stream_config
+        "event_stream_config": event_stream_config,
+        "yaml_data": yaml_data,
     }
 
     # all use cases should have a world_setup.py file containing a launch_use_case function
@@ -141,7 +148,7 @@ async def kill_all_use_cases():
 
     # Kill mocked socket
     try:
-        requests.get(f"http://localhost:{port}/kill-mocked-ws")
+        requests.get(f"http://localhost:{PORT_MOCKED_WS}/kill-mocked-ws")
     except Exception as e:
         print(f"An error occurred: {e}")
 

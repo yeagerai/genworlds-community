@@ -5,6 +5,7 @@ import { useUseCaseActionStore } from '@/stores/useCaseActionStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useRoute } from 'vue-router';
 import WorldInstance from '@/api/resources/WorldInstance';
+import TTS from '@/api/resources/TTS';
 
 const props = defineProps({
   use_case: {
@@ -19,6 +20,7 @@ const props = defineProps({
 
 const activeScreen = ref('');
 const screens = ref([]);
+const yamlData = ref('');
 const useCaseName = ref('');
 const websocketPort = ref(null);
 const showAlert = ref(true);
@@ -28,8 +30,12 @@ const activeScreenObject = computed(() => screens.value.find(screen => screen.na
 const shouldRenderIframe = computed(() => activeScreen.value === '16bit');
 const iframeSrc = computed(() => `${window.location.origin}:9000/16bit-front/?tankId=1`);
 
+const settingsStore = useSettingsStore();
+
 const loadUseCase = async (use_case, world_definition) => {
   console.log('Loading use case:', use_case, world_definition)
+
+  stopTTS();
   
   // Fetch configuration from REST API
   const config = await fetchConfig(use_case, world_definition);
@@ -42,6 +48,9 @@ const loadUseCase = async (use_case, world_definition) => {
     activeScreen.value = screens.value[0].name;
   }
 
+  // Set the YAML data
+  yamlData.value = config.yaml_data;
+
   // Set the use case name
   useCaseName.value = config.event_stream_config.name;
 
@@ -50,6 +59,89 @@ const loadUseCase = async (use_case, world_definition) => {
   connectToWebSocket();
 };
 
+const findAgentById = (agentId) => {
+  return yamlData.value.world_definition.world.agents.find(agent => agent.id === agentId);
+};
+
+
+// Text to speech
+const ttsEventQueue = ref([]);
+const ttsAudioPlayer = ref(null);
+const ttsIsLoading = ref(false);
+const processTTSQueue = async () => {
+  // If already loading playing, do nothing
+  if (ttsIsLoading.value || (ttsAudioPlayer.value && !ttsAudioPlayer.value.paused)) {
+    console.log('Already playing');
+    return;
+  }
+
+  if (ttsEventQueue.value.length > 0) {
+    try {
+      ttsIsLoading.value = true;
+      const event = ttsEventQueue.value.shift();
+      console.log('Playing TTS:', event.message);
+
+      const blob = await loadEventTTS(event);   
+      const audioSrc = URL.createObjectURL(blob);
+
+      if (!ttsAudioPlayer.value) {
+        ttsAudioPlayer.value = new Audio();
+        ttsAudioPlayer.value.type = "audio/mpeg";
+        ttsAudioPlayer.value.addEventListener('ended', () => {
+          console.log('TTS ended');
+          processTTSQueue();
+        });
+      }
+
+      ttsAudioPlayer.value.src = audioSrc;
+      ttsAudioPlayer.value.play();
+
+      // Preload the next TTS
+      if (ttsEventQueue.value.length > 0) {
+        const nextEvent = ttsEventQueue.value[0];
+        loadEventTTS(nextEvent);
+      }
+
+      ttsIsLoading.value = false;
+    } catch (error) {
+      console.error('Error playing TTS:', error);
+      processTTSQueue();
+    }
+  }
+};
+
+const loadEventTTS = async (event) => {
+  if (event.tts_promise) {
+    console.log('Already loading TTS for this event', event.message);
+    return event.tts_promise;
+  }
+
+  console.log('Loading TTS for event:', event.message);
+  const agent = findAgentById(event.sender_id);
+  const voiceId = agent.eleven_labs_voice_id || '21m00Tcm4TlvDq8ikWAM';
+  
+  event.tts_promise = TTS.convert(voiceId, event.message);   
+  return event.tts_promise; 
+}
+
+
+const stopTTS = () => {
+  // Empty the TTS queue and stop audio
+  ttsEventQueue.value = [];
+  if (ttsAudioPlayer.value)
+    ttsAudioPlayer.value.pause();
+    ttsAudioPlayer.value = null;
+};
+
+watch(() => settingsStore.settings.enableTTS, (newVal) => {
+  if (!newVal) {
+    stopTTS();
+  }
+}, { deep: true });
+
+
+
+// Websocket
 const connectToWebSocket = () => {
   if (webSocket.value) {
     webSocket.value.close();
@@ -76,6 +168,12 @@ const connectToWebSocket = () => {
         console.warn('Invalid message received:', msg.data);
         return; // Don't process this message
     } 
+
+    // TTS
+    if (settingsStore.settings.elevenLabsApiKey && settingsStore.settings.enableTTS && 'message' in socketEvent) {
+      ttsEventQueue.value.push(socketEvent);
+      processTTSQueue();
+    }
 
     for (const screen of screens.value) {
         for (const trackedEvent of screen.tracked_events) {
@@ -124,7 +222,6 @@ watch(route, to => {
 
 
 // Handle API key changes
-const settingsStore = useSettingsStore();
 watch(() => settingsStore.settings.openaiApiKey, () => {
   loadUseCase(props.use_case, props.world_definition);
 }, { deep: true });
@@ -148,7 +245,6 @@ onMounted(async () => {
 });
 
 const handleTabClick = (screenName) => {
-  console.log('Tab clicked:', screenName);
   activeScreen.value = screenName;
 };
 
@@ -158,7 +254,7 @@ const fetchConfig = async (use_case, world_definition) => {
   } catch (error) {
     console.error('Error fetching config:', error);
   }
-  return { screens: [], settings: {} };
+  return { screens: [], settings: {}, yamlData: '' };
 };
 
 const downloadEventHistory = () => {
@@ -203,7 +299,7 @@ const getEventCssClasses = (event) => {
 };
 
 
-
+// Handle use case actions
 const useCaseActionsStore = useUseCaseActionStore();
 const stopUseCase = async () => {
   console.log('Stopping use case');
@@ -213,6 +309,8 @@ const stopUseCase = async () => {
   } catch (error) {
     console.error('Error stopping use case:', error);
   }
+
+  stopTTS();
 
   webSocket.value.close();
   webSocket.value = null;
