@@ -18,10 +18,11 @@ const props = defineProps({
   },
 })
 
+const useCaseStarted = ref(false);
 const activeScreen = ref('');
 const screens = ref([]);
 const yamlData = ref('');
-const useCaseName = ref('');
+const useCaseName = computed(() => yamlData.value ? yamlData.value.world_definition.world.name : '');
 const websocketPort = ref(null);
 const showAlert = ref(true);
 const webSocket = ref(null);
@@ -34,6 +35,8 @@ const settingsStore = useSettingsStore();
 
 const loadUseCase = async (use_case, world_definition) => {
   console.log('Loading use case:', use_case, world_definition)
+
+  useCaseStarted.value = true;
 
   stopTTS();
   
@@ -223,19 +226,17 @@ watch(() => activeScreenObject, async () => {
 
 // Handle route changes
 const route = useRoute();
-watch(route, to => {
-  loadUseCase(to.params.use_case, to.params.world_definition);
+watch(route, () => {
+  stopUseCase();
 });
 
 
 // Handle API key changes
 watch(() => settingsStore.settings.openaiApiKey, () => {
-  loadUseCase(props.use_case, props.world_definition);
+  useCaseStarted.value = false;
 }, { deep: true });
 
 onMounted(async () => {
-  await loadUseCase(props.use_case, props.world_definition);
-
   const _keyListener = function(e) {
       if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
           e.preventDefault();
@@ -317,6 +318,8 @@ const stopUseCase = async () => {
     console.error('Error stopping use case:', error);
   }
 
+  useCaseStarted.value = false;
+
   stopTTS();
 
   webSocket.value.close();
@@ -345,7 +348,14 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
 </script>
 
 <template>
-  <div v-if="screens.length > 0" class="p-4 flex flex-col h-full">
+  <div v-if="!useCaseStarted" class="flex-1 mb-4 h-full w-full">
+    <button @click="loadUseCase(props.use_case, props.world_definition)" class="btn btn-ghost btn-lg h-full w-full">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-32 h-32">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+      </svg>
+    </button>
+  </div>
+  <div v-else-if="screens.length > 0" class="p-4 flex flex-col h-full">
     <div v-if="showAlert && websocketPort == 7455" class="alert alert-warning mb-4">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
       <p>
@@ -356,7 +366,7 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
       </p>
       <button @click="showAlert = false" class="btn btn-sm">OK</button>
     </div>
-    <!-- <h1 class="text-xl mb-4">{{ useCaseName }}</h1> -->
+    <h1 class="text-xl mb-4">{{ useCaseName }}</h1>
     <div class="tabs tabs-boxed mb-4">
       <button
         v-for="screen in screens"
