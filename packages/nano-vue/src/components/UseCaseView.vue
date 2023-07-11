@@ -130,6 +130,12 @@ const loadEventTTS = async (event) => {
 
 const stopTTS = () => {
   // Empty the TTS queue and stop audio
+  for (const event of ttsEventQueue.value) {
+    if (event.tts_promise) {
+      event.tts_promise.cancel();
+    }
+  }
+
   ttsEventQueue.value = [];
   if (ttsAudioPlayer.value)
     ttsAudioPlayer.value.pause();
@@ -227,6 +233,7 @@ watch(() => activeScreenObject, async () => {
 // Handle route changes
 const route = useRoute();
 watch(route, () => {
+  useCaseStarted.value = false;
   stopUseCase();
 });
 
@@ -317,8 +324,6 @@ const stopUseCase = async () => {
   } catch (error) {
     console.error('Error stopping use case:', error);
   }
-
-  useCaseStarted.value = false;
 
   stopTTS();
 
