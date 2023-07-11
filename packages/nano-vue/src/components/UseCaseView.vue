@@ -6,6 +6,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { useRoute } from 'vue-router';
 import WorldInstance from '@/api/resources/WorldInstance';
 import TTS from '@/api/resources/TTS';
+import WorldDetails from './WorldDetails.vue';
 
 const props = defineProps({
   use_case: {
@@ -29,6 +30,7 @@ const webSocket = ref(null);
 const fullEventHistory = ref([]);
 const activeScreenObject = computed(() => screens.value.find(screen => screen.name === activeScreen.value));
 const shouldRenderIframe = computed(() => activeScreen.value === '16bit');
+const shouldRenderWorldDetails = computed(() => activeScreen.value === 'world_details');
 const iframeSrc = computed(() => `${window.location.origin}:9000/16bit-front/?tankId=1`);
 
 const settingsStore = useSettingsStore();
@@ -331,8 +333,10 @@ const stopUseCase = async () => {
 
   stopTTS();
 
-  webSocket.value.close();
-  webSocket.value = null;
+  if (webSocket.value) {
+    webSocket.value.close();
+    webSocket.value = null;
+  }
 };
 
 
@@ -394,6 +398,14 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
       >
         16bit
       </button>
+      <button
+        :key="'world_details'"
+        @click="handleTabClick('world_details')"
+        :class="{ 'tab-active': activeScreen === 'world_details' }"
+        class="tab"
+      >
+        World Details
+      </button>
     </div>
     <div class="overflow-y-auto flex-1 mb-4" ref="chatContainer">
       <div v-if="shouldRenderIframe" class="w-full h-full">
@@ -405,6 +417,9 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
             allowfullscreen
             >
           </iframe>
+      </div>
+      <div v-else-if="shouldRenderWorldDetails" class="w-full h-full">
+        <WorldDetails :yamlData="yamlData" class="w-full h-full"/>
       </div>
       <div v-else>
         <div v-if="activeScreenObject" class="p-6 rounded-lg shadow-md">
