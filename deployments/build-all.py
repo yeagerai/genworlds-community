@@ -3,7 +3,7 @@ import subprocess
 import shutil
 
 # build the docker image
-subprocess.check_call(['docker', 'build', '-t', 'genworlds-world-app', '-f', './deployments/docker/Dockerfile', '.'])
+subprocess.check_call(['docker', 'build', '--no-cache', '-t', 'genworlds-world-app', '-f', './deployments/docker/Dockerfile', '.'])
 
 # get the id of the image
 image_id = subprocess.check_output(['docker', 'inspect', '--format="{{.Id}}"', 'genworlds-world-app']).strip().decode('utf-8')
