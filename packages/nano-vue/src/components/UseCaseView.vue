@@ -85,6 +85,12 @@ const processTTSQueue = async () => {
       console.log('Playing TTS:', event.message);
 
       const blob = await loadEventTTS(event);   
+
+      if (event.tts_cancelled) {
+        console.log('TTS cancelled');
+        return;
+      }
+
       const audioSrc = URL.createObjectURL(blob);
 
       if (!ttsAudioPlayer.value) {
@@ -131,9 +137,7 @@ const loadEventTTS = async (event) => {
 const stopTTS = () => {
   // Empty the TTS queue and stop audio
   for (const event of ttsEventQueue.value) {
-    if (event.tts_promise) {
-      event.tts_promise.cancel();
-    }
+    event.tts_cancelled = true;
   }
 
   ttsEventQueue.value = [];
