@@ -172,6 +172,13 @@ const connectToWebSocket = () => {
     // TTS
     if (settingsStore.settings.elevenLabsApiKey && settingsStore.settings.enableTTS && 'message' in socketEvent) {
       ttsEventQueue.value.push(socketEvent);
+
+      // Preload the next TTS
+      if (ttsEventQueue.value.length == 1) {
+        const nextEvent = ttsEventQueue.value[0];
+        loadEventTTS(nextEvent);
+      }
+
       processTTSQueue();
     }
 
