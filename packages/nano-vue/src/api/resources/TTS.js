@@ -27,7 +27,7 @@ export default {
             "text": text,
             "model_id": "eleven_monolingual_v1",
             "voice_settings": {
-              "stability": 0,
+              "stability": 0.33,
               "similarity_boost": 0,
               "style": 0.5,
               "use_speaker_boost": false
