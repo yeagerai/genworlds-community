@@ -13,6 +13,8 @@ interface MapInfo {
   tilemap: string;
 }
 
+type MapValue = MapInfo | (() => MapInfo);
+
 export const AVAILABLE_MAPS: Partial<{ [key in MAPS]: MapInfo | (() => MapInfo) }> = {
   [MAPS.TEST_MAP]: {
     tilemap: 'Mapa_Prova_Anna_02.json',
@@ -37,8 +39,12 @@ export const AVAILABLE_MAPS: Partial<{ [key in MAPS]: MapInfo | (() => MapInfo) 
   },
 };
 
+const SELECTED_MAPS = [
+  'MAPA BIBLIOTECA.json',
+  'MAPA RESEARCH.json'
+];
+
 AVAILABLE_MAPS[MAPS.RANDOM] = function() {
-  const mapKeys = Object.keys(AVAILABLE_MAPS).filter(key => key !== MAPS.RANDOM) as Exclude<MAPS, MAPS.RANDOM>[];
-  const randomKey = mapKeys[Math.floor(Math.random() * mapKeys.length)];
-  return AVAILABLE_MAPS[randomKey] as MapInfo;
+  const randomFile = SELECTED_MAPS[Math.floor(Math.random() * SELECTED_MAPS.length)];
+  return { tilemap: randomFile };
 };

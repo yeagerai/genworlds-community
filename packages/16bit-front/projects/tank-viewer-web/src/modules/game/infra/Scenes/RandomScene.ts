@@ -307,43 +307,42 @@ export class RandomScene extends AbstractAgentsScene {
   }
 
   // # Agent Position and Orientation  #########################################
+  private agentPositions: { [key: string]: number } = {};
+  private availablePositions: number[] = [0, 1, 2, 3];
 
   // eslint-disable-next-line class-methods-use-this
-  private getAgentPosition(agentName: string): number {
-    let position = -1;
-
-    if (agentName.includes('chamath')) {
-      position = 0;
-    } else if (agentName.includes('jason')) {
-      position = 1;
-    } else if (agentName.includes('davidf')) {
-      position = 2;
-    } else if (agentName.includes('davids')) {
-      position = 3;
-    }
-
-    return position;
+private getAgentPosition(agentName: string): number {
+  // If the agent already has a position, return it
+  if (agentName in this.agentPositions) {
+    return this.agentPositions[agentName];
   }
+
+  // If there are no available positions, throw an error or handle it appropriately
+  if (this.availablePositions.length === 0) {
+    throw new Error("No available positions for new agents.");
+  }
+
+  // Assign a random available position to the agent
+  const randomIndex = Math.floor(Math.random() * this.availablePositions.length);
+  const newPosition = this.availablePositions[randomIndex];
+
+  // Remove the assigned position from the available positions
+  this.availablePositions.splice(randomIndex, 1);
+
+  // Store the assigned position
+  this.agentPositions[agentName] = newPosition;
+
+  return newPosition;
+}
 
   // eslint-disable-next-line class-methods-use-this
   private getAgentLongName(agentName: string): string {
-    let longName = '';
-
-    if (agentName.includes('jason')) {
-      longName = 'Jason Calacanis';
-    } else if (agentName.includes('chamath')) {
-      longName = 'Chamath Palihapitiya';
-    } else if (agentName.includes('davidf')) {
-      longName = 'David Friedberg';
-    } else if (agentName.includes('davids')) {
-      longName = 'David Sacks';
-    }
-
+    let longName = agentName;
     return longName;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private getAgentSpriteName(agentName: string): string {
+  private getAgentSpriteName(): string {
     let spriteName = '';
     // Randomly select a number between 1 and 20
     const bodyNum = Math.floor(Math.random() * 20) + 1;
@@ -574,7 +573,7 @@ export class RandomScene extends AbstractAgentsScene {
 
       if (agentPosition === -1) return;
 
-      const spriteName = this.getAgentSpriteName(aiA.name);
+      const spriteName = this.getAgentSpriteName();
       const spawnPoint =
         this.spawnPoints[agentPosition % this.spawnPoints.length];
 

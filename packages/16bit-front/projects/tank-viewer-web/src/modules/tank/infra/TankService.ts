@@ -16,6 +16,7 @@ export class TankService {
     ['1', { ...TANK_MOCK_BASE, id: '1', mapId: MAPS.POKER }],
     ['2', { ...TANK_MOCK_BASE, id: '2', mapId: MAPS.LABORATORY }],
     ['3', { ...TANK_MOCK_BASE, id: '3', mapId: MAPS.LIBRARY }],
+    ['1234', { ...TANK_MOCK_BASE, id: '1234', mapId: MAPS.RANDOM }],
     ['2001', { ...TANK_MOCK_BASE, id: '2001', mapId: MAPS.TEST_POKER }],
     ['2002', { ...TANK_MOCK_BASE, id: '2002', mapId: MAPS.TEST_LABORATORY }],
     ['2003', { ...TANK_MOCK_BASE, id: '2003', mapId: MAPS.TEST_LIBRARY }],
