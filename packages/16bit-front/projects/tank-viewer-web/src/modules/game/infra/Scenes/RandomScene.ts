@@ -1,10 +1,7 @@
 import { AiAgent, SpeechMessage, Tilemap } from '@yeager/common-types';
 import { sleep } from '@/modules/utils/sleep';
 import {
-  JasonCalacanis,
-  ChamathPalihapitiya,
-  DavidFriedberg,
-  DavidSacks,
+  Body001, Body002, Body003, Body004, Body005, Body006, Body007, Body008, Body009, Body010, Body011, Body012, Body013, Body014, Body015, Body016, Body017, Body018, Body019, Body020,
   // collision,
 } from '@/assets';
 
@@ -31,7 +28,7 @@ enum TimeWaitingForNextMessage {
   MINIMAL = 1000,
 }
 
-export class PokerScene extends AbstractAgentsScene {
+export class RandomScene extends AbstractAgentsScene {
   private map!: Phaser.Tilemaps.Tilemap;
   private worldLayers: Phaser.Tilemaps.TilemapLayer[];
   private messageSpeed: number = MessageSpeeds.NORMAL;
@@ -149,22 +146,102 @@ export class PokerScene extends AbstractAgentsScene {
     // load images, tileMaps and Sprites
     this.load
       .tilemapTiledJSON('tilemap', this.tilemap)
-      .spritesheet('JasonCalacanis', JasonCalacanis, {
+      .spritesheet('Body001', Body001, {
         frameWidth: 16,
         frameHeight: 48,
         startFrame: 0,
       })
-      .spritesheet('ChamathPalihapitiya', ChamathPalihapitiya, {
+      .spritesheet('Body002', Body002, {
         frameWidth: 16,
         frameHeight: 48,
         startFrame: 0,
       })
-      .spritesheet('DavidFriedberg', DavidFriedberg, {
+      .spritesheet('Body003', Body003, {
         frameWidth: 16,
         frameHeight: 48,
         startFrame: 0,
       })
-      .spritesheet('DavidSacks', DavidSacks, {
+      .spritesheet('Body004', Body004, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body005', Body005, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body006', Body006, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body007', Body007, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body008', Body008, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body009', Body009, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body010', Body010, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body011', Body011, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body012', Body012, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body013', Body013, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body014', Body014, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body015', Body015, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body016', Body016, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body017', Body017, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body018', Body018, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body019', Body019, {
+        frameWidth: 16,
+        frameHeight: 48,
+        startFrame: 0,
+      })
+      .spritesheet('Body020', Body020, {
         frameWidth: 16,
         frameHeight: 48,
         startFrame: 0,
@@ -230,55 +307,47 @@ export class PokerScene extends AbstractAgentsScene {
   }
 
   // # Agent Position and Orientation  #########################################
+  private agentPositions: { [key: string]: number } = {};
+  private availablePositions: number[] = [0, 1, 2, 3];
 
   // eslint-disable-next-line class-methods-use-this
-  private getAgentPosition(agentName: string): number {
-    let position = -1;
-
-    if (agentName.includes('chamath')) {
-      position = 0;
-    } else if (agentName.includes('jason')) {
-      position = 1;
-    } else if (agentName.includes('friedberg')) {
-      position = 2;
-    } else if (agentName.includes('sacks')) {
-      position = 3;
-    }
-
-    return position;
+private getAgentPosition(agentName: string): number {
+  // If the agent already has a position, return it
+  if (agentName in this.agentPositions) {
+    return this.agentPositions[agentName];
   }
+
+  // If there are no available positions, throw an error or handle it appropriately
+  if (this.availablePositions.length === 0) {
+    throw new Error("No available positions for new agents.");
+  }
+
+  // Assign a random available position to the agent
+  const randomIndex = Math.floor(Math.random() * this.availablePositions.length);
+  const newPosition = this.availablePositions[randomIndex];
+
+  // Remove the assigned position from the available positions
+  this.availablePositions.splice(randomIndex, 1);
+
+  // Store the assigned position
+  this.agentPositions[agentName] = newPosition;
+
+  return newPosition;
+}
 
   // eslint-disable-next-line class-methods-use-this
   private getAgentLongName(agentName: string): string {
-    let longName = '';
-
-    if (agentName.includes('jason')) {
-      longName = 'Jason Calacanis';
-    } else if (agentName.includes('chamath')) {
-      longName = 'Chamath Palihapitiya';
-    } else if (agentName.includes('friedberg')) {
-      longName = 'David Friedberg';
-    } else if (agentName.includes('sacks')) {
-      longName = 'David Sacks';
-    }
-
+    let longName = agentName;
     return longName;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private getAgentSpriteName(agentName: string): string {
+  private getAgentSpriteName(): string {
     let spriteName = '';
-
-    if (agentName.includes('jason')) {
-      spriteName = 'JasonCalacanis';
-    } else if (agentName.includes('chamath')) {
-      spriteName = 'ChamathPalihapitiya';
-    } else if (agentName.includes('friedberg')) {
-      spriteName = 'DavidFriedberg';
-    } else if (agentName.includes('sacks')) {
-      spriteName = 'DavidSacks';
-    }
-
+    // Randomly select a number between 1 and 20
+    const bodyNum = Math.floor(Math.random() * 20) + 1;
+    // Prepend 'Body' and add leading zeroes if necessary
+    spriteName = 'Body' + String(bodyNum).padStart(3, '0');
     return spriteName;
   }
 
@@ -504,7 +573,7 @@ export class PokerScene extends AbstractAgentsScene {
 
       if (agentPosition === -1) return;
 
-      const spriteName = this.getAgentSpriteName(aiA.name);
+      const spriteName = this.getAgentSpriteName();
       const spawnPoint =
         this.spawnPoints[agentPosition % this.spawnPoints.length];
 

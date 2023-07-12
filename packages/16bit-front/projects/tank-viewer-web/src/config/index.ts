@@ -32,7 +32,7 @@ function getEnvironment(): Environment {
 }
 
 const getWsUrl = (): string => {
-  const wsProtocol: string = window.location.protocol === 'https:' ? 'https' : 'http';
+  const wsProtocol: string = window.location.protocol === 'https:' ? 'wss' : 'ws';
   const currentHost: string = window.location.host;
   const url: string = `${wsProtocol}://${currentHost}/16bit-back`;
   /* eslint-disable no-console */

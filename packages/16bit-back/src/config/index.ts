@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 export interface AppConfig {
   env: 'production' | 'staging' | 'development' | 'test' ;
   logging: {
@@ -88,8 +90,8 @@ export const config: AppConfig = {
     world: {
       websocket: {
         host: process.env.YEAGER_WORLD_WS_HOST || 'localhost',
-        port: process.env.YEAGER_WORLD_WS_PORT ? +process.env.YEAGER_WORLD_WS_PORT : 5001,
-        path: process.env.YEAGER_WORLD_WS_PATH || 'world',
+        port: process.env.OPENAI_API_KEY ? 7456 : 7455,
+        path: process.env.YEAGER_WORLD_WS_PATH || 'ws',
       },
     },
   },

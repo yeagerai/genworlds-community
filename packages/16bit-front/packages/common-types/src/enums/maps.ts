@@ -6,13 +6,16 @@ export enum MAPS {
   TEST_LABORATORY = 'test-laborator',
   LIBRARY = 'test',
   TEST_LIBRARY = 'test-library',
+  RANDOM = 'random',
 }
 
 interface MapInfo {
   tilemap: string;
 }
 
-export const AVAILABLE_MAPS: { [key in MAPS]: MapInfo } = {
+type MapValue = MapInfo | (() => MapInfo);
+
+export const AVAILABLE_MAPS: Partial<{ [key in MAPS]: MapInfo | (() => MapInfo) }> = {
   [MAPS.TEST_MAP]: {
     tilemap: 'Mapa_Prova_Anna_02.json',
   },
@@ -34,7 +37,14 @@ export const AVAILABLE_MAPS: { [key in MAPS]: MapInfo } = {
   [MAPS.TEST_LIBRARY]: {
     tilemap: 'MAPA BIBLIOTECA.json',
   },
-  // [MAPS.BIBLIOTECA]: {
-  //   tilemap: 'Mapa Biblioteca.json',
-  // },
+};
+
+const SELECTED_MAPS = [
+  'MAPA BIBLIOTECA.json',
+  'MAPA RESEARCH.json'
+];
+
+AVAILABLE_MAPS[MAPS.RANDOM] = function() {
+  const randomFile = SELECTED_MAPS[Math.floor(Math.random() * SELECTED_MAPS.length)];
+  return { tilemap: randomFile };
 };

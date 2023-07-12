@@ -67,7 +67,7 @@ RUN apt-get update && \
     curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y redis-server nodejs
 
-RUN npm install express http-proxy
+RUN npm install express http-proxy dotenv
 # Copy build artifacts from each stage
 COPY packages/16bit-back/package.json packages/16bit-back/package-lock.json ./
 COPY --from=node-builder-16bit-back --chown=root:root /root/build/dep-tsc/dist ./
