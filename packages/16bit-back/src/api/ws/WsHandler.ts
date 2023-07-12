@@ -19,7 +19,7 @@ export class WsHandler {
 
     const { host, port, path } = config.yeager.world.websocket;
     // TODO: check if the port is the mocked-ws or the real-ws by calling world-instance endpoint
-    const wsUrl = `ws://localhost:7455/ws`;
+    const wsUrl = `ws://${host}:${port}/${path}`;
 
     this.wsClient = new WebSocket(wsUrl, {
       perMessageDeflate: false,
