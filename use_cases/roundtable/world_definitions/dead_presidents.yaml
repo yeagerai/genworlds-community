@@ -4,7 +4,7 @@ world_definition:
   world:
     id: world
     class: genworlds.worlds.world_2d.world_2d.World2D
-    name: President GOATS
+    name: Dead Presidents
     description: Discuss leadership and the future of the western world with the great
       presidents from history
     locations:
@@ -23,6 +23,7 @@ world_definition:
     - id: george_washington
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: George Washington
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Host of the Podcast
       background: Born in 1732, George Washington grew up in Colonial Virginia. His
         formal education was limited, but he found success as a land surveyor and
@@ -72,6 +73,7 @@ world_definition:
     - id: abraham_lincoln
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Abraham Lincoln
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: Abraham Lincoln, born in Kentucky in 1809, was largely self-educated.
         He progressed from a Kentucky log cabin to becoming the 16th President of
@@ -132,6 +134,7 @@ world_definition:
     - id: john_f_kennedy
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: John F. Kennedy
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: John F. Kennedy (JFK) was born in 1917 into a wealthy, politically
         connected Boston family. He graduated from Harvard University in 1940 and
@@ -194,6 +197,7 @@ world_definition:
       name: 'Franklin D. Roosevelt
 
         '
+      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       role: Co-host of the podcast
       background: "Franklin D. Roosevelt, born into a wealthy New York family in 1882,\
         \ studied at Harvard and Columbia Law School. He began his political career\
@@ -292,11 +296,11 @@ world_definition:
       - Only the holder of the microphone can speak to the audience, if you don't
         have the microphone in your inventory, wait to receive it from the previous
         speaker
+      - If you have asked a question to an agent, make sure to give the microphone
+        to that agent so they can answer
       - Don't repeat yourself, ask insightful questions to the guests of the podcast
         to advance the conversation
       - Don't hog the microphone for a long time, make sure to give it to other participants
-      - If you have asked a question, make sure to give the microphone to the guest
-        so they can answer
       - If you have completed your statement, make sure to give the microphone to
         the next speaker
       - Do not wait if you still have the microphone, speak or pass the microphone

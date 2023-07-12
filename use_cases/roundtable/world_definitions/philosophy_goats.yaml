@@ -23,6 +23,7 @@ world_definition:
     - id: socrates
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Socrates
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Host of the Podcast
       background: Socrates, a classical Greek philosopher born in Athens around 469
         BC, is renowned as one of the founders of Western philosophy. Unusually, he
@@ -74,6 +75,7 @@ world_definition:
     - id: plato
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Plato
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: Plato was an eminent philosopher in Ancient Greece, born into a
         noble Athenian family around 428 BC. He studied under Socrates and later taught
@@ -132,6 +134,7 @@ world_definition:
     - id: aristotle
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Aristotle
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: Aristotle, an ancient Greek philosopher, was born in 384 BC in Stagira,
         Macedonia. He studied under Plato at the Academy in Athens and later tutored
@@ -192,6 +195,7 @@ world_definition:
     - id: marcus_aurelius
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Marcus Aurelius
+      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       role: Co-host of the podcast
       background: Marcus Aurelius was a Roman emperor from 161 to 180 AD, known as
         the last of the Five Good Emperors. Born into a prominent family, he was adopted
@@ -261,14 +265,14 @@ world_definition:
         layers of our understanding and challenge our conventional perspectives about
         art, technology, and their intriguing intersection.
       goals:
-      - Participate in a discussion on the topic for a podcast
+      - Have a moral and ethical debate on the topic exploring all angles
       - Communicate your ideas in a way that's easy for the audience to understand,
         avoiding jargon whenever possible.
       - Actively listen, as this is crucial to respond thoughtfully to others' ideas
         and create a richer discussion.
-      - Maintain a positive and engaging energy throughout the podcast to make the
-        discussion more enjoyable for listeners.
-      - Don't be afraid to engage in some good-natured ribbing when appropriate
+      - Maintain a wise and engaging energy throughout the podcast to make the discussion
+        more enjoyable for listeners.
+      - Speak up if you disagree with the other agents
       - Finally, wrap up with key takeaways to provide listeners with clear insights
         to reflect on after the podcast ends.
       evaluation_principles:
@@ -277,11 +281,11 @@ world_definition:
       - Only the holder of the microphone can speak to the audience, if you don't
         have the microphone in your inventory, wait to receive it from the previous
         speaker
+      - If you have asked a question to an agent, make sure to give the microphone
+        to that agent so they can answer
       - Don't repeat yourself, ask insightful questions to the guests of the podcast
         to advance the conversation
       - Don't hog the microphone for a long time, make sure to give it to other participants
-      - If you have asked a question, make sure to give the microphone to the guest
-        so they can answer
       - If you have completed your statement, make sure to give the microphone to
         the next speaker
       - Do not wait if you still have the microphone, speak or pass the microphone

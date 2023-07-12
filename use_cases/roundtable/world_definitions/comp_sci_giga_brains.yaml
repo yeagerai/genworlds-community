@@ -4,7 +4,7 @@ world_definition:
   world:
     id: world
     class: genworlds.worlds.world_2d.world_2d.World2D
-    name: Comp Sci GOATS
+    name: Comp Sci Giga-Brains
     description: Pick the (giga)brains of the best computer scientists of all time.
     locations:
     - roundtable
@@ -22,6 +22,7 @@ world_definition:
     - id: alan_turing
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Alan Turing
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Host of the Podcast
       background: Alan Turing, a British mathematician, logician, and computer scientist,
         played a key role in breaking German ciphers during WWII. He studied mathematics
@@ -86,6 +87,7 @@ world_definition:
     - id: donald_knuth
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Donald Knuth
+      eleven_labs_voice_id: yoZ06aMxZJJ28mfd3POQ
       role: Co-host of the podcast
       background: Donald Knuth is an acclaimed American computer scientist and mathematician,
         best known for his multi-volume work, "The Art of Computer Programming". Born
@@ -145,6 +147,7 @@ world_definition:
     - id: linus_torvalds
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Linus Torvalds
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Co-host of the podcast
       background: Linus Torvalds, born in Helsinki, Finland in 1969, is a software
         engineer and the creator of the Linux kernel, which is used in Linux operating
@@ -200,6 +203,7 @@ world_definition:
     - id: dennis_ritchie
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Dennis Ritchie
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Co-host of the podcast
       background: Dennis Ritchie was an American computer scientist known for creating
         the C programming language and influencing other programming languages, notably
@@ -283,11 +287,11 @@ world_definition:
       - Only the holder of the microphone can speak to the audience, if you don't
         have the microphone in your inventory, wait to receive it from the previous
         speaker
+      - If you have asked a question to an agent, make sure to give the microphone
+        to that agent so they can answer
       - Don't repeat yourself, ask insightful questions to the guests of the podcast
         to advance the conversation
       - Don't hog the microphone for a long time, make sure to give it to other participants
-      - If you have asked a question, make sure to give the microphone to the guest
-        so they can answer
       - If you have completed your statement, make sure to give the microphone to
         the next speaker
       - Do not wait if you still have the microphone, speak or pass the microphone

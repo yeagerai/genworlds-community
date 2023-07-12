@@ -23,6 +23,7 @@ world_definition:
     - id: tony_soprano
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Tony Soprano
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Host of the Podcast
       background: Tony Soprano is a fictional character, the protagonist in the HBO
         series "The Sopranos." Created by David Chase, Tony, portrayed by James Gandolfini,
@@ -81,6 +82,7 @@ world_definition:
     - id: al_capone
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Al Capone
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Co-host of the podcast
       background: Al Capone, born in 1899 in Brooklyn, New York, was a notorious gangster
         and businessman during the Prohibition era. He left school at 14 and joined
@@ -134,6 +136,7 @@ world_definition:
     - id: pablo_escobar
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Pablo Escobar
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: "Pablo Escobar, born in 1949 in Colombia, is infamous as the leader\
         \ of the Medell\xEDn Cartel, which controlled over 80% of the cocaine shipped\
@@ -191,6 +194,7 @@ world_definition:
     - id: el_chapo
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: El Chapo
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: "Joaqu\xEDn \"El Chapo\" Guzm\xE1n, born in Mexico to a poor farming\
         \ family, rose to lead the Sinaloa Cartel, one of the world's most powerful\
@@ -299,11 +303,11 @@ world_definition:
       - Only the holder of the microphone can speak to the audience, if you don't
         have the microphone in your inventory, wait to receive it from the previous
         speaker
+      - If you have asked a question to an agent, make sure to give the microphone
+        to that agent so they can answer
       - Don't repeat yourself, ask insightful questions to the guests of the podcast
         to advance the conversation
       - Don't hog the microphone for a long time, make sure to give it to other participants
-      - If you have asked a question, make sure to give the microphone to the guest
-        so they can answer
       - If you have completed your statement, make sure to give the microphone to
         the next speaker
       - Do not wait if you still have the microphone, speak or pass the microphone

@@ -22,6 +22,7 @@ world_definition:
     - id: captain_kirk
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Captain Kirk
+      eleven_labs_voice_id: ErXwobaYiN019PkySvjV
       role: Host of the Podcast
       background: Captain Kirk, full name James Tiberius Kirk, is a fictional character
         in the Star Trek franchise, originally played by William Shatner. Born in
@@ -83,6 +84,7 @@ world_definition:
     - id: neil_degrasse_tyson
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Neil DeGrasse Tyson
+      eleven_labs_voice_id: TxGEqnHWrfWFTfGW9XjX
       role: Co-host of the podcast
       background: 'Neil DeGrasse Tyson is an American astrophysicist, author, and
         science communicator. Born and raised in New York City, Tyson discovered his
@@ -141,6 +143,7 @@ world_definition:
     - id: bob_lazar
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Bob Lazar
+      eleven_labs_voice_id: VR6AewLTigWG4xSOukaG
       role: Co-host of the podcast
       background: Bob Lazar is an American conspiracy theorist and claimed former
         Area 51 engineer. He was born in 1959 in Coral Gables, Florida. He attended
@@ -197,6 +200,7 @@ world_definition:
     - id: christopher_mellon
       class: use_cases.roundtable.agents.roundtable_agent.RoundtableAgent
       name: Christopher Mellon
+      eleven_labs_voice_id: pNInz6obpgDQGcFmaJgB
       role: Co-host of the podcast
       background: Christopher Mellon is a former US Deputy Assistant Secretary of
         Defense for Intelligence, having served in both the Clinton and George W.
@@ -299,11 +303,11 @@ world_definition:
       - Only the holder of the microphone can speak to the audience, if you don't
         have the microphone in your inventory, wait to receive it from the previous
         speaker
+      - If you have asked a question to an agent, make sure to give the microphone
+        to that agent so they can answer
       - Don't repeat yourself, ask insightful questions to the guests of the podcast
         to advance the conversation
       - Don't hog the microphone for a long time, make sure to give it to other participants
-      - If you have asked a question, make sure to give the microphone to the guest
-        so they can answer
       - If you have completed your statement, make sure to give the microphone to
         the next speaker
       - Do not wait if you still have the microphone, speak or pass the microphone

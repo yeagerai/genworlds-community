@@ -5,6 +5,7 @@ export const useSettingsStore = defineStore('settingsStore', {
     settings: {
       openaiApiKey: '',
       elevenLabsApiKey: '',
+      enableTTS: false,
     },
   }),
   actions: {

@@ -84,7 +84,7 @@ async def send_mocked_world_event_stream():
         stop_event = stop_events.popleft()
         stop_event.set()
         time.sleep(0.1)
-        
+
     return {"status": "Stopped all mocked worlds"}
 
 @app.websocket("/ws")

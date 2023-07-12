@@ -5,6 +5,8 @@ import { useUseCaseActionStore } from '@/stores/useCaseActionStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useRoute } from 'vue-router';
 import WorldInstance from '@/api/resources/WorldInstance';
+import TTS from '@/api/resources/TTS';
+import WorldDetails from './WorldDetails.vue';
 
 const props = defineProps({
   use_case: {
@@ -17,9 +19,11 @@ const props = defineProps({
   },
 })
 
+const useCaseStarted = ref(false);
 const activeScreen = ref('');
 const screens = ref([]);
-const useCaseName = ref('');
+const yamlData = ref('');
+const useCaseName = computed(() => yamlData.value ? yamlData.value.world_definition.world.name : '');
 const websocketPort = ref(null);
 const showAlert = ref(true);
 const webSocket = ref(null);
@@ -34,8 +38,14 @@ const iframeSrc = computed(() => {
     return `${window.location.origin}:9000/16bit-front/?tankId=${tankId}`;
 });
 
+const settingsStore = useSettingsStore();
+
 const loadUseCase = async (use_case, world_definition) => {
   console.log('Loading use case:', use_case, world_definition)
+
+  useCaseStarted.value = true;
+
+  stopTTS();
   
   // Fetch configuration from REST API
   const config = await fetchConfig(use_case, world_definition);
@@ -48,6 +58,9 @@ const loadUseCase = async (use_case, world_definition) => {
     activeScreen.value = screens.value[0].name;
   }
 
+  // Set the YAML data
+  yamlData.value = config.yaml_data;
+
   // Set the use case name
   useCaseName.value = config.event_stream_config.name;
 
@@ -56,6 +69,99 @@ const loadUseCase = async (use_case, world_definition) => {
   connectToWebSocket();
 };
 
+const findAgentById = (agentId) => {
+  return yamlData.value.world_definition.world.agents.find(agent => agent.id === agentId);
+};
+
+
+// Text to speech
+const ttsEventQueue = ref([]);
+const ttsAudioPlayer = ref(null);
+const ttsIsLoading = ref(false);
+const processTTSQueue = async () => {
+  // If already loading playing, do nothing
+  if (ttsIsLoading.value || (ttsAudioPlayer.value && !ttsAudioPlayer.value.paused)) {
+    console.log('Already playing');
+    return;
+  }
+
+  if (ttsEventQueue.value.length > 0) {
+    try {
+      ttsIsLoading.value = true;
+      const event = ttsEventQueue.value.shift();
+      console.log('Playing TTS:', event.message);
+
+      const blob = await loadEventTTS(event);   
+
+      if (event.tts_cancelled) {
+        console.log('TTS cancelled');
+        return;
+      }
+
+      const audioSrc = URL.createObjectURL(blob);
+
+      if (!ttsAudioPlayer.value) {
+        ttsAudioPlayer.value = new Audio();
+        ttsAudioPlayer.value.type = "audio/mpeg";
+        ttsAudioPlayer.value.addEventListener('ended', () => {
+          console.log('TTS ended');
+          processTTSQueue();
+        });
+      }
+
+      ttsAudioPlayer.value.src = audioSrc;
+      ttsAudioPlayer.value.play();
+
+      // Preload the next TTS
+      if (ttsEventQueue.value.length > 0) {
+        const nextEvent = ttsEventQueue.value[0];
+        loadEventTTS(nextEvent);
+      }
+
+      ttsIsLoading.value = false;
+    } catch (error) {
+      console.error('Error playing TTS:', error);
+      processTTSQueue();
+    }
+  }
+};
+
+const loadEventTTS = async (event) => {
+  if (event.tts_promise) {
+    console.log('Already loading TTS for this event', event.message);
+    return event.tts_promise;
+  }
+
+  console.log('Loading TTS for event:', event.message);
+  const agent = findAgentById(event.sender_id);
+  const voiceId = agent.eleven_labs_voice_id || '21m00Tcm4TlvDq8ikWAM';
+  
+  event.tts_promise = TTS.convert(voiceId, event.message);   
+  return event.tts_promise; 
+}
+
+
+const stopTTS = () => {
+  // Empty the TTS queue and stop audio
+  for (const event of ttsEventQueue.value) {
+    event.tts_cancelled = true;
+  }
+
+  ttsEventQueue.value = [];
+  if (ttsAudioPlayer.value)
+    ttsAudioPlayer.value.pause();
+    ttsAudioPlayer.value = null;
+};
+
+watch(() => settingsStore.settings.enableTTS, (newVal) => {
+  if (!newVal) {
+    stopTTS();
+  }
+}, { deep: true });
+
+
+
+// Websocket
 const connectToWebSocket = () => {
   if (webSocket.value) {
     webSocket.value.close();
@@ -82,6 +188,19 @@ const connectToWebSocket = () => {
         console.warn('Invalid message received:', msg.data);
         return; // Don't process this message
     } 
+
+    // TTS
+    if (settingsStore.settings.elevenLabsApiKey && settingsStore.settings.enableTTS && 'message' in socketEvent) {
+      ttsEventQueue.value.push(socketEvent);
+
+      // Preload the next TTS
+      if (ttsEventQueue.value.length == 1) {
+        const nextEvent = ttsEventQueue.value[0];
+        loadEventTTS(nextEvent);
+      }
+
+      processTTSQueue();
+    }
 
     for (const screen of screens.value) {
         for (const trackedEvent of screen.tracked_events) {
@@ -124,20 +243,18 @@ watch(() => activeScreenObject, async () => {
 
 // Handle route changes
 const route = useRoute();
-watch(route, to => {
-  loadUseCase(to.params.use_case, to.params.world_definition);
+watch(route, () => {
+  useCaseStarted.value = false;
+  stopUseCase();
 });
 
 
 // Handle API key changes
-const settingsStore = useSettingsStore();
 watch(() => settingsStore.settings.openaiApiKey, () => {
-  loadUseCase(props.use_case, props.world_definition);
+  useCaseStarted.value = false;
 }, { deep: true });
 
 onMounted(async () => {
-  await loadUseCase(props.use_case, props.world_definition);
-
   const _keyListener = function(e) {
       if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
           e.preventDefault();
@@ -154,7 +271,6 @@ onMounted(async () => {
 });
 
 const handleTabClick = (screenName) => {
-  console.log('Tab clicked:', screenName);
   activeScreen.value = screenName;
 };
 
@@ -164,7 +280,7 @@ const fetchConfig = async (use_case, world_definition) => {
   } catch (error) {
     console.error('Error fetching config:', error);
   }
-  return { screens: [], settings: {} };
+  return { screens: [], settings: {}, yamlData: '' };
 };
 
 const downloadEventHistory = () => {
@@ -209,7 +325,7 @@ const getEventCssClasses = (event) => {
 };
 
 
-
+// Handle use case actions
 const useCaseActionsStore = useUseCaseActionStore();
 const stopUseCase = async () => {
   console.log('Stopping use case');
@@ -220,8 +336,12 @@ const stopUseCase = async () => {
     console.error('Error stopping use case:', error);
   }
 
-  webSocket.value.close();
-  webSocket.value = null;
+  stopTTS();
+
+  if (webSocket.value) {
+    webSocket.value.close();
+    webSocket.value = null;
+  }
 };
 
 
@@ -246,7 +366,14 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
 </script>
 
 <template>
-  <div v-if="screens.length > 0" class="p-4 flex flex-col h-full">
+  <div v-if="!useCaseStarted" class="flex-1 mb-4 h-full w-full">
+    <button @click="loadUseCase(props.use_case, props.world_definition)" class="btn btn-ghost btn-lg h-full w-full">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-32 h-32">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+      </svg>
+    </button>
+  </div>
+  <div v-else-if="screens.length > 0" class="p-4 flex flex-col h-full">
     <div v-if="showAlert && websocketPort == 7455" class="alert alert-warning mb-4">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
       <p>
@@ -257,7 +384,7 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
       </p>
       <button @click="showAlert = false" class="btn btn-sm">OK</button>
     </div>
-    <!-- <h1 class="text-xl mb-4">{{ useCaseName }}</h1> -->
+    <h1 class="text-xl mb-4">{{ useCaseName }}</h1>
     <div class="tabs tabs-boxed mb-4">
       <button
         v-for="screen in screens"
@@ -276,6 +403,14 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
       >
         16bit
       </button>
+      <button
+        :key="'world_details'"
+        @click="handleTabClick('world_details')"
+        :class="{ 'tab-active': activeScreen === 'world_details' }"
+        class="tab"
+      >
+        World Details
+      </button>
     </div>
     <div class="overflow-y-auto flex-1 mb-4" ref="chatContainer">
       <div v-if="shouldRenderIframe" class="w-full h-full">
@@ -287,6 +422,9 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
             allowfullscreen
             >
           </iframe>
+      </div>
+      <div v-else-if="shouldRenderWorldDetails" class="w-full h-full">
+        <WorldDetails :yamlData="yamlData" class="w-full h-full"/>
       </div>
       <div v-else>
         <div v-if="activeScreenObject" class="p-6 rounded-lg shadow-md">

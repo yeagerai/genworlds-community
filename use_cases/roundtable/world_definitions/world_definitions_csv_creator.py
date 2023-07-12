@@ -69,9 +69,9 @@ def main(input_file):
                             ],
                             "constraints": [
                                 "Only the holder of the microphone can speak to the audience, if you don't have the microphone in your inventory, wait to receive it from the previous speaker",
+                                "If you have asked a question to an agent, make sure to give the microphone to that agent so they can answer",
                                 "Don't repeat yourself, ask insightful questions to the guests of the podcast to advance the conversation",
                                 "Don't hog the microphone for a long time, make sure to give it to other participants",
-                                "If you have asked a question, make sure to give the microphone to the guest so they can answer",
                                 "If you have completed your statement, make sure to give the microphone to the next speaker",
                                 "Do not wait if you still have the microphone, speak or pass the microphone to the next speaker",
                             ],
@@ -86,6 +86,7 @@ def main(input_file):
                 "id": id_from_name(row["agent_name"]),
                 "class": "use_cases.roundtable.agents.roundtable_agent.RoundtableAgent",
                 "name": row["agent_name"],
+                "eleven_labs_voice_id": row["eleven_labs_voice_id"],
                 "role": row["role"],
                 "background": row["background"],
                 "personality": row["personality"],
