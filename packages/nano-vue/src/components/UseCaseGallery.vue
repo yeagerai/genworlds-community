@@ -66,7 +66,7 @@ const downloadEventHistory = () => {
        
         <select id="use-case-select" class="select select-sm w-full max-w-xs"
           v-model="currentUseCase" @change="navigateToCurentUseCase">
-          <option :value="null" disabled selected>Select a use case</option>
+          <option :value="null" disabled selected>Select a World</option>
           <option v-for="useCase in useCases" :key="useCase.use_case + useCase.world_definition" :value="useCase">{{ useCase.use_case + "/" + useCase.world_definition }}</option>
         </select>       
 
