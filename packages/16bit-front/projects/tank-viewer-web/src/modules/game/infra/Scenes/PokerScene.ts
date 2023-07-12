@@ -239,9 +239,9 @@ export class PokerScene extends AbstractAgentsScene {
       position = 0;
     } else if (agentName.includes('jason')) {
       position = 1;
-    } else if (agentName.includes('davidf')) {
+    } else if (agentName.includes('friedberg')) {
       position = 2;
-    } else if (agentName.includes('davids')) {
+    } else if (agentName.includes('sacks')) {
       position = 3;
     }
 
@@ -256,9 +256,9 @@ export class PokerScene extends AbstractAgentsScene {
       longName = 'Jason Calacanis';
     } else if (agentName.includes('chamath')) {
       longName = 'Chamath Palihapitiya';
-    } else if (agentName.includes('davidf')) {
+    } else if (agentName.includes('friedberg')) {
       longName = 'David Friedberg';
-    } else if (agentName.includes('davids')) {
+    } else if (agentName.includes('sacks')) {
       longName = 'David Sacks';
     }
 
@@ -273,9 +273,9 @@ export class PokerScene extends AbstractAgentsScene {
       spriteName = 'JasonCalacanis';
     } else if (agentName.includes('chamath')) {
       spriteName = 'ChamathPalihapitiya';
-    } else if (agentName.includes('davidf')) {
+    } else if (agentName.includes('friedberg')) {
       spriteName = 'DavidFriedberg';
-    } else if (agentName.includes('davids')) {
+    } else if (agentName.includes('sacks')) {
       spriteName = 'DavidSacks';
     }
 

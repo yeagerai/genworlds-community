@@ -21,7 +21,7 @@ app.add_middleware(
 
 websocket_manager = WebSocketManager()
 
-SPEEDUP_RATIO = 25
+SPEEDUP_RATIO = 5
 stop_events = deque()
 
 def send_events(events, stop_event: threading.Event):
