@@ -46,7 +46,11 @@ export class TankService {
     let tank: Tank | undefined = this.tanks.get(tankId);
 
     if (tank === undefined) {
-      tank = { ...TANK_MOCK_BASE, id: tankId };
+      tank = { 
+        ...TANK_MOCK_BASE, 
+        id: tankId,
+        mapId: MAPS.RANDOM, // default to random map
+      };
     }
 
     tank.tilemap = loadTilemap(tank.mapId);

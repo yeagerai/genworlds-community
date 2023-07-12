@@ -1,5 +1,6 @@
 import { MAPS, Tilemap } from '@yeager/common-types';
 import { PokerScene } from './PokerScene';
+import { RandomScene } from './RandomScene';
 import { MainScene } from './MainScene';
 import { AbstractAgentsScene } from './AbstractAgentsScene';
 import { TestPokerScene } from './TestPokerScene';
@@ -20,6 +21,8 @@ export function getSceneFromMap(
     scene = new TestPokerScene(tilemap);
   } else if (map === MAPS.TEST_LIBRARY) {
     scene = new TestPokerScene(tilemap);
+  }else if (map === MAPS.RANDOM) {
+    scene = new RandomScene(tilemap);
   }
 
   return scene;

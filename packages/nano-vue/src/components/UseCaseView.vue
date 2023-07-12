@@ -26,7 +26,13 @@ const webSocket = ref(null);
 const fullEventHistory = ref([]);
 const activeScreenObject = computed(() => screens.value.find(screen => screen.name === activeScreen.value));
 const shouldRenderIframe = computed(() => activeScreen.value === '16bit');
-const iframeSrc = computed(() => `${window.location.origin}:9000/16bit-front/?tankId=1`);
+const iframeSrc = computed(() => {
+    let tankId = "1234";
+    if (window.location.pathname.endsWith("all_in_podcast.yaml")) {
+        tankId = "1";
+    }
+    return `${window.location.origin}:9000/16bit-front/?tankId=${tankId}`;
+});
 
 const loadUseCase = async (use_case, world_definition) => {
   console.log('Loading use case:', use_case, world_definition)
