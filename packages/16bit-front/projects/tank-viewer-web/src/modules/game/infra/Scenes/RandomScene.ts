@@ -15,10 +15,10 @@ interface MessageBufferItem {
 }
 
 enum MessageSpeeds {
-  NORMAL = 40,
-  FAST = 40,
-  FASTER = 40,
-  INSANE = 40,
+  NORMAL = 50,
+  FAST = 50,
+  FASTER = 50,
+  INSANE = 50,
 }
 
 enum TimeWaitingForNextMessage {

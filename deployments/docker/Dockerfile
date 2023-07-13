@@ -55,6 +55,7 @@ COPY packages/nano-vue/package*.json ./
 RUN npm install yarn
 RUN yarn install
 COPY packages/nano-vue/ ./
+COPY .env ./.env
 RUN yarn build
 
 # ---- Stage 4: Copy artifacts to the final Python image ----
