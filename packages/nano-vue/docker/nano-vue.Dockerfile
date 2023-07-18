@@ -1,5 +1,5 @@
 # Use the official image as a parent image
-FROM node:lts-alpine as build-stage
+FROM node:18-alpine
 
 # Set the working directory
 WORKDIR /app
@@ -14,20 +14,8 @@ RUN yarn install
 # Copy the current directory contents into the container at /app
 COPY packages/nano-vue/ .
 
-# Build the app using yarn
-RUN yarn build
+# Expose port 8080 (or whatever port your dev server uses)
+EXPOSE 8080
 
-# Production stage
-FROM nginx:stable-alpine as production-stage
-
-# Copy Nginx configuration file
-COPY packages/nano-vue/default.conf /etc/nginx/conf.d/default.conf
-
-# Copy the built app to our server
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Start Vue development server with hot-reloading
+CMD ["yarn", "serve"]

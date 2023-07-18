@@ -1,70 +1,20 @@
-# ==============================================================================
-# ==== Step 1: build ===========================================================
-# ==============================================================================
+# Use an official Node runtime as a parent image
+FROM node:18-alpine
 
-FROM node:18-alpine as builder
+# Set the working directory in the container to /app
+WORKDIR /app
 
-# Install packages to compile from source
-RUN apk add --no-cache python3 make g++
+# Copy package.json and yarn.lock
+COPY 16bit-front/package.json 16bit-front/yarn.lock ./
 
-# Create monorepo directory
-WORKDIR /monorepo
+# Install any needed packages specified in package.json
+RUN yarn install
 
-# Install dependencies
-COPY packages/16bit-front/package.json packages/16bit-front/yarn.lock ./
-RUN yarn install --frozen-lockfile
+# Copy the current directory contents into the container at /app
+COPY 16bit-front/ /app
 
-# Copy lerna config file
-COPY packages/16bit-front/lerna.json packages/16bit-front/nx.json ./
+# Make port 8080 available to the world outside this container
+EXPOSE 8080
 
-# Copy packages
-COPY packages/16bit-front/packages ./packages
-
-# Copy Services
-COPY packages/16bit-front/projects ./projects
-
-# Create a release of each lerna package
-RUN yarn bootstrap
-
-# Read and define environment variables
-ARG node_environment=production
-# ARG react_app_environment=production
-
-ENV NODE_ENV=$node_environment
-# ENV REACT_APP_ENV=$react_app_environment
-ENV CI=true
-
-# Create a release of each lerna package
-RUN yarn build
-
-# delete projects from node_modules
-RUN yarn rimraf ./node_modules/@yeager/tank-viewer-web
-
-# replace packages replace symbolic links by real files
-RUN yarn symlink-resolver build ./node_modules/@yeager
-
-# keep package.json, index.js and dist folder from @yeager packages
-RUN find ./node_modules/@yeager -mindepth 2 -maxdepth 2 -type f -and -not -name package.json -and -not -name index.js -delete
-RUN find ./node_modules/@yeager -mindepth 2 -maxdepth 2 -type d -and -not -name dist -and -not -name types -exec rm -rf {} \;
-
-# ==============================================================================
-# ==== Step 2: deliver =========================================================
-# ==============================================================================
-
-FROM node:18-alpine as deliver
-
-WORKDIR /monorepo
-
-# Copy projects
-COPY --from=builder ./monorepo/projects ./projects
-
-#-------------------------------------------------------------------------------
-# STAGE 3: Setup server
-#-------------------------------------------------------------------------------
-
-FROM nginx:stable-alpine
-
-COPY --from=deliver /monorepo/projects/tank-viewer-web/nginx-config/nginx.conf /etc/nginx/nginx.conf
-COPY --from=deliver /monorepo/projects/tank-viewer-web/nginx-config/default.conf /etc/nginx/conf.d/default.conf
-
-COPY --from=deliver /monorepo/projects/tank-viewer-web/dist /static_webpage
+# Run serve when the container launches
+CMD ["yarn", "serve"]

@@ -6,14 +6,15 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY packages/world-instance /app
-COPY use_cases /app/use_cases
 
 # If you have any environment files, copy them
 COPY .env /app/.env
-COPY packages/world-instance/requirements.txt .
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# COPY packages/world-instance/requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip install -e /genworlds
 RUN pip install debugpy==1.6.0
 
 # Make port 7457 available to the world outside this container

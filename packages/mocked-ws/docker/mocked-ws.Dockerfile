@@ -2,13 +2,15 @@ FROM python:3.11.3-slim
 
 WORKDIR /app
 
-COPY packages/mocked-ws/requirements.txt .
+# COPY packages/mocked-ws/requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Install genworlds in editable mode
+RUN pip install -e /genworlds
+
 RUN pip install debugpy
 
 COPY packages/mocked-ws/app/ app/
-COPY use_cases /app/use_cases
 
 EXPOSE 7455
 

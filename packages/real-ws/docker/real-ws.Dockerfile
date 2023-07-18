@@ -6,10 +6,14 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY packages/real-ws /app
-COPY packages/real-ws/requirements.txt .
+
+# Install genworlds in editable mode
+RUN pip install -e /genworlds
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# COPY packages/real-ws/requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt
+
 RUN pip install debugpy
 
 # Make port 80 available to the world outside this container
