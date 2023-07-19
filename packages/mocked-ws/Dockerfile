@@ -9,10 +9,12 @@ RUN pip install poetry debugpy
 COPY ./genworlds-community/packages/mocked-ws/ ./mocked-ws/
 COPY ./genworlds/ ./genworlds/
 
-# Project initialization:
+# Install genworlds from local synced folder
 RUN cd ./genworlds && poetry config virtualenvs.create false && poetry install 
 
 EXPOSE 7455
+EXPOSE 5680
+
 ENV PYTHONPATH=/app:$PYTHONPATH
 
 CMD ["sh", "-c", "python -u -m debugpy --listen 0.0.0.0:5680 -m uvicorn --reload --host 0.0.0.0 --port 7455 app.main:app"]

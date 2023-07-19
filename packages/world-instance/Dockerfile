@@ -19,8 +19,6 @@ COPY ./genworlds-community/.env ./world-instance/.env
 
 # Make port 7457 available to the world outside this container
 EXPOSE 7457
-
-# Expose debug port
 EXPOSE 5678
 
 # Run main.py when the container launches

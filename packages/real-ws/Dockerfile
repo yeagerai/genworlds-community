@@ -10,11 +10,13 @@ RUN pip install poetry debugpy
 COPY ./genworlds-community/packages/real-ws/ ./real-ws/
 COPY ./genworlds/ ./genworlds/
 
-# Project initialization:
+# Install genworlds from local synced folder
 RUN cd ./genworlds && poetry config virtualenvs.create false && poetry install 
 
-# Make port 80 available to the world outside this container
+
 EXPOSE 7456
+EXPOSE 5679
+
 ENV PYTHONPATH=/app:$PYTHONPATH
 
 # Run main.py when the container launches
