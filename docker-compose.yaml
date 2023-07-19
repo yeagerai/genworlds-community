@@ -5,65 +5,71 @@ services:
     image: redis:latest
 
   mocked-ws:
-    build: packages/mocked-ws/docker
+    build: 
+      context: ../
+      dockerfile: ./genworlds-community/packages/mocked-ws/Dockerfile
     command: python -u -m uvicorn --reload --host 0.0.0.0 --port 7455 mocked-ws.app.main:app
     volumes:
-      - packages/mocked-ws:/app
-      - ../genworlds:/genworlds
-      - use-cases:/use-cases
+      - ./packages/mocked-ws:/app/mocked-ws
+      - ../genworlds:/app/genworlds
+      - ./use-cases:/app/use-cases
 
   real-ws:
-    build: packages/real-ws/docker 
-    command: python ./main.py # 7456
+    build: 
+      context: ../
+      dockerfile: ./genworlds-community/packages/real-ws/Dockerfile
+    command: python real-ws/main.py # 7456
     volumes:
-      - packages/real-ws:/app
-      - ../genworlds:/genworlds
+      - ./packages/real-ws:/app/real-ws
+      - ../genworlds:/app/genworlds
 
   world-instance:
-    build: packages/world-instance/docker
+    build:
+      context: ../
+      dockerfile: ./genworlds-community/packages/world-instance/Dockerfile
     command: python -u -m uvicorn --reload --host 0.0.0.0 --port 7457 world-instance.main:app
     volumes:
-      - packages/world-instance:/app
-      - ../genworlds:/genworlds
-      - use-cases:/use-cases
+      - ./packages/world-instance:/app/world-instance
+      - ../genworlds:/app/genworlds
+      - ./use-cases:/app/use-cases
     depends_on:
       - real-ws
 
-  16bit-back:
-    build: packages/16bit-back/docker
-    command: ts-node-dev --respawn --transpile-only src/server.ts
-    volumes:
-      - packages/16bit-back:/app
-    depends_on:
-      - real-ws
-      - mocked-ws
-      - redis
+  # 16bit-back:
+  #   build: packages/16bit-back
+  #   command: ts-node-dev --respawn --transpile-only src/server.ts
+  #   volumes:
+  #     - ./packages/16bit-back:/app
+  #   depends_on:
+  #     - real-ws
+  #     - mocked-ws
+  #     - redis
 
-  16bit-front:
-    build: packages/16bit-front/docker
-    command: yarn serve
-    volumes:
-      - ./16bit-front:/app
-    depends_on:
-      - 16bit-back
+  # 16bit-front:
+  #   build: packages/16bit-front
+  #   command: yarn serve
+  #   volumes:
+  #     - ./16bit-front:/app
+  #   depends_on:
+  #     - 16bit-back
 
-  nano-vue:
-    build: packages/nano-vue/docker
-    command: yarn serve
-    volumes:
-      - packages/nano-vue:/app
-    depends_on:
-      - 16bit-front
-    ports:
-      - "8080:8080"
+  # nano-vue:
+  #   build: packages/nano-vue
+  #   command: yarn serve
+  #   volumes:
+  #     - ./packages/nano-vue:/app
+  #   depends_on:
+  #     - 16bit-front
+  #   ports:
+  #     - "8080:8080"
 
-  gateway:
-    build: packages/gateway/docker
-    command: node --inspect-brk=0.0.0.0 src/server.js
-    volumes:
-      - packages/gateway:/app
-    depends_on:
-      - nano-vue
-    ports:
-      - "9000:9000"
-      - "9229:9229"
+  # gateway:
+  #   build: packages/gateway
+  #   command: node --inspect-brk=0.0.0.0 src/server.js
+  #   volumes:
+  #     - ./packages/gateway:/app
+  #   depends_on:
+  #     - nano-vue
+  #   ports:
+  #     - "9000:9000"
+  #     - "9229:9229"
