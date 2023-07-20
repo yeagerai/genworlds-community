@@ -5,13 +5,14 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package.json and yarn.lock
-COPY 16bit-front/package.json 16bit-front/yarn.lock ./
+COPY ./genworlds-community/packages/16bit-front/package.json ./
+COPY ./genworlds-community/packages/16bit-front/yarn.lock ./
 
 # Install any needed packages specified in package.json
 RUN yarn install
 
 # Copy the current directory contents into the container at /app
-COPY 16bit-front/ /app
+COPY ./genworlds-community/packages/16bit-front/ /app
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080

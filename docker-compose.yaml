@@ -35,18 +35,22 @@ services:
     depends_on:
       - real-ws
 
-  # 16bit-back:
-  #   build: packages/16bit-back
-  #   command: ts-node-dev --respawn --transpile-only src/server.ts
-  #   volumes:
-  #     - ./packages/16bit-back:/app
-  #   depends_on:
-  #     - real-ws
-  #     - mocked-ws
-  #     - redis
+  16bit-back:
+    build: 
+      context: ../
+      dockerfile: ./genworlds-community/packages/16bit-back/Dockerfile
+    command: /home/node/app/node_modules/.bin/ts-node-dev --respawn --transpile-only src/server.ts
+    volumes:
+      - ./genworlds-community/packages/16bit-back:/app
+    depends_on:
+      - real-ws
+      - mocked-ws
+      - redis
 
   # 16bit-front:
-  #   build: packages/16bit-front
+  #   build: 
+  #     context: ../
+  #     dockerfile: ./genworlds-community/packages/16bit-front/Dockerfile
   #   command: yarn serve
   #   volumes:
   #     - ./16bit-front:/app

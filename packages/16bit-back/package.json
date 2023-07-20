@@ -44,6 +44,7 @@
     "module-alias": "^2.2.2",
     "mongoose": "^7.2.0",
     "morgan": "^1.10.0",
+    "ts-node-dev": "^2.0.0",
     "winston": "^3.8.2",
     "ws": "^8.13.0"
   },
