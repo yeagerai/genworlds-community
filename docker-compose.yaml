@@ -41,39 +41,43 @@ services:
       dockerfile: ./genworlds-community/packages/16bit-back/Dockerfile
     command: /home/node/app/node_modules/.bin/ts-node-dev --respawn --transpile-only src/server.ts
     volumes:
-      - ./genworlds-community/packages/16bit-back:/app
+      - ./packages/16bit-back:/app
     depends_on:
       - real-ws
       - mocked-ws
       - redis
 
-  # 16bit-front:
-  #   build: 
-  #     context: ../
-  #     dockerfile: ./genworlds-community/packages/16bit-front/Dockerfile
-  #   command: yarn serve
-  #   volumes:
-  #     - ./16bit-front:/app
-  #   depends_on:
-  #     - 16bit-back
+  16bit-front:
+    build: 
+      context: ../
+      dockerfile: ./genworlds-community/packages/16bit-front/Dockerfile
+    command: yarn dev
+    volumes:
+      - ./packages/16bit-front:/app
+    depends_on:
+      - 16bit-back
 
-  # nano-vue:
-  #   build: packages/nano-vue
-  #   command: yarn serve
-  #   volumes:
-  #     - ./packages/nano-vue:/app
-  #   depends_on:
-  #     - 16bit-front
-  #   ports:
-  #     - "8080:8080"
+  nano-vue:
+    build: 
+      context: ../
+      dockerfile: ./genworlds-community/packages/nano-vue/Dockerfile
+    command: yarn serve
+    volumes:
+      - ./packages/nano-vue:/app
+    depends_on:
+      - 16bit-front
+    ports:
+      - "8080:8080"
 
-  # gateway:
-  #   build: packages/gateway
-  #   command: node --inspect-brk=0.0.0.0 src/server.js
-  #   volumes:
-  #     - ./packages/gateway:/app
-  #   depends_on:
-  #     - nano-vue
-  #   ports:
-  #     - "9000:9000"
-  #     - "9229:9229"
+  gateway:
+    build: 
+      context: ../
+      dockerfile: ./genworlds-community/packages/gateway/Dockerfile
+    command: node --inspect-brk=0.0.0.0 src/server.js
+    volumes:
+      - ./packages/gateway:/app
+    depends_on:
+      - nano-vue
+    ports:
+      - "9000:9000"
+      - "9229:9229"

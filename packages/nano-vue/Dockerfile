@@ -5,14 +5,15 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package.json and yarn.lock
-COPY .env /app/.env
-COPY packages/nano-vue/package.json packages/nano-vue/yarn.lock ./
+COPY ./genworlds-community/.env /app/.env
+COPY ./genworlds-community/packages/nano-vue/package.json ./ 
+COPY ./genworlds-community/packages/nano-vue/yarn.lock ./
 
 # Install dependencies using yarn
 RUN yarn install
 
 # Copy the current directory contents into the container at /app
-COPY packages/nano-vue/ .
+COPY ./genworlds-community/packages/nano-vue/ .
 
 # Expose port 8080 (or whatever port your dev server uses)
 EXPOSE 8080

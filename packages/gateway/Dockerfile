@@ -1,11 +1,11 @@
 # Use an official Node.js runtime as a parent image
-FROM node:lts-alpine
+FROM node:18-alpine
 
 # Set the working directory in the container to /app
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY packages/gateway/ .
+COPY ./genworlds-community/packages/gateway/ .
 
 # If you have package.json or other dependency files, copy them and install dependencies
 # COPY packages/gateway/package*.json ./
