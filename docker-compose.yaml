@@ -12,7 +12,7 @@ services:
     volumes:
       - ./packages/mocked-ws:/app/mocked-ws
       - ../genworlds:/app/genworlds
-      - ./use-cases:/app/use-cases
+      - ./use_cases:/app/use_cases
 
   real-ws:
     build: 
@@ -31,7 +31,7 @@ services:
     volumes:
       - ./packages/world-instance:/app/world-instance
       - ../genworlds:/app/genworlds
-      - ./use-cases:/app/use-cases
+      - ./use_cases:/app/use_cases
     depends_on:
       - real-ws
 
