@@ -21,6 +21,12 @@ load_dotenv()
 
 PORT_REAL_WS = 7456
 PORT_MOCKED_WS = 7455
+HOST_NAME = "localhost"
+if os.environ.get('VUE_APP_IS_DEV'):
+    if os.environ.get('OPENAI_API_KEY'):
+        HOST_NAME = "real-ws"
+    else:
+        HOST_NAME = "mocked-ws"
 
 # openai_api_key = os.environ.get('OPENAI_API_KEY')
 # port = 7456 if openai_api_key else 7455
@@ -107,7 +113,7 @@ async def trigger_world(request: Request, use_case: str, world_definition: str):
 
     if is_mocked:
         try:
-            requests.get(f"http://localhost:{port}/start-mocked-ws/{use_case}/{world_definition}")
+            requests.get(f"http://{HOST_NAME}:{port}/start-mocked-ws/{use_case}/{world_definition}")
         except Exception as e:
             print(f"An error occurred: {e}")
         return response
@@ -148,7 +154,7 @@ async def kill_all_use_cases():
 
     # Kill mocked socket
     try:
-        requests.get(f"http://localhost:{PORT_MOCKED_WS}/kill-mocked-ws")
+        requests.get(f"http://{HOST_NAME}:{PORT_MOCKED_WS}/kill-mocked-ws")
     except Exception as e:
         print(f"An error occurred: {e}")
 

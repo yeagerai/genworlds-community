@@ -27,6 +27,8 @@ services:
     build:
       context: ../
       dockerfile: ./genworlds-community/packages/world-instance/Dockerfile
+    environment:
+      - VUE_APP_IS_DEV=true
     command: python -u -m uvicorn --reload --host 0.0.0.0 --port 7457 world-instance.main:app
     volumes:
       - ./packages/world-instance:/app/world-instance
@@ -39,6 +41,8 @@ services:
     build: 
       context: ../
       dockerfile: ./genworlds-community/packages/16bit-back/Dockerfile
+    environment:
+      - VUE_APP_IS_DEV=true
     command: /home/node/app/node_modules/.bin/ts-node-dev --respawn --transpile-only src/server.ts
     volumes:
       - ./packages/16bit-back:/app
@@ -51,9 +55,12 @@ services:
     build: 
       context: ../
       dockerfile: ./genworlds-community/packages/16bit-front/Dockerfile
-    command: yarn dev
+    environment:
+      - VUE_APP_IS_DEV=true
+    command: ["/bin/sh", "-c", "yarn install && yarn dev"]
     volumes:
       - ./packages/16bit-front:/app
+      - /app/node_modules
     depends_on:
       - 16bit-back
 
@@ -61,6 +68,8 @@ services:
     build: 
       context: ../
       dockerfile: ./genworlds-community/packages/nano-vue/Dockerfile
+    environment:
+      - VUE_APP_IS_DEV=true
     command: yarn serve
     volumes:
       - ./packages/nano-vue:/app
@@ -73,7 +82,9 @@ services:
     build: 
       context: ../
       dockerfile: ./genworlds-community/packages/gateway/Dockerfile
-    command: node --inspect-brk=0.0.0.0 src/server.js
+    environment:
+      - VUE_APP_IS_DEV=true
+    command: node server.js
     volumes:
       - ./packages/gateway:/app
     depends_on:
