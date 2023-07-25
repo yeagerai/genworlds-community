@@ -21,3 +21,13 @@ If two issues are related, or blocking, please link them rather than combining t
 We will try to keep these issues as up to date as possible, though
 with the rapid rate of develop in this field some may get out of date.
 If you notice this happening, please let us know.
+
+## 🚀 Running it with Docker Compose (dev mode)
+
+This is the recommended way to run the framework in development mode. It will run all the services in the framework and will allow you to modify the code and see the changes in real time. Also to change the framework, if you have it in the same parent folder as the community edition, it will also be updated in real time.
+
+It takes a while to build the first time, and some disk space, but it's worth it.
+
+```sh
+docker compose up
+```

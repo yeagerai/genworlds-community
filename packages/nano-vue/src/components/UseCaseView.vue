@@ -35,7 +35,9 @@ const iframeSrc = computed(() => {
     if (window.location.pathname.endsWith("all_in_podcast.yaml")) {
         tankId = "1";
     }
-    return `${window.location.origin}:9000/16bit-front/?tankId=${tankId}`;
+    const protocol = window.location.protocol === 'https:' ? 'https' : 'http';
+    const currentHostName = window.location.hostname;
+    return `${protocol}://${currentHostName}:9000/16bit-front/?tankId=${tankId}`;
 });
 
 const settingsStore = useSettingsStore();
@@ -167,7 +169,7 @@ const connectToWebSocket = () => {
     webSocket.value.close();
   }
   let wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  const currentHost = window.location.host;
+  const currentHost = window.location.hostname;
   let wsUrl;
   
   if (websocketPort.value == 7456) {

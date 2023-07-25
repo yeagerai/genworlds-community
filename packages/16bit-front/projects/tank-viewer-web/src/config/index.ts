@@ -33,8 +33,8 @@ function getEnvironment(): Environment {
 
 const getWsUrl = (): string => {
   const wsProtocol: string = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  const currentHost: string = window.location.host;
-  const url: string = `${wsProtocol}://${currentHost}/16bit-back`;
+  const currentHost: string = window.location.hostname;
+  const url: string = `${wsProtocol}://${currentHost}:9000/16bit-back`;
   /* eslint-disable no-console */
   console.log('url', url);
   return url;

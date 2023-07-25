@@ -32,6 +32,7 @@ const navigateToCurentUseCase = () => {
 const fetchUseCases = async () => {
   try {
     const data = await WorldInstance.listUseCases();
+    console.log("Use cases:", data)
     useCases.value = data.sort((a, b) => (a.use_case+a.world_definition).localeCompare(b.use_case+b.world_definition));
   } catch (error) {
     console.error("There was a problem reading use cases:", error);

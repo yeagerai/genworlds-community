@@ -79,7 +79,7 @@ export const config: AppConfig = {
     password: process.env.DB_MONGO_PASS,
   },
   redis: {
-    host: process.env.DB_REDIS_HOST || 'localhost',
+    host: process.env.VUE_APP_IS_DEV ? 'redis' : 'localhost',
     port: process.env.DB_REDIS_PORT ? +process.env.DB_REDIS_PORT : 6379,
     prefix: process.env.DB_REDIS_PREFIX,
   },
@@ -89,7 +89,7 @@ export const config: AppConfig = {
   yeager: {
     world: {
       websocket: {
-        host: process.env.YEAGER_WORLD_WS_HOST || 'localhost',
+        host: process.env.VUE_APP_IS_DEV ? (process.env.OPENAI_API_KEY ? 'real-ws' : 'mocked-ws') : 'localhost',
         port: process.env.OPENAI_API_KEY ? 7456 : 7455,
         path: process.env.YEAGER_WORLD_WS_PATH || 'ws',
       },

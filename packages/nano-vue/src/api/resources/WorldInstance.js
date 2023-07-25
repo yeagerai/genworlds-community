@@ -6,7 +6,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 
 export default {
     baseUrl() {
-        const currentUrl = window.location.host;
+        const currentUrl = window.location.hostname;
         const protocol = window.location.protocol === 'https:' ? 'https' : 'http';
         const port = 9000;
         return `${protocol}://${currentUrl}:${port}/world-instance`
@@ -24,6 +24,7 @@ export default {
     },
 
     async listUseCases() {
+        console.log(`${this.baseUrl()}/use-case-list`)
         try {
             const response = await axios.get(
                 `${this.baseUrl()}/use-case-list`,
