@@ -57,6 +57,7 @@ services:
       dockerfile: ./genworlds-community/packages/16bit-front/Dockerfile
     environment:
       - VUE_APP_IS_DEV=true
+      - PORT=8081
     command: ["/bin/sh", "-c", "yarn install && yarn dev"]
     volumes:
       - ./packages/16bit-front:/app
@@ -91,4 +92,3 @@ services:
       - nano-vue
     ports:
       - "9000:9000"
-      - "9229:9229"

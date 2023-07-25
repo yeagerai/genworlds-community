@@ -14,8 +14,8 @@ RUN yarn install
 # Copy the current directory contents into the container at /app
 COPY ./genworlds-community/packages/16bit-front/ /app
 
-# Make port 8080 available to the world outside this container
-EXPOSE 8080
+# Make port 8081 available to the world outside this container
+EXPOSE 8081
 
 # Run serve when the container launches
 CMD ["yarn", "serve"]
