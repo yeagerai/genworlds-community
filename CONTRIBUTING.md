@@ -26,19 +26,7 @@ If you notice this happening, please let us know.
 
 This is the recommended way to run the framework in development mode. It will run all the services in the framework and will allow you to modify the code and see the changes in real time. Also to change the framework, if you have it in the same parent folder as the community edition, it will also be updated in real time.
 
-First step is to set in the `.env` file the following variable:
-
-```bash
-VUE_APP_IS_DEV=true
-```
-
-Then you can run the following command:
-
-```sh
-docker compose build --no-cache
-```
-
-It takes a while to build the first time, but it will be faster in the next ones, remove the `--no-cache` if required.
+It takes a while to build the first time, and some disk space, but it's worth it.
 
 ```sh
 docker compose up
