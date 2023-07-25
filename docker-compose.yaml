@@ -8,7 +8,7 @@ services:
     build: 
       context: ../
       dockerfile: ./genworlds-community/packages/mocked-ws/Dockerfile
-    command: python -u -m uvicorn --reload --host 0.0.0.0 --port 7455 mocked-ws.app.main:app
+    command: /bin/bash -c "pip install -e /app/genworlds && python -u -m uvicorn --reload --host 0.0.0.0 --port 7455 mocked-ws.app.main:app"
     volumes:
       - ./packages/mocked-ws:/app/mocked-ws
       - ../genworlds:/app/genworlds
@@ -18,7 +18,7 @@ services:
     build: 
       context: ../
       dockerfile: ./genworlds-community/packages/real-ws/Dockerfile
-    command: python real-ws/main.py # 7456
+    command: /bin/bash -c "pip install -e /app/genworlds && python real-ws/main.py" # 7456
     volumes:
       - ./packages/real-ws:/app/real-ws
       - ../genworlds:/app/genworlds
@@ -29,7 +29,7 @@ services:
       dockerfile: ./genworlds-community/packages/world-instance/Dockerfile
     environment:
       - VUE_APP_IS_DEV=true
-    command: python -u -m uvicorn --reload --host 0.0.0.0 --port 7457 world-instance.main:app
+    command: /bin/bash -c "pip install -e /app/genworlds && python -u -m uvicorn --reload --host 0.0.0.0 --port 7457 world-instance.main:app"
     volumes:
       - ./packages/world-instance:/app/world-instance
       - ../genworlds:/app/genworlds
