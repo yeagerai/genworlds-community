@@ -75,6 +75,92 @@ const findAgentById = (agentId) => {
   return yamlData.value.world_definition.world.agents.find(agent => agent.id === agentId);
 };
 
+// Chat events
+const mod = (n, m) => {
+  return ((n % m) + m) % m;
+}
+
+const message = ref("");
+const showSuggestions = ref(false);
+const suggestions = ref([]);
+let selectedAgent = ref("");
+let selectedEvent = ref("");
+const focusedSuggestionIndex = ref(0);
+
+const handleInput = () => {
+  if (message.value.startsWith("/")) {
+    // If agent and event are already selected, no need to show dropdown again
+    if (selectedAgent.value && selectedEvent.value) {
+      showSuggestions.value = false;
+      return;
+    }
+    
+    if (!selectedAgent.value) {
+      // If agent is not selected, show agents suggestions
+      suggestions.value = ["agent1", "agent2", "agent3"];
+    } else {
+      // If agent is selected, show events suggestions
+      suggestions.value = ["event1", "event2", "event3"];
+    }
+    showSuggestions.value = true;
+  } else {
+    showSuggestions.value = false;
+  }
+};
+
+const handleKeydown = (event) => {
+  switch (event.key) {
+    case 'ArrowUp':
+      // prevent cursor from going to the start of textarea
+      event.preventDefault();
+      focusedSuggestionIndex.value = mod(focusedSuggestionIndex.value - 1, suggestions.value.length);
+      break;
+    case 'ArrowDown':
+      // prevent cursor from going to the end of textarea
+      event.preventDefault();
+      focusedSuggestionIndex.value = mod(focusedSuggestionIndex.value + 1, suggestions.value.length);
+      break;
+    case 'Enter':
+    case 'Tab':
+      event.preventDefault();
+      // 'Enter' selects the focused suggestion
+      selectSuggestion(suggestions.value[focusedSuggestionIndex.value]);
+      focusedSuggestionIndex.value = 0;
+      break;
+    case 'Backspace':
+      // If there is no input and there is a selected event, remove the event.
+      if (message.value === '' && selectedEvent.value) {
+        removeEvent();
+      }
+      // If there is no input and no selected event, but there is a selected agent, remove the agent.
+      else if (message.value === '' && !selectedEvent.value && selectedAgent.value) {
+        removeAgent();
+      }
+      focusedSuggestionIndex.value = 0;
+      break;
+  }
+};
+
+const selectSuggestion = (item) => {
+  if (!selectedAgent.value) {
+    selectedAgent.value = item;
+    // Clear the input message once the agent has been selected
+    message.value = "";
+  } else if (!selectedEvent.value) {
+    selectedEvent.value = item;
+    // Clear the input message once the event has been selected
+    message.value = "";
+  }
+  showSuggestions.value = false;
+};
+
+const removeEvent = () => {
+  selectedEvent.value = "";
+};
+
+const removeAgent = () => {
+  selectedAgent.value = "";
+};
 
 // Text to speech
 const ttsEventQueue = ref([]);
@@ -460,7 +546,53 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
         </div>
       </div>
     </div>
-    <!-- <textarea class="textarea w-full" placeholder="SendEvent" disabled></textarea> -->
+    <div class="flex flex-col">
+      <div class="flex relative items-end w-full">
+    <div class="flex-grow bg-white shadow rounded p-2 flex items-center" 
+         :class="{ 'cursor-not-allowed': websocketPort != 7455 }"
+         :disabled="websocketPort != 7455">
+
+        <!-- Render the selected agent as a badge -->
+        <span class="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2" 
+              v-if="selectedAgent">
+          {{ selectedAgent }}
+          <button @click="removeAgent()">x</button>
+        </span>
+
+        <!-- Render the selected event as a badge -->
+        <span class="bg-blue-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2" 
+              v-if="selectedEvent">
+          {{ selectedEvent }}
+          <button @click="removeEvent()">x</button>
+        </span>
+
+      <!-- Only show input field when the textarea is not disabled -->
+      <input v-show="websocketPort == 7455" 
+             type="text" 
+             class="flex-grow bg-transparent outline-none" 
+             v-model="message" 
+             @input="handleInput" 
+             @keydown="handleKeydown"
+             :placeholder="getPlaceholder">
+    </div>
+    
+    <div class="absolute bg-white shadow rounded p-2 w-full" v-show="showSuggestions" style="bottom: 100%;">
+      <div v-for="(item, index) in suggestions" 
+           :key="index" 
+           @click="selectSuggestion(item)" 
+           :class="{ 'bg-gray-200': index === focusedSuggestionIndex }" 
+           class="cursor-pointer hover:bg-gray-200">
+        {{ item }}
+      </div>
+    </div>
+    
+    <button class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
+            @click="sendMessage" 
+            :disabled="websocketPort != 7455">
+      Send
+    </button>
+  </div>
+  </div>
   </div>
 
 </template>
