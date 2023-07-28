@@ -4,6 +4,9 @@ FROM node:18-alpine
 # Set the working directory in the container to /app
 WORKDIR /app
 
+# Install Python, make and g++
+RUN apk add --no-cache python3 make g++
+
 # Copy package.json and yarn.lock
 COPY ./genworlds-community/packages/16bit-front/package.json ./
 COPY ./genworlds-community/packages/16bit-front/yarn.lock ./
