@@ -83,8 +83,12 @@ const mod = (n, m) => {
 const message = ref("");
 const showSuggestions = ref(false);
 const suggestions = ref([]);
+let availableAgents = ref([]);
 let selectedAgent = ref("");
+
+let availableEvents = ref([]);
 let selectedEvent = ref("");
+
 const focusedSuggestionIndex = ref(0);
 
 const handleInput = () => {
@@ -97,10 +101,11 @@ const handleInput = () => {
     
     if (!selectedAgent.value) {
       // If agent is not selected, show agents suggestions
-      suggestions.value = ["agent1", "agent2", "agent3"];
+      suggestions.value = availableAgents.value;
     } else {
       // If agent is selected, show events suggestions
-      suggestions.value = ["event1", "event2", "event3"];
+      // look for the speaking events of this agent
+      suggestions.value = ["user_speaks_with_agent_event"]; // temporal
     }
     showSuggestions.value = true;
   } else {
@@ -247,7 +252,34 @@ watch(() => settingsStore.settings.enableTTS, (newVal) => {
   }
 }, { deep: true });
 
+const sendMessage = () => {
+  // Checking if necessary data is filled
+  if (!selectedAgent.value || !selectedEvent.value || !message.value) {
+    console.warn('Cannot send message: not all required fields are filled.');
+    return;
+  }
 
+  const payload = {
+    event_type: "user_speaks_with_agent",
+    description: "The user speaks with an agent",
+    created_at: new Date().toISOString(),
+    sender_id: "user_id",  // Replace with actual user id
+    target_id: selectedAgent.value.id,
+    message: message.value
+  };
+
+  // Sending the message through the WebSocket
+  webSocket.value.send(JSON.stringify(payload));
+
+  // Reset the message input and selected values
+  message.value = "";
+  selectedAgent.value = "";
+  selectedEvent.value = "";
+};
+
+function removeDuplicates(arr) {
+  return [...new Set(arr)];
+}
 
 // Websocket
 const connectToWebSocket = () => {
@@ -276,6 +308,28 @@ const connectToWebSocket = () => {
         console.warn('Invalid message received:', msg.data);
         return; // Don't process this message
     } 
+
+    // Check if the event type is 'world_sends_nearby_entities_event' and process entities
+    if (socketEvent.event_type === 'world_sends_nearby_entities_event') {
+      let events = [];
+      socketEvent.nearby_entities.forEach(entity => {
+        if (entity.entity_type === 'AGENT') {
+          availableAgents.value.push(entity.id);
+        }
+      });
+
+      // Update available agents and events
+      availableEvents.value.push(...events);
+      
+      // Make sure the arrays you're passing to removeDuplicates are defined
+      if (availableAgents.value) {
+        availableAgents.value = removeDuplicates(availableAgents.value);
+      }
+      
+      if (availableEvents.value) {
+        availableEvents.value = removeDuplicates(availableEvents.value);
+      }
+    }
 
     // TTS
     if (settingsStore.settings.elevenLabsApiKey && settingsStore.settings.enableTTS && 'message' in socketEvent) {

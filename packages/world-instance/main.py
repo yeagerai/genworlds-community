@@ -117,12 +117,9 @@ async def trigger_world(request: Request, use_case: str, world_definition: str):
             print(f"An error occurred: {e}")
         return response
     else:
-        print("EPA!!!")
         try:
             module = import_module(module_name)
             launch_use_case = getattr(module, function_name)
-            print(f"The module: {module}")
-            print("The use_case is: ", launch_use_case)
 
             # Set openai API key in environment variable, for the process
             opneai_api_key_env = os.environ.get('OPENAI_API_KEY')
@@ -137,7 +134,6 @@ async def trigger_world(request: Request, use_case: str, world_definition: str):
                 os.environ['OPENAI_API_KEY'] = opneai_api_key_env
             else:
                 del os.environ['OPENAI_API_KEY']
-            print(f"Hey this is the response: {response}")
             return response
         except Exception as e:
             print("Error: ", e)
