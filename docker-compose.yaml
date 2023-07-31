@@ -29,6 +29,7 @@ services:
       dockerfile: ./genworlds-community/packages/world-instance/Dockerfile
     environment:
       - VUE_APP_IS_DEV=true
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     command: /bin/bash -c "pip install -e /app/genworlds && python -u -m uvicorn --reload --host 0.0.0.0 --port 7457 world-instance.main:app"
     volumes:
       - ./packages/world-instance:/app/world-instance

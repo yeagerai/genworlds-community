@@ -567,7 +567,7 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
         </span>
 
       <!-- Only show input field when the textarea is not disabled -->
-      <input v-show="websocketPort == 7455" 
+      <input v-show="websocketPort != 7455" 
              type="text" 
              class="flex-grow bg-transparent outline-none" 
              v-model="message" 
@@ -588,7 +588,7 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
     
     <button class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
             @click="sendMessage" 
-            :disabled="websocketPort != 7455">
+            :disabled="websocketPort == 7455">
       Send
     </button>
   </div>
