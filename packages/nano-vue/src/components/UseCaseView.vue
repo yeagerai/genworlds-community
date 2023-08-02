@@ -259,19 +259,18 @@ const sendMessage = () => {
     return;
   }
 
-  const payload = {
-    event_type: "user_speaks_with_agent",
+  const payload = JSON.stringify({
+    event_type: "user_speaks_with_agent_event",
     description: "The user speaks with an agent",
     created_at: new Date().toISOString(),
     sender_id: "user_id",  // Replace with actual user id
     target_id: selectedAgent.value,
     message: message.value
-  };
+  });
 
   // Sending the message through the WebSocket
-  console.log(webSocket.value.readyState);
   try {
-    webSocket.value.send(JSON.stringify(payload));
+    webSocket.value.send(payload);
   } catch (error) {
     console.error('Failed to send message:', error);
   }
@@ -303,7 +302,18 @@ const connectToWebSocket = () => {
   webSocket.value = new ReconnectingWebSocket(wsUrl, [], {maxRetries: 0});
 
   webSocket.value.addEventListener('message', (msg) => {
-    const socketEvent = JSON.parse(msg.data);
+    let socketEvent;
+    console.log(typeof msg.data);
+    if (typeof msg.data === 'object') {
+      socketEvent = JSON.stringify(msg.data);
+    } else {
+      try {
+        socketEvent = JSON.parse(msg.data);
+      } catch (error) {
+        console.error('Failed to parse message:', error);
+        socketEvent = msg.data; // If parsing fails, set socketEvent to the original string.
+      }
+    }
     console.log('Received message:', socketEvent)
 
     fullEventHistory.value.push(socketEvent);
@@ -581,7 +591,7 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
                   <div class="chat-header" >
                     From: {{ getFieldValue(event, 'sender_id') }}         
                     <template v-if="getFieldValue(event, 'target_id')">
-                      To: {{ getFieldValue(event, 'target_id') }}
+                              To: {{ getFieldValue(event, 'target_id') }}
                     </template>
                     <time class="text-xs opacity-50">{{ getFieldValue(event, 'created_at') }}</time>
                   </div>

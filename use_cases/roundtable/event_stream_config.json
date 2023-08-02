@@ -23,6 +23,7 @@
             {"name":"created_at"},
             {"name":"event_type"}, 
             {"name":"target_id"},
+            {"name":"sender_id"},
             {"name":"message"},
             {"name":"summary"}
           ],
@@ -88,6 +89,7 @@
             {"name":"created_at"},
             {"name":"event_type"}, 
             {"name":"target_id"},
+            {"name":"sender_id"},
             {"name":"message"},
             {"name":"summary"}
           ],
