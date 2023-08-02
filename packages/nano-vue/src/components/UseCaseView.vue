@@ -264,12 +264,17 @@ const sendMessage = () => {
     description: "The user speaks with an agent",
     created_at: new Date().toISOString(),
     sender_id: "user_id",  // Replace with actual user id
-    target_id: selectedAgent.value.id,
+    target_id: selectedAgent.value,
     message: message.value
   };
 
   // Sending the message through the WebSocket
-  webSocket.value.send(JSON.stringify(payload));
+  console.log(webSocket.value.readyState);
+  try {
+    webSocket.value.send(JSON.stringify(payload));
+  } catch (error) {
+    console.error('Failed to send message:', error);
+  }
 
   // Reset the message input and selected values
   message.value = "";
@@ -573,8 +578,11 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
             <ul class="space-y-4">
               <li v-for="(event, index) in activeScreenObject.event_history" :key="index">
                 <div class="chat chat-start">
-                  <div class="chat-header">
-                    From: {{ getFieldValue(event, 'sender_id') }}                    
+                  <div class="chat-header" >
+                    From: {{ getFieldValue(event, 'sender_id') }}         
+                    <template v-if="getFieldValue(event, 'target_id')">
+                      To: {{ getFieldValue(event, 'target_id') }}
+                    </template>
                     <time class="text-xs opacity-50">{{ getFieldValue(event, 'created_at') }}</time>
                   </div>
                   <div class="chat-bubble" :class="getEventCssClasses(event)">
