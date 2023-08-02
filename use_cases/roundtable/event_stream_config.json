@@ -18,6 +18,29 @@
           "filters":[]
         },
         {
+          "event_type": "user_speaks_with_agent_event",
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"}, 
+            {"name":"target_id"},
+            {"name":"sender_id"},
+            {"name":"message"},
+            {"name":"summary"}
+          ],
+          "filters":[]
+        },
+        {
+          "event_type": "agent_speaks_with_user_event",
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"}, 
+            {"name":"sender_id"},
+            {"name":"message"},
+            {"name":"summary"}
+          ],
+          "filters":[]
+        },
+        {
           "event_type": "agent_gives_object_to_agent_event",
           "css_classes": ["italic", "font-light"],
           "fields_to_display": [
@@ -46,6 +69,29 @@
             {"name":"world_name"},
             {"name":"world_description"},
             {"name":"schemas"}
+          ],
+          "filters":[]
+        },
+        {
+          "event_type": "agent_speaks_into_microphone",
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"}, 
+            {"name":"sender_id"},
+            {"name":"message"},
+            {"name":"summary"}
+          ],
+          "filters":[]
+        },
+        {
+          "event_type": "user_speaks_with_agent_event",
+          "fields_to_display": [
+            {"name":"created_at"},
+            {"name":"event_type"}, 
+            {"name":"target_id"},
+            {"name":"sender_id"},
+            {"name":"message"},
+            {"name":"summary"}
           ],
           "filters":[]
         },

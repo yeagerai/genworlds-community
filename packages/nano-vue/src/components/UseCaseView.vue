@@ -75,6 +75,97 @@ const findAgentById = (agentId) => {
   return yamlData.value.world_definition.world.agents.find(agent => agent.id === agentId);
 };
 
+// Chat events
+const mod = (n, m) => {
+  return ((n % m) + m) % m;
+}
+
+const message = ref("");
+const showSuggestions = ref(false);
+const suggestions = ref([]);
+let availableAgents = ref([]);
+let selectedAgent = ref("");
+
+let availableEvents = ref([]);
+let selectedEvent = ref("");
+
+const focusedSuggestionIndex = ref(0);
+
+const handleInput = () => {
+  if (message.value.startsWith("/")) {
+    // If agent and event are already selected, no need to show dropdown again
+    if (selectedAgent.value && selectedEvent.value) {
+      showSuggestions.value = false;
+      return;
+    }
+    
+    if (!selectedAgent.value) {
+      // If agent is not selected, show agents suggestions
+      suggestions.value = availableAgents.value;
+    } else {
+      // If agent is selected, show events suggestions
+      // look for the speaking events of this agent
+      suggestions.value = ["user_speaks_with_agent_event"]; // temporal
+    }
+    showSuggestions.value = true;
+  } else {
+    showSuggestions.value = false;
+  }
+};
+
+const handleKeydown = (event) => {
+  switch (event.key) {
+    case 'ArrowUp':
+      // prevent cursor from going to the start of textarea
+      event.preventDefault();
+      focusedSuggestionIndex.value = mod(focusedSuggestionIndex.value - 1, suggestions.value.length);
+      break;
+    case 'ArrowDown':
+      // prevent cursor from going to the end of textarea
+      event.preventDefault();
+      focusedSuggestionIndex.value = mod(focusedSuggestionIndex.value + 1, suggestions.value.length);
+      break;
+    case 'Enter':
+    case 'Tab':
+      event.preventDefault();
+      // 'Enter' selects the focused suggestion
+      selectSuggestion(suggestions.value[focusedSuggestionIndex.value]);
+      focusedSuggestionIndex.value = 0;
+      break;
+    case 'Backspace':
+      // If there is no input and there is a selected event, remove the event.
+      if (message.value === '' && selectedEvent.value) {
+        removeEvent();
+      }
+      // If there is no input and no selected event, but there is a selected agent, remove the agent.
+      else if (message.value === '' && !selectedEvent.value && selectedAgent.value) {
+        removeAgent();
+      }
+      focusedSuggestionIndex.value = 0;
+      break;
+  }
+};
+
+const selectSuggestion = (item) => {
+  if (!selectedAgent.value) {
+    selectedAgent.value = item;
+    // Clear the input message once the agent has been selected
+    message.value = "";
+  } else if (!selectedEvent.value) {
+    selectedEvent.value = item;
+    // Clear the input message once the event has been selected
+    message.value = "";
+  }
+  showSuggestions.value = false;
+};
+
+const removeEvent = () => {
+  selectedEvent.value = "";
+};
+
+const removeAgent = () => {
+  selectedAgent.value = "";
+};
 
 // Text to speech
 const ttsEventQueue = ref([]);
@@ -161,7 +252,38 @@ watch(() => settingsStore.settings.enableTTS, (newVal) => {
   }
 }, { deep: true });
 
+const sendMessage = () => {
+  // Checking if necessary data is filled
+  if (!selectedAgent.value || !selectedEvent.value || !message.value) {
+    console.warn('Cannot send message: not all required fields are filled.');
+    return;
+  }
 
+  const payload = JSON.stringify({
+    event_type: "user_speaks_with_agent_event",
+    description: "The user speaks with an agent",
+    created_at: new Date().toISOString(),
+    sender_id: "user_id",  // Replace with actual user id
+    target_id: selectedAgent.value,
+    message: message.value
+  });
+
+  // Sending the message through the WebSocket
+  try {
+    webSocket.value.send(payload);
+  } catch (error) {
+    console.error('Failed to send message:', error);
+  }
+
+  // Reset the message input and selected values
+  message.value = "";
+  selectedAgent.value = "";
+  selectedEvent.value = "";
+};
+
+function removeDuplicates(arr) {
+  return [...new Set(arr)];
+}
 
 // Websocket
 const connectToWebSocket = () => {
@@ -180,7 +302,18 @@ const connectToWebSocket = () => {
   webSocket.value = new ReconnectingWebSocket(wsUrl, [], {maxRetries: 0});
 
   webSocket.value.addEventListener('message', (msg) => {
-    const socketEvent = JSON.parse(msg.data);
+    let socketEvent;
+    console.log(typeof msg.data);
+    if (typeof msg.data === 'object') {
+      socketEvent = JSON.stringify(msg.data);
+    } else {
+      try {
+        socketEvent = JSON.parse(msg.data);
+      } catch (error) {
+        console.error('Failed to parse message:', error);
+        socketEvent = msg.data; // If parsing fails, set socketEvent to the original string.
+      }
+    }
     console.log('Received message:', socketEvent)
 
     fullEventHistory.value.push(socketEvent);
@@ -190,6 +323,28 @@ const connectToWebSocket = () => {
         console.warn('Invalid message received:', msg.data);
         return; // Don't process this message
     } 
+
+    // Check if the event type is 'world_sends_nearby_entities_event' and process entities
+    if (socketEvent.event_type === 'world_sends_nearby_entities_event') {
+      let events = [];
+      socketEvent.nearby_entities.forEach(entity => {
+        if (entity.entity_type === 'AGENT') {
+          availableAgents.value.push(entity.id);
+        }
+      });
+
+      // Update available agents and events
+      availableEvents.value.push(...events);
+      
+      // Make sure the arrays you're passing to removeDuplicates are defined
+      if (availableAgents.value) {
+        availableAgents.value = removeDuplicates(availableAgents.value);
+      }
+      
+      if (availableEvents.value) {
+        availableEvents.value = removeDuplicates(availableEvents.value);
+      }
+    }
 
     // TTS
     if (settingsStore.settings.elevenLabsApiKey && settingsStore.settings.enableTTS && 'message' in socketEvent) {
@@ -433,8 +588,11 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
             <ul class="space-y-4">
               <li v-for="(event, index) in activeScreenObject.event_history" :key="index">
                 <div class="chat chat-start">
-                  <div class="chat-header">
-                    From: {{ getFieldValue(event, 'sender_id') }}                    
+                  <div class="chat-header" >
+                    From: {{ getFieldValue(event, 'sender_id') }}         
+                    <template v-if="getFieldValue(event, 'target_id')">
+                              To: {{ getFieldValue(event, 'target_id') }}
+                    </template>
                     <time class="text-xs opacity-50">{{ getFieldValue(event, 'created_at') }}</time>
                   </div>
                   <div class="chat-bubble" :class="getEventCssClasses(event)">
@@ -460,7 +618,53 @@ watch(() => useCaseActionsStore.performDownloadUseCaseEventHistoryAction, (newVa
         </div>
       </div>
     </div>
-    <!-- <textarea class="textarea w-full" placeholder="SendEvent" disabled></textarea> -->
+    <div class="flex flex-col">
+      <div class="flex relative items-end w-full">
+    <div class="flex-grow bg-white shadow rounded p-2 flex items-center" 
+         :class="{ 'cursor-not-allowed': websocketPort != 7455 }"
+         :disabled="websocketPort != 7455">
+
+        <!-- Render the selected agent as a badge -->
+        <span class="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2" 
+              v-if="selectedAgent">
+          {{ selectedAgent }}
+          <button @click="removeAgent()">x</button>
+        </span>
+
+        <!-- Render the selected event as a badge -->
+        <span class="bg-blue-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2" 
+              v-if="selectedEvent">
+          {{ selectedEvent }}
+          <button @click="removeEvent()">x</button>
+        </span>
+
+      <!-- Only show input field when the textarea is not disabled -->
+      <input v-show="websocketPort != 7455" 
+             type="text" 
+             class="flex-grow bg-transparent outline-none" 
+             v-model="message" 
+             @input="handleInput" 
+             @keydown="handleKeydown"
+             :placeholder="getPlaceholder">
+    </div>
+    
+    <div class="absolute bg-white shadow rounded p-2 w-full" v-show="showSuggestions" style="bottom: 100%;">
+      <div v-for="(item, index) in suggestions" 
+           :key="index" 
+           @click="selectSuggestion(item)" 
+           :class="{ 'bg-gray-200': index === focusedSuggestionIndex }" 
+           class="cursor-pointer hover:bg-gray-200">
+        {{ item }}
+      </div>
+    </div>
+    
+    <button class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
+            @click="sendMessage" 
+            :disabled="websocketPort == 7455">
+      Send
+    </button>
+  </div>
+  </div>
   </div>
 
 </template>

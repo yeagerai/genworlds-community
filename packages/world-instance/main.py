@@ -110,7 +110,6 @@ async def trigger_world(request: Request, use_case: str, world_definition: str):
     # all use cases should have a world_setup.py file containing a launch_use_case function
     module_name = f"use_cases.{use_case}.world_setup"
     function_name = "launch_use_case"
-
     if is_mocked:
         try:
             requests.get(f"http://{HOST_NAME}:{port}/start-mocked-ws/{use_case}/{world_definition}")
@@ -135,9 +134,9 @@ async def trigger_world(request: Request, use_case: str, world_definition: str):
                 os.environ['OPENAI_API_KEY'] = opneai_api_key_env
             else:
                 del os.environ['OPENAI_API_KEY']
-
             return response
         except Exception as e:
+            print("Error: ", e)
             return {"status": f"Failed to launch use case. Error: {str(e)}", "port": None, "is_mocked": None}
         
 @app.get("/kill-all-use-cases")
