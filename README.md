@@ -8,7 +8,7 @@
 
 GenWorlds Community Edition is your toolkit for building and fine-tuning unique AI worlds. It consists of an array of backend and frontend services, including Vue, JavaScript, Redis, WebSockets, and more. You can launch GenWorlds Community Edition through Replit or Docker.
 
-GenWorlds Community uses The GenWorlds Framework as its core. For more information please visit [The Docs](https://genworlds.com/docs/getting-started).
+GenWorlds Community uses The GenWorlds Framework as its core. For more information please visit [The Docs](https://genworlds.com/docs/get-started/intro).
 
 ## Key Features
 
@@ -49,7 +49,7 @@ VUE_APP_USE_CASE_ACCESS_POINT=/use_cases/roundtable/presidential_debate.yaml
 
 And you can replace `roundtable` by any folder name in the `use_cases/` folder.
 
-For more detailed information of how to use the framework, you can check the [GenWorlds Docs](https://genworlds.com/docs/getting-started).
+For more detailed information of how to use the framework, you can check the [GenWorlds Docs](https://genworlds.com/docs/get-started/intro).
 
 #### Setting the API keys
 
@@ -92,7 +92,7 @@ The use case needs to be reloaded to apply the changes.
 
 The ([GenWorlds framework](https://github.com/yeagerai/genworlds)) is a powerful set of tools for creating your own worlds of agents and objects that go far beyond the RoundTable use case.
 
-See the ([GenWorlds Developer Documentation](https://genworlds.com/docs/getting-started)) to get started.
+See the ([GenWorlds Developer Documentation](https://genworlds.com/docs/get-started/intro)) to get started.
 
 ## Contributing
 
