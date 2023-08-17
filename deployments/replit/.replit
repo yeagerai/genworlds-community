@@ -33,6 +33,7 @@ PYTHONPATH = "$PYTHONHOME/lib/python3.10:${VIRTUAL_ENV}/lib/python3.10/site-pack
 REPLIT_POETRY_PYPI_REPOSITORY = "https://package-proxy.replit.com/pypi/"
 MPLBACKEND = "TkAgg"
 POETRY_CACHE_DIR = "${REPL_HOME}/.cache/pypoetry"
+GENWORLDS_WEBSOCKET_URL = "ws://real-ws:7456/ws"
 
 # Enable unit tests. This is only supported for a few languages.
 [unitTest]

@@ -44,6 +44,7 @@ RUN set -ex; \
 FROM node:18-alpine AS node-builder-16bit-front
 WORKDIR /app
 COPY packages/16bit-front/ ./
+RUN apk add --no-cache python3 make g++
 RUN npm install yarn
 RUN yarn install
 RUN yarn build
@@ -52,6 +53,7 @@ RUN yarn build
 FROM node:18-alpine AS node-builder-nano-vue
 WORKDIR /app
 COPY packages/nano-vue/package*.json ./
+RUN apk add --no-cache python3 make g++
 RUN npm install yarn
 RUN yarn install
 COPY packages/nano-vue/ ./
@@ -95,6 +97,8 @@ COPY use_cases ./use_cases
 COPY .env ./.env
 
 COPY deployments/docker/runner.py ./runner.py
+
+ENV GENWORLDS_WEBSOCKET_URL=ws://localhost:7456/ws
 
 EXPOSE 80
 EXPOSE 9000
