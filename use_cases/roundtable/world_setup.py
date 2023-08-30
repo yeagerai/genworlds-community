@@ -20,8 +20,10 @@ from use_cases.roundtable.objects.microphone import Microphone
 
 thread_pool_ref = concurrent.futures.ThreadPoolExecutor
 
+# ENVIRONMENT VARIABLES
 load_dotenv(dotenv_path=".env")
 openai_api_key = os.getenv("OPENAI_API_KEY")
+genworlds_websocket_url = os.getenv("GENWORLDS_WEBSOCKET_URL", "ws://localhost:7456/ws")
 
 ABS_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -104,7 +106,10 @@ def construct_world(data):
     if 'world' not in data:
         raise ValueError("Missing 'world' in data")
     
-    base_kwargs = data.get('base_args', {})
+    base_kwargs = {
+        'websocket_url': genworlds_websocket_url,
+    }
+    base_kwargs = base_kwargs | data.get('base_args', {})
 
     world_def = data['world']
 
