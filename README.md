@@ -33,7 +33,37 @@ Check out the `use-cases/` folder of this repository for examples.
 
 ## 🛠️ Getting Started
 
-### Running with Docker
+### Running it locally
+
+To set up and run GenWorlds Community Edition locally, use the following commands:
+
+```sh
+git clone git@github.com:yeagerai/genworlds-community.git
+```
+
+Then create a file called `.env` and copy the content of the `.env.example` and replace the corresponding API keys.
+
+Then open a `jupyter-notebook` and go to `use_cases/quickstart/quickstart.ipynb` and run all the cells.
+
+After that, to install the dependencies and run the frontend server:
+
+```sh
+cd vue-gui
+yarn install
+yarn serve
+```
+
+Finally, you can open your browser and go to `http://localhost:8080/`. Start interacting with your world typing `/` on the textbox.
+
+Here is a video of the process, after we have executed the `git clone` command:
+
+[![GenWorlds Community Initial Setup](https://youtube.com/to-be-done.jpg)](https://www.youtube.com/to-be-done)
+
+And you can create new `ChatInterfaceWorld`(s) inside the `use_cases/` folder to adapt it to your particular use-case.
+
+For more detailed information of how to use the framework, you can check the [GenWorlds Docs](https://genworlds.com/docs/get-started/intro).
+
+### Running with Docker (under development, so not working yet)
 
 To set up and run GenWorlds Community Edition with Docker, use the following commands:
 
@@ -52,10 +82,6 @@ docker run -p 80:80 -p 7456:7456 -d genworlds-world-app
 
 Finally, you can open your browser and go to `http://localhost/`
 
-And you can create new `ChatInterfaceWorld`(s) inside the `use_cases/` folder to adapt it to your particular use-case.
-
-For more detailed information of how to use the framework, you can check the [GenWorlds Docs](https://genworlds.com/docs/get-started/intro).
-
 #### Setting the API keys
 
 ##### OpenAI
@@ -65,7 +91,6 @@ When you first run a use_case, you will see a pre-recorded history of a conversa
 To run a real simulation, you need to set your OpenAI API key. It can be found at [OpenAI Platform](https://platform.openai.com/account/api-keys). The RoundTable uses GPT4.
 
 Set the OpenAI API key by clicking the cog icon at top right.
-
 
 ## Creating your own Worlds
 

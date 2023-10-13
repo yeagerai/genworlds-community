@@ -1,0 +1,54 @@
+{
+    "name": "RAG World",
+    "screens": [
+      {
+        "name": "Chat Room",
+        "has_input": false,
+        "screen_type": "event_history",
+        "tracked_events": [
+            {
+                "event_type": "user_speaks_with_agent_event"
+            },
+            {
+              "event_type": "agent_goes_to_sleep"
+            },
+            {
+                "event_type": "agent_speaks_with_agent_event"
+            },
+            {
+            "event_type": "agent_speaks_with_user_event"
+          }
+        ]
+      },
+  
+      {
+        "name": "All events",
+        "has_input": false,
+        "screen_type": "event_history",
+        "tracked_events": [
+          {
+            "event_type": "world_sends_available_action_schemas_event"
+          },
+          {
+            "event_type": "world_sends_available_entities_event"
+          },
+          {
+            "event_type": "user_speaks_with_agent_event"
+          },
+          {
+            "event_type": "user_requests_screens_to_world"
+          },
+          {
+            "event_type": "agent_wants_updated_state"
+          },
+          {
+            "event_type": "agent_goes_to_sleep"
+          },
+          {
+            "event_type": "world_sends_screens_to_user"
+          }
+        ]
+      }    
+    ],
+    "settings": {}
+  }
