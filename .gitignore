@@ -20,3 +20,5 @@ yarn-error.log*
 pnpm-debug.log*
 
 /.conda
+
+.ipynb_checkpoints
