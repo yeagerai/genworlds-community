@@ -57,7 +57,8 @@ Finally, you can open your browser and go to `http://localhost:8080/`. Start int
 
 Here is a video of the process, after we have executed the `git clone` command:
 
-[![GenWorlds Community Initial Setup](https://youtube.com/to-be-done.jpg)](https://www.youtube.com/to-be-done)
+[![GenWorlds Community Initial Setup](https://img.youtube.com/vi/0amH15NkAb8/maxresdefault.jpg
+)](https://www.youtube.com/watch?v=0amH15NkAb8)
 
 And you can create new `ChatInterfaceWorld`(s) inside the `use_cases/` folder to adapt it to your particular use-case.
 
