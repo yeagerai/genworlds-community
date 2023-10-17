@@ -1,7 +1,0 @@
-{
-  "extends": ["@yeager/eslint-config"],
-  "ignorePatterns": ["webpack.config.js"],
-  "parserOptions": {
-    "project": ["tsconfig.json"]
-  }
-}
